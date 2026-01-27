@@ -16,6 +16,8 @@ export default function DeleteImageModal({
     onClose: () => void;
     onConfirm: () => void;
 }) {
+    console.log(image);
+
     return (
         <Dialog open onOpenChange={onClose}>
             <DialogContent>

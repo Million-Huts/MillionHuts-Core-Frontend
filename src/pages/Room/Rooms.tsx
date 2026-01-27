@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { apiPrivate } from "@/lib/api";
 import RoomGrid from "@/components/room/RoomGrid";
@@ -24,7 +23,6 @@ export interface Room {
 
 export default function Rooms() {
     const { currentPG } = usePG();
-    const navigate = useNavigate();
 
     const pgId = currentPG?.id;
 
