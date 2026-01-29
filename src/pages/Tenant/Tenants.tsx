@@ -13,6 +13,7 @@ export interface Tenant {
     email?: string;
     phone?: string;
     isKycVerified: boolean;
+    profileImage?: string;
 }
 
 export default function Tenants() {

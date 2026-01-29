@@ -18,6 +18,7 @@ import FloorDetails from './pages/Floor/FloorDetails';
 import Rooms from './pages/Room/Rooms';
 import RoomDetails from './pages/Room/RoomDetails';
 import Tenants from './pages/Tenant/Tenants';
+import TenantDetails from './pages/Tenant/TenantDetails';
 
 function App() {
   return (
@@ -50,7 +51,7 @@ function App() {
             <Route path="/rooms/:roomId" element={<RoomDetails />} />
 
             <Route path="tenants" element={<Tenants />} />
-            <Route path="tenants/:tenantId" element={<Tenants />} />
+            <Route path="tenants/:tenantId" element={<TenantDetails />} />
           </Route>
         </Route>
 

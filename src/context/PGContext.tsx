@@ -7,6 +7,7 @@ import {
 } from "react";
 import { apiPrivate } from "@/lib/api";
 import type { PGSummary } from "@/interfaces/pg";
+import { useAuth } from "./AuthContext";
 
 interface PGContextType {
     pgs: PGSummary[];
@@ -24,38 +25,39 @@ export function PGProvider({ children }: { children: ReactNode }) {
     const [pgs, setPGs] = useState<PGSummary[]>([]);
     const [currentPG, setCurrentPG] = useState<PGSummary | null>(null);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+
+    const fetchPGs = async () => {
+        try {
+            const res = await apiPrivate.get("/pgs/summary"); // minimal list endpoint
+            const pgList: PGSummary[] = res.data.pgs;
+
+            setPGs(pgList);
+
+            if (pgList.length === 0) {
+                setCurrentPG(null);
+                return;
+            }
+
+            const storedPGId = localStorage.getItem(STORAGE_KEY);
+            const matchedPG =
+                storedPGId &&
+                pgList.find((pg) => pg.id === storedPGId);
+
+            setCurrentPG(matchedPG || pgList[0]);
+        } catch (err) {
+            console.error("Failed to load PGs", err);
+            setPGs([]);
+            setCurrentPG(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Fetch PGs (minimal endpoint)
     useEffect(() => {
-        const fetchPGs = async () => {
-            try {
-                const res = await apiPrivate.get("/pgs/summary"); // minimal list endpoint
-                const pgList: PGSummary[] = res.data.pgs;
-
-                setPGs(pgList);
-
-                if (pgList.length === 0) {
-                    setCurrentPG(null);
-                    return;
-                }
-
-                const storedPGId = localStorage.getItem(STORAGE_KEY);
-                const matchedPG =
-                    storedPGId &&
-                    pgList.find((pg) => pg.id === storedPGId);
-
-                setCurrentPG(matchedPG || pgList[0]);
-            } catch (err) {
-                console.error("Failed to load PGs", err);
-                setPGs([]);
-                setCurrentPG(null);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPGs();
-    }, []);
+    }, [user]);
 
     const switchPG = (pgId: string) => {
         const pg = pgs.find((p) => p.id === pgId);
