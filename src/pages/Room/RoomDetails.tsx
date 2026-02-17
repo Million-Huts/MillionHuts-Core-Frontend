@@ -12,8 +12,8 @@ export default function RoomDetails() {
     const [room, setRoom] = useState<Room | null>(null);
 
     useEffect(() => {
-        apiPrivate.get(`/pgs/${pgId}/rooms/room/${roomId}`).then((res) => {
-            setRoom(res.data.room);
+        apiPrivate.get(`/pgs/${pgId}/rooms/${roomId}`).then((res) => {
+            setRoom(res.data.data.room);
         });
     }, [roomId]);
 

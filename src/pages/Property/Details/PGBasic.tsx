@@ -27,8 +27,8 @@ export default function PGBasic() {
     useEffect(() => {
         const fetchPG = async () => {
             try {
-                const res = await apiPrivate.get(`/pgs/${pgId}/getOne`);
-                setPg(res.data.pg);
+                const res = await apiPrivate.get(`/pgs/${pgId}`);
+                setPg(res.data.data.pg);
             } catch {
                 toast.error("Failed to load PG details");
             } finally {
@@ -133,7 +133,7 @@ function PGEditForm({
         };
 
         try {
-            await apiPrivate.patch("/pgs/update-pg", payload);
+            await apiPrivate.patch(`/pgs/${pg.id}`, payload);
             toast.success("PG updated");
             onUpdated(payload as Partial<PGData>);
         } catch (err: any) {

@@ -33,7 +33,7 @@ export default function Rooms() {
     useEffect(() => {
         const fetchRooms = async () => {
             const res = await apiPrivate.get(`/pgs/${pgId}/rooms`);
-            setRooms(res.data.rooms);
+            setRooms(res.data.data.rooms);
             setLoading(false);
         };
         fetchRooms();

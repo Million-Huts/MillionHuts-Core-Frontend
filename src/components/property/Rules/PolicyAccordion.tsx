@@ -41,13 +41,13 @@ export default function PolicyAccordion({
                 </div>
 
                 <AccordionContent className="px-4 pb-4 bg-white">
-                    {!Array.isArray(policy.rules) || policy.rules.length === 0 ? (
+                    {!Array.isArray(policy.items) || policy.items.length === 0 ? (
                         <p className="text-sm text-gray-500">
                             No rules present. Add new rules.
                         </p>
                     ) : (
                         <div className="space-y-2 bg-white">
-                            {policy.rules.map((item) => (
+                            {policy.items.map((item) => (
                                 <RuleItemRow
                                     key={item.id}
                                     item={item}

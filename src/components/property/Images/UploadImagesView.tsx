@@ -20,7 +20,7 @@ export default function UploadImagesView({
 
         try {
             await apiPrivate.post(
-                `/pgs/${pgId}/images/upload`,
+                `/pgs/${pgId}/images`,
                 formData
             );
             onUploaded();

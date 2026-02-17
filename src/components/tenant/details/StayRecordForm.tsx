@@ -76,7 +76,7 @@ export default function StayRecordForm({
     };
 
     return (
-        <div className="w-full md:w-1/3 rounded-2xl bg-white p-4 shadow-sm">
+        <div className="w-full rounded-2xl bg-white p-4 shadow-sm">
             <h3 className="mb-4 text-lg font-semibold">Edit Stay Details</h3>
 
             <form onSubmit={handleSubmit} className="space-y-3">

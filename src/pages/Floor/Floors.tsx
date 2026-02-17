@@ -28,8 +28,8 @@ export default function Floors() {
         const fetchFloors = async () => {
             try {
                 const res = await apiPrivate.get(`/pgs/${currentPG?.id}/floors`);
-                if (res.data.floors && res.data.floors.length > 0)
-                    setFloors(res.data.floors);
+                if (res.data.data.floors && res.data.data.floors.length > 0)
+                    setFloors(res.data.data.floors);
             } catch (error: any) {
                 toast.error(error.response.data.message);
             } finally {

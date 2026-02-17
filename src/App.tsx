@@ -37,27 +37,37 @@ function App() {
 
 
             <Route path="/pgs" element={<Properties />} />
-            <Route path="/pgs/:pgId" element={<PGLayout />}>
-              <Route path="basic" element={<PGBasic />} />
-              <Route path="details" element={<PGDetails />} />
-              <Route path="images" element={<PGImages />} />
-              <Route path="rules" element={<PGRules />} />
-              <Route path="amenities" element={<PGAmenities />} />
+
+            <Route path="/pgs/:pgId">
+              <Route path='' element={<PGLayout />}>
+                {/* PG */}
+                <Route path="basic" element={<PGBasic />} />
+                <Route path="details" element={<PGDetails />} />
+                <Route path="images" element={<PGImages />} />
+                <Route path="rules" element={<PGRules />} />
+                <Route path="amenities" element={<PGAmenities />} />
+              </Route>
+
+              {/* Floors */}
+              <Route path="floors" element={<Floors />} />
+              <Route path="floors/:floorId" element={<FloorDetails />} />
+
+              {/* Rooms */}
+              <Route path="rooms" element={<Rooms />} />
+              <Route path="rooms/:roomId" element={<RoomDetails />} />
+
+              {/* Tenants */}
+              <Route path="tenants" element={<Tenants />} />
+              <Route path="tenants/:tenantId" element={<TenantDetails />} />
+
             </Route>
-            <Route path="/floors" element={<Floors />} />
-            <Route path="/floor/:floorId" element={<FloorDetails />} />
 
-            <Route path="/rooms" element={<Rooms />} />
-            <Route path="/rooms/:roomId" element={<RoomDetails />} />
-
-            <Route path="tenants" element={<Tenants />} />
-            <Route path="tenants/:tenantId" element={<TenantDetails />} />
           </Route>
         </Route>
 
         {/* Default Redirect */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+      </Routes >
       <Toaster position='top-center' reverseOrder={false} />
     </>
   );

@@ -28,7 +28,7 @@ export default function PGImages() {
     const fetchImages = async () => {
         try {
             const res = await apiPrivate.get(`/pgs/${pgId}/images`);
-            setImages(res.data.images);
+            setImages(res.data.data.images);
         } catch (error: any) {
             toast.error(error.response.data.message);
         } finally {
@@ -68,9 +68,7 @@ export default function PGImages() {
                 onDelete={setDeleteImage}
                 onMakeCover={async (imageId: string) => {
                     try {
-                        await apiPrivate.patch(`/pgs/${pgId}/images/cover-image`, {
-                            imageId,
-                        });
+                        await apiPrivate.patch(`/pgs/${pgId}/images/${imageId}/cover`);
                         setImages((prev) =>
                             prev.map((img) => ({
                                 ...img,
@@ -100,7 +98,7 @@ export default function PGImages() {
                     onConfirm={async () => {
                         try {
                             await apiPrivate.delete(
-                                `/pgs/${pgId}/images/remove/${deleteImage.id}`
+                                `/pgs/${pgId}/images/${deleteImage.id}`
                             );
                             setImages((prev) =>
                                 prev.filter((img) => img.id !== deleteImage.id)

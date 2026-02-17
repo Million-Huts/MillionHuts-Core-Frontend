@@ -31,7 +31,7 @@ export default function FloorDetails() {
             setLoading(true);
             try {
                 const res = await apiPrivate.get(`/pgs/${pgId}/floors/${floorId}`);
-                setFloor(res.data.floor);
+                setFloor(res.data.data.floor);
             } catch (error: any) {
                 toast.error(error.response.data.message);
             } finally {
@@ -72,7 +72,7 @@ export default function FloorDetails() {
         };
         try {
             await apiPrivate.patch(
-                `/pgs/${pgId}/floors/update/${floorId}`,
+                `/pgs/${pgId}/floors/${floorId}`,
                 payload
             );
             toast.success("Floor updated");

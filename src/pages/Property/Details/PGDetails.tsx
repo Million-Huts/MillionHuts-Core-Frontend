@@ -46,8 +46,8 @@ export default function PGDetails() {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const res = await apiPrivate.get(`/pgs/details/${pgId}`);
-                setDetails(res.data);
+                const res = await apiPrivate.get(`/pgs/${pgId}/details`);
+                setDetails(res.data.data.details);
             } catch {
                 setDetails(null);
             } finally {
@@ -169,7 +169,7 @@ function DetailsForm({
         };
 
         try {
-            await apiPrivate.patch(`/pgs/details/update/${pgId}`, payload);
+            await apiPrivate.patch(`/pgs/${pgId}/details`, payload);
             toast.success("Property details updated");
             onUpdated(payload);
         } catch (err: any) {

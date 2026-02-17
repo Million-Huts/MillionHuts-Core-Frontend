@@ -1,14 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Floor } from "@/pages/Floor/Floors";
+import { usePG } from "@/context/PGContext";
 
 export default function FloorCard({ floor }: { floor: Floor }) {
     const navigate = useNavigate();
-
+    const { currentPG } = usePG();
     return (
         <Card
             className="cursor-pointer transition hover:shadow-md"
-            onClick={() => navigate(`/floor/${floor.id}`)}
+            onClick={() => navigate(`/pgs/${currentPG?.id}/floors/${floor.id}`)}
         >
             <CardContent className="p-4 space-y-2">
                 <h3 className="text-lg font-semibold">{floor.label}</h3>

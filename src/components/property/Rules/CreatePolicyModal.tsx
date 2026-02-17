@@ -24,7 +24,7 @@ export default function CreatePolicyModal({
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         try {
-            await apiPrivate.post(`/pgs/${pgId}/rules/create/policy`, {
+            await apiPrivate.post(`/pgs/${pgId}/rules/sections`, {
                 title: formData.get("title"),
             });
             toast.success("Policy created");

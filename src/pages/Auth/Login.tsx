@@ -1,17 +1,22 @@
 import { useAuth } from "@/context/AuthContext";
-import { loginUser } from "@/services/authService";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const navigate = useNavigate();
-    const { user, loading, setUser } = useAuth();
+    const { user, loading, login } = useAuth();
+
+    /* =====================================================
+       Redirect if already logged in
+    ===================================================== */
 
     useEffect(() => {
         if (!loading && user) {
@@ -19,27 +24,50 @@ export default function Login() {
         }
     }, [user, loading, navigate]);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    /* =====================================================
+       Submit Handler
+    ===================================================== */
+
+    const handleSubmit = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
         e.preventDefault();
+
         setError(null);
+        setSubmitting(true);
 
         const formData = new FormData(e.currentTarget);
+
         const email = formData.get("email")?.toString().trim();
         const password = formData.get("password")?.toString();
 
         if (!email || !password) {
             setError("Email and password are required");
+            setSubmitting(false);
             return;
         }
 
         try {
-            const data = await loginUser({ email, password });
-            setUser(data.user);
+            await login({ email, password });
+
+            toast.success("Login successful");
+
             navigate("/dashboard", { replace: true });
         } catch (err: any) {
-            setError(err.response?.data?.message || "Invalid credentials");
+            const message =
+                err?.response?.data?.message ||
+                "Invalid credentials";
+
+            setError(message);
+            toast.error(message);
+        } finally {
+            setSubmitting(false);
         }
     };
+
+    /* =====================================================
+       UI
+    ===================================================== */
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -69,17 +97,26 @@ export default function Login() {
                             placeholder="Password"
                             autoComplete="current-password"
                         />
+
                         <button
                             type="button"
                             onClick={() => setShowPassword((p) => !p)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                         >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showPassword ? (
+                                <EyeOff size={18} />
+                            ) : (
+                                <Eye size={18} />
+                            )}
                         </button>
                     </div>
 
-                    <Button type="submit" className="w-full">
-                        Login
+                    <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={submitting}
+                    >
+                        {submitting ? "Logging in..." : "Login"}
                     </Button>
                 </form>
 

@@ -18,7 +18,7 @@ export interface PGRuleItem {
 export interface Policy {
     id: string;
     title: string;
-    rules: PGRuleItem[];
+    items: PGRuleItem[];
 }
 
 export default function PGRulesPage() {
@@ -32,7 +32,7 @@ export default function PGRulesPage() {
     const fetchRules = async () => {
         try {
             const res = await apiPrivate.get(`/pgs/${pgId}/rules`);
-            setPolicies(res.data.data);
+            setPolicies(res.data.data.sections);
         } finally {
             setLoading(false);
         }
@@ -63,12 +63,12 @@ export default function PGRulesPage() {
                             policy={policy}
                             onAddRule={() => setActivePolicyId(policy.id)}
                             onDeletePolicy={async () => {
-                                await apiPrivate.delete(`/pgs/${pgId}/rules/policy/${policy.id}`);
+                                await apiPrivate.delete(`/pgs/${pgId}/rules/sections/${policy.id}`);
                                 toast.success("Policy deleted");
                                 fetchRules();
                             }}
                             onDeleteRule={async (ruleId) => {
-                                await apiPrivate.delete(`/pgs/${pgId}/rules/rule/${ruleId}`);
+                                await apiPrivate.delete(`/pgs/${pgId}/rules/items/${ruleId}`);
                                 toast.success("Rule deleted");
                                 fetchRules();
                             }}

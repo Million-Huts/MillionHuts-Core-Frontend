@@ -31,7 +31,7 @@ const SHARING: { type: string, capacity: number }[] = [
         capacity: 1
     },
     {
-        type: "Double",
+        type: "DOUBLE",
         capacity: 2
     },
     {
@@ -93,8 +93,8 @@ export default function CreateRoomModal({
         };
 
         try {
-            const res = await apiPrivate.post(`/pgs/${pgId}/rooms/create`, payload);
-            onCreated(res.data.room);
+            const res = await apiPrivate.post(`/pgs/${pgId}/rooms`, payload);
+            onCreated(res.data.data.room);
             toast.success("Room created");
             onClose();
         } catch {
@@ -109,10 +109,10 @@ export default function CreateRoomModal({
             setFloorError(false);
             try {
                 const res = await apiPrivate.get(`/pgs/${pgId}/floors`);
-                if (!res.data.floors || res.data.floors.length === 0)
+                if (!res.data.data.floors || res.data.data.floors.length === 0)
                     setFloorError(true);
                 else
-                    setFloors(res.data.floors);
+                    setFloors(res.data.data.floors);
             } catch (error: any) {
                 toast.error(error.response.data.message);
                 setFloorError(true);

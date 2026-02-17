@@ -36,8 +36,8 @@ export default function AddRulesModal({
 
     const handleSubmit = async () => {
         try {
-            await apiPrivate.post(`/pgs/${pgId}/rules/create/${policyId}`, {
-                rules,
+            await apiPrivate.post(`/pgs/${pgId}/rules/sections/${policyId}/items`, {
+                items: rules,
             });
             toast.success("Rules added");
             onAdded();

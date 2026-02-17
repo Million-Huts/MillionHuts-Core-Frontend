@@ -9,11 +9,11 @@ import { PGProvider } from './context/PGContext.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <PGProvider>
+      <PGProvider>
+        <AuthProvider>
           <App />
-        </PGProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </PGProvider>
     </BrowserRouter>
   </StrictMode>,
 )

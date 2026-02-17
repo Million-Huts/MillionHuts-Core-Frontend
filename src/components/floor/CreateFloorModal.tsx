@@ -50,7 +50,7 @@ export default function CreateFloorModal({
 
         try {
             const res = await apiPrivate.post(
-                `/pgs/${pgId}/floors/create`,
+                `/pgs/${pgId}/floors`,
                 payload
             );
             onCreated(res.data.floor);

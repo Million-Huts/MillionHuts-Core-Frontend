@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Room } from "@/pages/Room/Rooms";
+import { usePG } from "@/context/PGContext";
 
 export default function RoomCard({ room }: { room: Room }) {
     const navigate = useNavigate();
+    const { currentPG } = usePG();
 
     const availability =
         room.capacity - room.occupiedCount > 0 ? "Available" : "Full";
@@ -11,7 +13,7 @@ export default function RoomCard({ room }: { room: Room }) {
     return (
         <Card
             className="cursor-pointer transition hover:shadow-md"
-            onClick={() => navigate(`/rooms/${room.id}`)}
+            onClick={() => navigate(`/pgs/${currentPG?.id}/rooms/${room.id}`)}
         >
             <CardContent className="p-4 space-y-2">
                 <h3 className="text-lg font-semibold">Room {room.name}</h3>
