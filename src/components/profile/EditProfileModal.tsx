@@ -1,94 +1,74 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
-import { Label } from "../ui/label";
 import toast from "react-hot-toast";
 import { apiPrivate } from "@/lib/api";
-import type { UserType } from "@/interfaces/UserType";
 
-interface Props {
-    open: boolean;
-    onClose: () => void;
-}
+interface Props { open: boolean; onClose: () => void; }
 
 export default function EditProfileModal({ open, onClose }: Props) {
     const { user, setUser } = useAuth();
-    const [name, setName] = useState<string>(user?.name ?? "")
-    const [email, setEmail] = useState<string>(user?.email ?? "")
-    const [phone, setPhone] = useState<string>(user?.phone ?? "")
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        name: user?.name ?? "",
+        email: user?.email ?? "",
+        phone: user?.phone ?? "",
+    });
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
         try {
-            const payload: Record<string, any> = {};
-            if (name !== user?.name) payload.name = name;
-            if (email !== user?.email) payload.email = email;
-            if (phone !== user?.phone) payload.phone = phone;
-
-            if (Object.keys(payload).length === 0) {
-                return toast.error("Change any of the fields to update profile");
-            }
-
-            const res = await apiPrivate.patch('/users/profile', payload);
-            const userData: UserType = res.data.user;
-            setUser(userData);
-            toast.success("Profile Updated Successfully!");
-        } catch (error) {
-            console.log(error);
-        } finally {
+            const res = await apiPrivate.patch(`/users/${user?.id}`, formData);
+            setUser(res.data.data.user); // Note: data.data.user
+            toast.success("Profile updated successfully!");
             onClose();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to update profile");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Edit Profile</DialogTitle>
+                    <DialogTitle>Update Profile</DialogTitle>
+                    <DialogDescription>Change your public information below.</DialogDescription>
                 </DialogHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <Label className="ml-1 mb-2">Username</Label>
+                <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                        <Label>Full Name</Label>
                         <Input
-                            name="name"
-                            placeholder="Full Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={formData.name}
+                            onChange={e => setFormData({ ...formData, name: e.target.value })}
                         />
                     </div>
-                    <div>
-                        <Label className="ml-1 mb-2">Email</Label>
+                    <div className="space-y-2">
+                        <Label>Email</Label>
                         <Input
-                            name="email"
                             type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={formData.email}
+                            onChange={e => setFormData({ ...formData, email: e.target.value })}
                         />
                     </div>
-                    <div>
-                        <Label className="ml-1 mb-2">Contact</Label>
+                    <div className="space-y-2">
+                        <Label>Phone Number</Label>
                         <Input
-                            name="phone"
-                            placeholder="Phone"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
+                            value={formData.phone}
+                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
                         />
                     </div>
-                    <div className="flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={onClose}>
-                            Cancel
+                    <div className="flex justify-end gap-3 mt-6">
+                        <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? "Saving..." : "Save Changes"}
                         </Button>
-                        <Button type="submit">Save</Button>
                     </div>
                 </form>
             </DialogContent>

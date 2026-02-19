@@ -6,7 +6,7 @@ import {
     type ReactNode,
 } from "react";
 import { api, apiPrivate, setUnauthorizedHandler } from "@/lib/api";
-import type { UserType } from "@/interfaces/UserType";
+import type { UserType } from "@/interfaces/user";
 import { usePG } from "./PGContext";
 
 interface AuthContextType {
@@ -70,10 +70,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }) => {
         const res = await api.post("/auth/login", credentials);
 
-        const { user, pgs } = res.data.data;
+        const { user } = res.data.data;
 
         setUser(user);
-        setPGsFromAuth(pgs || []);
+        fetchMe();
     };
 
     /* =====================================================

@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
-import toast from "react-hot-toast";
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Login() {
     const [error, setError] = useState<string | null>(null);
@@ -14,122 +14,112 @@ export default function Login() {
     const navigate = useNavigate();
     const { user, loading, login } = useAuth();
 
-    /* =====================================================
-       Redirect if already logged in
-    ===================================================== */
-
     useEffect(() => {
         if (!loading && user) {
             navigate("/dashboard", { replace: true });
         }
     }, [user, loading, navigate]);
 
-    /* =====================================================
-       Submit Handler
-    ===================================================== */
-
-    const handleSubmit = async (
-        e: React.FormEvent<HTMLFormElement>
-    ) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         setError(null);
         setSubmitting(true);
 
         const formData = new FormData(e.currentTarget);
-
         const email = formData.get("email")?.toString().trim();
         const password = formData.get("password")?.toString();
 
         if (!email || !password) {
-            setError("Email and password are required");
+            setError("Please enter both email and password.");
             setSubmitting(false);
             return;
         }
 
         try {
             await login({ email, password });
-
-            toast.success("Login successful");
-
             navigate("/dashboard", { replace: true });
         } catch (err: any) {
-            const message =
-                err?.response?.data?.message ||
-                "Invalid credentials";
-
-            setError(message);
-            toast.error(message);
+            setError(err?.response?.data?.message || "Invalid email or password.");
         } finally {
             setSubmitting(false);
         }
     };
 
-    /* =====================================================
-       UI
-    ===================================================== */
-
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
-                <h2 className="mb-6 text-center text-2xl font-semibold">
-                    Welcome Back
-                </h2>
+        <div className="flex min-h-screen items-center justify-center bg-background px-4">
+            {/* Decorative background glow */}
+            <div className="absolute inset-0 overflow-hidden -z-10">
+                <div className="absolute -top-[10%] -left-[10%] h-[40%] w-[40%] rounded-full bg-primary/5 blur-[120px]" />
+                <div className="absolute -bottom-[10%] -right-[10%] h-[40%] w-[40%] rounded-full bg-primary/10 blur-[120px]" />
+            </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md space-y-8 rounded-2xl border bg-card p-8 shadow-xl"
+            >
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Welcome back</h2>
+                    <p className="mt-2 text-sm text-muted-foreground">Enter your credentials to access your account</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
                     {error && (
-                        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-                            {error}
-                        </div>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+                        >
+                            <AlertCircle size={16} />
+                            <span>{error}</span>
+                        </motion.div>
                     )}
 
-                    <Input
-                        name="email"
-                        type="email"
-                        placeholder="Email address"
-                        autoComplete="email"
-                    />
-
-                    <div className="relative">
-                        <Input
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Password"
-                            autoComplete="current-password"
-                        />
-
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword((p) => !p)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                        >
-                            {showPassword ? (
-                                <EyeOff size={18} />
-                            ) : (
-                                <Eye size={18} />
-                            )}
-                        </button>
+                    <div className="space-y-2">
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                            <Input
+                                name="email"
+                                type="email"
+                                placeholder="name@company.com"
+                                className="pl-10 h-11"
+                                autoComplete="email"
+                            />
+                        </div>
                     </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={submitting}
-                    >
-                        {submitting ? "Logging in..." : "Login"}
+                    <div className="space-y-2">
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                            <Input
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                className="pl-10 pr-10 h-11"
+                                autoComplete="current-password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <Button type="submit" className="w-full h-11 text-base font-medium" disabled={submitting}>
+                        {submitting ? "Signing in..." : "Sign in"}
                     </Button>
                 </form>
 
-                <p className="mt-4 text-center text-sm text-gray-600">
+                <p className="text-center text-sm text-muted-foreground">
                     Don&apos;t have an account?{" "}
-                    <Link
-                        to="/register"
-                        className="font-medium text-primary hover:underline"
-                    >
-                        Register
+                    <Link to="/register" className="font-semibold text-primary hover:text-primary/80 transition-colors">
+                        Create an account
                     </Link>
                 </p>
-            </div>
+            </motion.div>
         </div>
     );
 }
