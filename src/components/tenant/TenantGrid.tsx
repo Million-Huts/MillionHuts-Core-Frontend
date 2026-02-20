@@ -1,5 +1,5 @@
 import TenantCard from "./TenantCard";
-import type { Tenant } from "@/pages/Tenant/Tenants";
+import type { Tenant } from "@/interfaces/tenant";
 
 export default function TenantGrid({ tenants }: { tenants: Tenant[] }) {
     return (
