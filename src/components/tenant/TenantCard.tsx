@@ -1,37 +1,56 @@
+// components/tenant/TenantCard.tsx
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import type { Tenant } from "@/pages/Tenant/Tenants";
-import { Mail, Phone } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Mail, Phone, ShieldCheck, ArrowRight } from "lucide-react";
+import { usePG } from "@/context/PGContext";
 
-export default function TenantCard({ tenant }: { tenant: Tenant }) {
+export default function TenantCard({ tenant }: any) {
     const navigate = useNavigate();
+    const { currentPG } = usePG();
 
     return (
         <Card
-            onClick={() => navigate(`/tenants/${tenant.id}`)}
-            className="cursor-pointer hover:shadow-md transition"
+            onClick={() => navigate(`/pgs/${currentPG?.id}/tenants/${tenant.id}`)}
+            className="group cursor-pointer overflow-hidden border-border/40 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
         >
-            <CardContent className="p-4 space-y-2">
-                <div className="flex items-center gap-3">
-                    <div >
-                        <img src={tenant.profileImage ?? ''} alt="" className="h-16 w-16 object-cover rounded-full" />
+            <div className="p-5 space-y-4">
+                <div className="flex items-start justify-between">
+                    <div className="relative">
+                        <img
+                            src={tenant.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${tenant.fullName}`}
+                            className="h-14 w-14 rounded-2xl object-cover ring-2 ring-background shadow-sm"
+                        />
+                        {tenant.isKycVerified && (
+                            <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-0.5">
+                                <ShieldCheck size={12} />
+                            </div>
+                        )}
                     </div>
+                    <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-100 uppercase text-[10px] tracking-wider">
+                        Active
+                    </Badge>
+                </div>
 
-                    <div>
-                        <p className="font-medium">{tenant.fullName}</p>
-                        <p className="text-sm text-gray-500 flex items-center gap-2">
-                            <Mail size={16} />{tenant.email}
+                <div>
+                    <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+                        {tenant.fullName}
+                    </h3>
+                    <div className="mt-2 space-y-1">
+                        <p className="text-xs text-muted-foreground flex items-center gap-2">
+                            <Mail size={12} /> {tenant.email || 'No email provided'}
                         </p>
-                        <p className="text-sm text-gray-500 flex items-center gap-2">
-                            <Phone size={16} /> {tenant.phone}
+                        <p className="text-xs text-muted-foreground flex items-center gap-2">
+                            <Phone size={12} /> {tenant.phone || 'No phone provided'}
                         </p>
                     </div>
                 </div>
+            </div>
 
-                {tenant.isKycVerified && (
-                    <span className="text-xs text-green-600">KYC Verified</span>
-                )}
-            </CardContent>
+            <div className="px-5 py-3 bg-muted/30 border-t flex items-center justify-between text-xs font-medium text-muted-foreground">
+                View Detailed Profile
+                <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+            </div>
         </Card>
     );
 }

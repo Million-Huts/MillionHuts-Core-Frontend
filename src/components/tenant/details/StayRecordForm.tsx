@@ -15,6 +15,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { toISODateTime } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 interface Props {
     stayInfo: TenantStay;
     onSave: () => void;
@@ -26,7 +28,7 @@ export default function StayRecordForm({
     onSave,
     onCancel,
 }: Props) {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const { currentPG } = usePG();
     const [rooms, setRooms] = useState<Room[] | []>([]);
     const pgId = currentPG?.id;
@@ -34,10 +36,11 @@ export default function StayRecordForm({
     const getRooms = async () => {
         try {
             const res = await apiPrivate.get(`/pgs/${pgId}/rooms`);
-            setRooms(res.data.rooms);
-            setLoading(false);
+            setRooms(res.data.data.rooms);
         } catch (error: any) {
             toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -64,7 +67,7 @@ export default function StayRecordForm({
         };
 
         try {
-            const res = await apiPrivate.patch(`/pgs/${pgId}/stay/${stayInfo.id}`, payload);
+            const res = await apiPrivate.patch(`/pgs/${pgId}/stays/${stayInfo.id}`, payload);
             toast.success(res.data.message);
             onSave();
             onCancel();
@@ -75,92 +78,78 @@ export default function StayRecordForm({
         }
     };
 
+    if (loading)
+        return (
+            <div className="relative">
+                <LoadingOverlay isLoading={loading} />
+            </div>
+        )
+
+
     return (
-        <div className="w-full rounded-2xl bg-white p-4 shadow-sm">
-            <h3 className="mb-4 text-lg font-semibold">Edit Stay Details</h3>
+        <Card className="border-primary/20 shadow-xl bg-white">
+            <CardHeader>
+                <CardTitle>Update Stay Record</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <Label>Assigned Room</Label>
+                            <Select name="roomId" defaultValue={stayInfo.roomId}>
+                                <SelectTrigger className="h-11">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {rooms && rooms.map((room) => (
+                                        <SelectItem value={room.id} key={room.id}>{room.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-                <div>
-                    <Label className="mb-1 ml-2">Room</Label>
-                    <Select name="roomId" defaultValue={stayInfo.roomId}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Room" />
-                        </SelectTrigger>
-                        <SelectContent className="w-full">
-                            {rooms && rooms.map((room) => (
-                                <SelectItem value={room.id} key={room.id}>{room.name}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
+                        <div className="space-y-2">
+                            <Label>Monthly Rent (₹)</Label>
+                            <Input name="rent" type="number" defaultValue={stayInfo.rent} className="h-11" required />
+                        </div>
 
-                <div>
-                    <Label className="mb-1 ml-2">Monthly Rent</Label>
-                    <Input
-                        name="rent"
-                        type="number"
-                        placeholder="Monthly Rent"
-                        defaultValue={stayInfo.rent}
-                        required
-                    />
-                </div>
+                        <div className="space-y-2">
+                            <Label>Security Deposit (₹)</Label>
+                            <Input name="deposit" type="number" defaultValue={stayInfo.deposit} className="h-11" />
+                        </div>
 
-                <div>
-                    <Label className="mb-1 ml-2">Deposit</Label>
-                    <Input
-                        name="deposit"
-                        type="number"
-                        placeholder="Deposit"
-                        defaultValue={stayInfo.deposit}
-                    />
-                </div>
-                <div>
-                    <Label className="mb-1 ml-2">Joining Date</Label>
-                    <Input
-                        name="startDate"
-                        type="date"
-                        defaultValue={stayInfo.startDate?.split("T")[0]}
-                        required
-                    />
-                </div>
+                        <div className="space-y-2">
+                            <Label>Start Date</Label>
+                            <Input name="startDate" type="date" defaultValue={stayInfo.startDate?.split("T")[0]} className="h-11" required />
+                        </div>
 
-                <div>
-                    <Label className="mb-1 ml-2">Leave Date</Label>
-                    <Input
-                        name="endDate"
-                        type="date"
-                        defaultValue={stayInfo.endDate?.split("T")[0]}
-                    />
-                </div>
+                        <div className="space-y-2">
+                            <Label>End Date (Optional)</Label>
+                            <Input name="endDate" type="date" defaultValue={stayInfo.endDate?.split("T")[0]} className="h-11" />
+                        </div>
 
-                <div>
-                    <Label className="mb-1 ml-2">Status</Label>
-                    <select
-                        name="status"
-                        defaultValue={stayInfo.status ?? "ACTIVE"}
-                        className="w-full rounded-md border px-3 py-2 text-sm"
-                    >
-                        <option value="ACTIVE">Active</option>
-                        <option value="VACATED">Vacated</option>
-                        <option value="TERMINATED">Terminated</option>
-                    </select>
-                </div>
+                        <div className="space-y-2">
+                            <Label>Stay Status</Label>
+                            <select
+                                name="status"
+                                defaultValue={stayInfo.status}
+                                className="w-full rounded-md border border-input h-11 px-3 text-sm focus:ring-2 focus:ring-primary"
+                            >
+                                <option value="ACTIVE">Active</option>
+                                <option value="VACATED">Vacated</option>
+                                <option value="TERMINATED">Terminated</option>
+                            </select>
+                        </div>
+                    </div>
 
-
-                <div className="flex gap-2 pt-2">
-                    <Button type="submit" disabled={loading}>
-                        Save
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onCancel}
-                        disabled={loading}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-            </form>
-        </div>
+                    <div className="flex justify-end gap-3 pt-4 border-t">
+                        <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
+                        <Button type="submit" disabled={loading} className="px-8">
+                            {loading ? "Updating..." : "Save Stay Changes"}
+                        </Button>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
     );
 }

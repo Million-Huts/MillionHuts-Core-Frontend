@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import AppSidebar from "@/components/common/AppSidebar";
-import TopNavbar from "@/components/common/TopNavbar";
+import AppSidebar from "@/components/shared/AppSidebar";
+import TopNavbar from "@/components/shared/TopNavbar";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 

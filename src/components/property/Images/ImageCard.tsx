@@ -1,59 +1,48 @@
-import { Trash2, Star } from "lucide-react";
-import type { PGImage } from "@/pages/Property/Details/PGImages";
+// pages/Property/PGImages/components/ImageCard.tsx
+import { Trash2, Star, Maximize2 } from "lucide-react";
 
-interface Props {
-    image: PGImage;
-    onClick: () => void;
-    onDelete: () => void;
-    onMakeCover: () => void;
-}
-
-export default function ImageCard({
-    image,
-    onClick,
-    onDelete,
-    onMakeCover,
-}: Props) {
+export default function ImageCard({ image, onClick, onDelete, onMakeCover }: any) {
     return (
-        <div
-            className="group relative overflow-hidden rounded-xl cursor-pointer"
-            onClick={onClick}
-        >
+        <div className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted border border-border/40 transition-all hover:shadow-xl">
             <img
                 src={image.url}
-                alt=""
-                className="h-56 w-full object-cover"
+                alt="Property"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
             />
 
-            {/* Hover Mask */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition" />
+            {/* Cover Badge */}
+            {image.isCover && (
+                <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-lg">
+                    <Star className="h-3 w-3 fill-current" /> Cover Photo
+                </div>
+            )}
 
-            {/* Actions */}
-            <div
-                className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition"
-                onClick={(e) => e.stopPropagation()}
-            >
+            {/* Hover Actions Layer */}
+            <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+            <div className="absolute inset-0 z-30 flex items-center justify-center gap-3 opacity-0 transition-all duration-300 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
+                <button
+                    onClick={onClick}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-colors"
+                >
+                    <Maximize2 size={18} />
+                </button>
                 {!image.isCover && (
                     <button
-                        onClick={onMakeCover}
-                        className="rounded-full bg-white p-2 hover:bg-gray-100"
+                        onClick={(e) => { e.stopPropagation(); onMakeCover(); }}
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-yellow-400 hover:text-black transition-colors"
                     >
                         <Star size={18} />
                     </button>
                 )}
                 <button
-                    onClick={onDelete}
-                    className="rounded-full bg-white p-2 hover:bg-gray-100"
+                    onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-destructive hover:text-destructive-foreground transition-colors"
                 >
                     <Trash2 size={18} />
                 </button>
             </div>
-
-            {image.isCover && (
-                <span className="absolute left-2 top-2 rounded bg-black/70 px-2 py-0.5 text-xs text-white">
-                    Cover
-                </span>
-            )}
         </div>
     );
 }
