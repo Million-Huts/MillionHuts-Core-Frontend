@@ -38,7 +38,7 @@ export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: an
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-scroll">
                 <div className="flex flex-col items-center pt-4">
                     <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4">
                         <ShieldPlus className="h-6 w-6" />

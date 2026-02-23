@@ -36,7 +36,7 @@ export default function EditProfileModal({ open, onClose }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>
                     <DialogTitle>Update Profile</DialogTitle>
                     <DialogDescription>Change your public information below.</DialogDescription>

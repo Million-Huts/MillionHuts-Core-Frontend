@@ -47,7 +47,7 @@ export default function AssignStayModal({ open, tenant, applicationId, rooms, on
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-[450px] p-0 max-h-[90vh] overflow-y-scroll">
                 <div className="bg-primary/5 p-6 border-b">
                     <DialogHeader>
                         <DialogTitle>Assign Stay: {tenant?.fullName}</DialogTitle>

@@ -89,7 +89,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[600px] rounded-[2.5rem]">
+            <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] max-h-[90vh] overflow-y-scroll">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center p-20">
                         <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />

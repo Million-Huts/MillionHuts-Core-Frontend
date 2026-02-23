@@ -38,7 +38,7 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>
                     <DialogTitle>Add New Property</DialogTitle>
                     <DialogDescription>

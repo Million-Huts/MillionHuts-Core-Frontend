@@ -64,7 +64,7 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[450px] rounded-3xl">
+            <DialogContent className="sm:max-w-[450px] rounded-3xl max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold">Edit Floor Details</DialogTitle>
                     <DialogDescription>Modify the label and common areas for this level.</DialogDescription>

@@ -32,12 +32,8 @@ export default function RoomDetails() {
 
     const fetchRoomData = async () => {
         try {
-            const [roomRes, tenantRes] = await Promise.all([
-                apiPrivate.get(`/pgs/${currentPG?.id}/rooms/${roomId}`),
-                apiPrivate.get(`/tenants/${currentPG?.id}?roomId=${roomId}`)
-            ]);
+            const roomRes = await apiPrivate.get(`/pgs/${currentPG?.id}/rooms/${roomId}`);
             setRoom(roomRes.data.data.room);
-            setTenants(tenantRes.data.tenants || []);
         } catch (error) {
             console.error("Failed to fetch room details", error);
         } finally {
@@ -45,10 +41,22 @@ export default function RoomDetails() {
         }
     };
 
+    const fetchTenants = async () => {
+        try {
+            const tenantRes = await apiPrivate.get(`/tenants/${currentPG?.id}?roomId=${roomId}`);
+            setTenants(tenantRes.data.tenants || []);
+        } catch (error) {
+            console.error("Failed to fetch tenants for room", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         if (!currentPG?.id || !roomId) return;
 
         fetchRoomData();
+        fetchTenants();
     }, [roomId, currentPG]);
 
     if (loading) return <div className="p-10 text-center animate-pulse">Loading room configuration...</div>;

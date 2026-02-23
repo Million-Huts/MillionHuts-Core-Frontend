@@ -53,7 +53,7 @@ export default function AddRulesModal({ pgId, open, policyId, onClose, onAdded }
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-scroll flex flex-col p-0">
                 <div className="p-6 border-b">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-primary/10 rounded-lg text-primary">

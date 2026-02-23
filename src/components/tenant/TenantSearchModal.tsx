@@ -28,7 +28,7 @@ export default function TenantSearchModal({ open, onClose, onSelectTenant }: any
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-md overflow-hidden p-0">
+            <DialogContent className="max-w-md max-h-[90vh] overflow-y-scroll p-0">
                 <div className="p-6">
                     <DialogHeader className="mb-4">
                         <DialogTitle>{showTempForm ? "Create Temporary Profile" : "Add New Resident"}</DialogTitle>

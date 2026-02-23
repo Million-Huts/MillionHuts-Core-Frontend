@@ -10,6 +10,7 @@ import {
     X,
     Warehouse,
     Command,
+    IndianRupee,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -46,6 +47,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
         { label: "Floors", icon: Warehouse, to: `/pgs/${currentPG?.id}/floors` },
         { label: "Rooms", icon: BedDouble, to: `/pgs/${currentPG?.id}/rooms` },
         { label: "Tenants", icon: Users, to: `/pgs/${currentPG?.id}/tenants` },
+        { label: "Expense", icon: IndianRupee, to: `/pgs/${currentPG?.id}/expense` },
     ];
 
     // System/User navigation

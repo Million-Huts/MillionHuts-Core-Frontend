@@ -23,7 +23,7 @@ export default function DeleteImageModal({
 }) {
     return (
         <Dialog open onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden border-none bg-background/95 backdrop-blur-xl shadow-2xl">
+            <DialogContent className="sm:max-w-[400px] p-0 max-h-[90vh] overflow-y-scroll border-none bg-background/95 backdrop-blur-xl shadow-2xl">
                 {/* Visual Danger Header */}
                 <div className="h-2 bg-destructive/20" />
 

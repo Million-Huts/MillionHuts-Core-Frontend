@@ -55,7 +55,7 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId }: Pro
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[450px] rounded-3xl">
+            <DialogContent className="sm:max-w-[450px] rounded-3xl max-h-[90vh] overflow-y-scroll">
                 <DialogHeader>
                     <div className="h-12 w-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-2">
                         <Sparkles className="h-6 w-6 text-primary" />

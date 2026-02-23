@@ -19,6 +19,8 @@ import Rooms from './pages/Room/Rooms';
 import RoomDetails from './pages/Room/RoomDetails';
 import Tenants from './pages/Tenant/Tenants';
 import TenantDetails from './pages/Tenant/TenantDetails';
+import ExpenseReportPage from './pages/Expense/ExpenseReportPage';
+import ExpensesPage from './pages/Expense/ExpensesPage';
 
 function App() {
   return (
@@ -60,6 +62,9 @@ function App() {
               <Route path="tenants" element={<Tenants />} />
               <Route path="tenants/:tenantId" element={<TenantDetails />} />
 
+              {/* Expenses Module  */}
+              <Route path="expense" element={<ExpensesPage />} />
+              <Route path="expense/report" element={<ExpenseReportPage />} />
             </Route>
 
           </Route>
