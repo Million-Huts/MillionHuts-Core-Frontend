@@ -4,12 +4,14 @@ import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Loader2 } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import type { Expense } from "@/interfaces/expense";
 
 import ExpenseTable from "@/components/expense/ExpenseTable";
 import ExpenseFilters from "@/components/expense/ExpenseFilters";
 import AddExpenseModal from "@/components/expense/AddExpenseModal";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
 
 export default function ExpensesPage() {
     const { pgId } = useParams();
@@ -20,6 +22,9 @@ export default function ExpensesPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
+
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(null);
 
     const [filters, setFilters] = useState({
         search: "",
@@ -54,14 +59,27 @@ export default function ExpensesPage() {
         fetchExpenses();
     }, [fetchExpenses]);
 
-    const deleteExpense = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this record?")) return;
+    // 1. Modified delete trigger: Instead of calling API, it opens the modal
+    const handleDeleteClick = (id: string) => {
+        setSelectedExpenseId(id);
+        setDeleteModalOpen(true);
+    };
+
+    // 2. The actual API call when confirmed
+    const handleConfirmDelete = async () => {
+        if (!selectedExpenseId) return;
+
         try {
-            await apiPrivate.delete(`/pgs/${pgId}/expense/${id}`);
-            toast.success("Expense deleted");
+            setLoading(true); // Optional: show loading while deleting
+            await apiPrivate.delete(`/pgs/${pgId}/expense/${selectedExpenseId}`);
+            toast.success("Expense deleted successfully");
             fetchExpenses();
         } catch {
             toast.error("Delete failed");
+        } finally {
+            setDeleteModalOpen(false);
+            setSelectedExpenseId(null);
+            setLoading(false);
         }
     };
 
@@ -88,21 +106,16 @@ export default function ExpensesPage() {
             <ExpenseFilters filters={filters} setFilters={setFilters} onApply={fetchExpenses} />
 
             {/* DATA TABLE */}
-            <div className="bg-card border rounded-xl shadow-sm overflow-hidden">
-                {loading ? (
-                    <div className="h-64 flex flex-col items-center justify-center gap-2">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <p className="text-sm text-muted-foreground">Loading expenses...</p>
-                    </div>
-                ) : (
-                    <ExpenseTable
-                        expenses={expenses}
-                        onDelete={deleteExpense}
-                        page={page}
-                        setPage={setPage}
-                        totalPages={totalPages}
-                    />
-                )}
+            <div className={`bg-card border rounded-xl shadow-sm overflow-hidden relative ${loading ? "min-h-[50vh]" : ""}`}>
+                <LoadingOverlay isLoading={loading} message="Loading Expenses..." />
+                <ExpenseTable
+                    expenses={expenses}
+                    onDelete={handleDeleteClick}
+                    page={page}
+                    setPage={setPage}
+                    totalPages={totalPages}
+                />
+
             </div>
 
             {/* MODAL */}
@@ -111,6 +124,15 @@ export default function ExpensesPage() {
                 onClose={() => setModalOpen(false)}
                 pgId={pgId!}
                 onRefresh={fetchExpenses}
+            />
+
+            {/* CONFIRM DELETE MODAL */}
+            <ConfirmDeleteModal
+                isOpen={deleteModalOpen}
+                title="Permanently Delete Expense?"
+                description="This action cannot be undone. This will permanently remove the record from your ledger."
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
             />
         </div>
     );

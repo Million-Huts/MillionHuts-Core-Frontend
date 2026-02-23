@@ -21,6 +21,8 @@ import Tenants from './pages/Tenant/Tenants';
 import TenantDetails from './pages/Tenant/TenantDetails';
 import ExpenseReportPage from './pages/Expense/ExpenseReportPage';
 import ExpensesPage from './pages/Expense/ExpensesPage';
+import ComplaintsPage from './pages/Complaints/ComplaintsPage';
+import ComplaintDetailsPage from './pages/Complaints/ComplaintDetailsPage';
 
 function App() {
   return (
@@ -65,6 +67,11 @@ function App() {
               {/* Expenses Module  */}
               <Route path="expense" element={<ExpensesPage />} />
               <Route path="expense/report" element={<ExpenseReportPage />} />
+
+              {/* Complaints Module */}
+              <Route path="complaints" element={<ComplaintsPage />} />
+              <Route path="complaints/:complaintId" element={<ComplaintDetailsPage />} />
+
             </Route>
 
           </Route>
