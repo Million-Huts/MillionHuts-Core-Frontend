@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
 
@@ -16,6 +16,7 @@ import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
 export default function ExpensesPage() {
     const { pgId } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState(false);
@@ -58,6 +59,11 @@ export default function ExpensesPage() {
     useEffect(() => {
         fetchExpenses();
     }, [fetchExpenses]);
+
+    useEffect(() => {
+        if (searchParams.get("create") === "true")
+            setModalOpen(true);
+    }, [searchParams]);
 
     // 1. Modified delete trigger: Instead of calling API, it opens the modal
     const handleDeleteClick = (id: string) => {

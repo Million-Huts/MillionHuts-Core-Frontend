@@ -8,6 +8,7 @@ import { usePG } from "@/context/PGContext";
 import { Plus, Home, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSearchParams } from "react-router-dom";
 
 export interface Room {
     id: string;
@@ -25,6 +26,7 @@ export interface Room {
 }
 
 export default function Rooms() {
+    const [searchParams] = useSearchParams();
     const { currentPG } = usePG();
     const pgId = currentPG?.id;
 
@@ -49,6 +51,12 @@ export default function Rooms() {
     useEffect(() => {
         fetchRooms();
     }, [pgId]);
+
+    useEffect(() => {
+        if (searchParams.get("create") === "true")
+            setOpenCreate(true)
+
+    }, [searchParams])
 
     const filteredRooms = rooms.filter(r =>
         r.name.toLowerCase().includes(search.toLowerCase()) ||

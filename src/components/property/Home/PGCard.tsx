@@ -9,7 +9,7 @@ import type { PG } from "@/interfaces/pg";
 
 export default function PGCard({ pg }: { pg: PG }) {
     const navigate = useNavigate();
-    const image = pg.coverImage?.url || "https://images.unsplash.com/photo-1555854817-5b2260d166dd?q=80&w=800&auto=format&fit=crop";
+    const image = pg.coverImage?.url || "/defaults/default_pg.png";
 
     return (
         <motion.div
@@ -24,7 +24,7 @@ export default function PGCard({ pg }: { pg: PG }) {
                     <img
                         src={image}
                         alt={pg.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                         <span className="text-white text-xs font-medium flex items-center gap-1">

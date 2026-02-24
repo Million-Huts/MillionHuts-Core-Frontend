@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Plus, Search, FilterX, CheckCircle2 } from "lucide-react";
 
@@ -22,6 +22,7 @@ export default function ComplaintsPage() {
     const { currentPG } = usePG();
     const pgId = currentPG?.id;
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const [complaints, setComplaints] = useState<Complaint[]>([]);
     const [stats, setStats] = useState<ComplaintStats | null>(null);
@@ -65,6 +66,10 @@ export default function ComplaintsPage() {
     };
 
     useEffect(() => { fetchData(); }, [page, status, priority, pgId]);
+    useEffect(() => {
+        if (searchParams.get("create") === "true")
+            setIsCreateOpen(true);
+    }, [searchParams])
 
     return (
         <div className="p-6 max-w-[1600px] mx-auto space-y-8">

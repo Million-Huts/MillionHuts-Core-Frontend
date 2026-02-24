@@ -11,6 +11,7 @@ import CreatePGModal from "@/components/property/Home/CreatePGModal";
 import { apiPrivate } from "@/lib/api";
 import { usePG } from "@/context/PGContext";
 import type { PG } from "@/interfaces/pg";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 
 export default function Properties() {
     const { setPGs } = usePG();
@@ -53,27 +54,21 @@ export default function Properties() {
             <Separator className="bg-border/60" />
 
             {/* Content Section */}
-            <main className="min-h-[400px]">
-                {loading ? (
-                    <div className="flex h-[400px] w-full flex-col items-center justify-center gap-2">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="text-sm text-muted-foreground animate-pulse">Loading your portfolio...</p>
-                    </div>
-                ) : (
-                    <AnimatePresence mode="wait">
-                        {pgs.length === 0 ? (
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                            >
-                                <EmptyState onCreate={() => setOpenCreate(true)} />
-                            </motion.div>
-                        ) : (
-                            <PGGrid pgs={pgs} />
-                        )}
-                    </AnimatePresence>
-                )}
+            <main className="min-h-[400px] relative">
+                <LoadingOverlay isLoading={loading} message="Loading Properties..." />
+                <AnimatePresence mode="wait">
+                    {pgs.length === 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                        >
+                            <EmptyState onCreate={() => setOpenCreate(true)} />
+                        </motion.div>
+                    ) : (
+                        <PGGrid pgs={pgs} />
+                    )}
+                </AnimatePresence>
             </main>
 
             <CreatePGModal

@@ -25,10 +25,10 @@ export default function FloorCard({ floor }: { floor: Floor }) {
                 </div>
 
                 <div className="space-y-1 mb-6">
-                    <h3 className="text-xl font-bold">Floor {floor.label}</h3>
+                    <h3 className="text-xl font-bold">{floor.label}</h3>
                     <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <DoorOpen className="h-4 w-4" />
-                        <span>{floor.totalRooms} Rooms Configured</span>
+                        <span>{floor.totalRooms} Rooms listed</span>
                     </div>
                 </div>
 

@@ -1,6 +1,6 @@
 // pages/Tenant/Tenants.tsx
 import { useEffect, useState, useCallback } from "react";
-import { Users, FileText, Plus, Loader2 } from "lucide-react";
+import { Users, FileText, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiPrivate } from "@/lib/api";
@@ -15,13 +15,18 @@ import AssignStayModal from "@/components/tenant/AssignStayModal";
 import EmptyState from "@/components/shared/EmptyState";
 import type { Application } from "@/interfaces/application";
 import type { Tenant } from "@/interfaces/tenant";
+import { useSearchParams } from "react-router-dom";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 
 export default function Tenants() {
     const { currentPG } = usePG();
+    const [searchParams] = useSearchParams();
+
     const [tenants, setTenants] = useState([]);
     const [applications, setApplications] = useState<Application[] | []>([]);
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [tabValue, setTabValue] = useState("residents");
 
     const [openSearch, setOpenSearch] = useState(false);
     const [selectedApp, setSelectedApp] = useState<Application | null>(null);
@@ -51,7 +56,18 @@ export default function Tenants() {
         fetchData();
     }, [fetchData]);
 
-    if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>;
+    useEffect(() => {
+        if (searchParams.get("create") === "true")
+            setOpenSearch(true)
+        if (searchParams.get("applications") === "true")
+            setTabValue("apps")
+    }, [searchParams])
+
+    if (loading) return (
+        <div className="relative min-h-screen">
+            <LoadingOverlay isLoading={loading} message="Loading Tenants..." />
+        </div>
+    )
 
     return (
         <div className="p-6 space-y-8 max-w-7xl mx-auto">
@@ -71,7 +87,7 @@ export default function Tenants() {
                 rooms={rooms}
             />
 
-            <Tabs defaultValue="residents" className="w-full">
+            <Tabs value={tabValue} className="w-full">
                 <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
                     <TabsTrigger value="residents" className="rounded-lg gap-2">
                         <Users className="h-4 w-4" /> Staying Tenants
