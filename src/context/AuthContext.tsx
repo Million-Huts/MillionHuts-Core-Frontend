@@ -8,6 +8,8 @@ import {
 import { api, apiPrivate, setUnauthorizedHandler } from "@/lib/api";
 import type { UserType } from "@/interfaces/user";
 import { usePG } from "./PGContext";
+import { connectSocket, getSocket } from "@/lib/socket";
+import { initFcm } from "@/services/initFcm";
 
 interface AuthContextType {
     user: UserType | null;
@@ -36,6 +38,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const { user, pgs } = res.data.data;
 
             setUser(user);
+            if (!getSocket())
+                connectSocket(user.id);
             setPGsFromAuth(pgs || []);
         } catch {
             setUser(null);
@@ -47,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         fetchMe();
+        initFcm();
     }, []);
 
     /* =====================================================
@@ -69,10 +74,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password: string;
     }) => {
         const res = await api.post("/auth/login", credentials);
+        await initFcm();
 
         const { user } = res.data.data;
 
         setUser(user);
+        connectSocket(user.id);
         fetchMe();
     };
 

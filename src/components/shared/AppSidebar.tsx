@@ -12,6 +12,7 @@ import {
     Command,
     MessageSquareWarning,
     Wallet,
+    Bell,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -50,6 +51,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
         { label: "Tenants", icon: Users, to: `/pgs/${currentPG?.id}/tenants` },
         { label: "Expense", icon: Wallet, to: `/pgs/${currentPG?.id}/expense` },
         { label: "Complaints", icon: MessageSquareWarning, to: `/pgs/${currentPG?.id}/complaints` },
+        { label: "Notifications", icon: Bell, to: `/pgs/${currentPG?.id}/notifications` },
     ];
 
     // System/User navigation

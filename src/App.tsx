@@ -23,8 +23,24 @@ import ExpenseReportPage from './pages/Expense/ExpenseReportPage';
 import ExpensesPage from './pages/Expense/ExpensesPage';
 import ComplaintsPage from './pages/Complaints/ComplaintsPage';
 import ComplaintDetailsPage from './pages/Complaints/ComplaintDetailsPage';
+import Notifications from './pages/Notifications';
+import { useEffect } from 'react';
+import { getSocket } from './lib/socket';
 
 function App() {
+  useEffect(() => {
+    const socket = getSocket();
+
+    if (!socket) return;
+
+    socket.on("notification:new", (data) => {
+      console.log("New notification:", data);
+    });
+
+    return () => {
+      socket.off("notification:new");
+    };
+  }, [])
   return (
     <>
       <Routes>
@@ -35,16 +51,15 @@ function App() {
         {/* Private Routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<ProtectedLayout />}>
-
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
-
 
             <Route path="/pgs" element={<Properties />} />
 
             <Route path="/pgs/:pgId">
+
               <Route path='' element={<PGLayout />}>
-                {/* PG */}
+                {/* PG Information Module*/}
                 <Route path="basic" element={<PGBasic />} />
                 <Route path="details" element={<PGDetails />} />
                 <Route path="images" element={<PGImages />} />
@@ -52,15 +67,15 @@ function App() {
                 <Route path="amenities" element={<PGAmenities />} />
               </Route>
 
-              {/* Floors */}
+              {/* Floors Module*/}
               <Route path="floors" element={<Floors />} />
               <Route path="floors/:floorId" element={<FloorDetails />} />
 
-              {/* Rooms */}
+              {/* Rooms Module */}
               <Route path="rooms" element={<Rooms />} />
               <Route path="rooms/:roomId" element={<RoomDetails />} />
 
-              {/* Tenants */}
+              {/* Tenants Module */}
               <Route path="tenants" element={<Tenants />} />
               <Route path="tenants/:tenantId" element={<TenantDetails />} />
 
@@ -71,6 +86,9 @@ function App() {
               {/* Complaints Module */}
               <Route path="complaints" element={<ComplaintsPage />} />
               <Route path="complaints/:complaintId" element={<ComplaintDetailsPage />} />
+
+              {/* Notifications Module  */}
+              <Route path="notifications" element={<Notifications />} />
 
             </Route>
 
