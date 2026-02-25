@@ -5,7 +5,6 @@ import { apiPrivate } from "@/lib/api";
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useNotificationsSocket } from "@/hooks/useNotificationsSocket";
 
 interface Notification {
     id: string;
