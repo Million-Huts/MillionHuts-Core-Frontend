@@ -31,7 +31,7 @@ self.addEventListener("notificationclick", function (event) {
     event.notification.close();
 
 
-    const url = "https://app.millionhuts.com" + (event.notification.data?.url || "/notifications");
+    const url = event.notification.data?.url || "/notifications";
 
     event.waitUntil(
         clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {

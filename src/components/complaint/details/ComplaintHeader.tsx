@@ -24,7 +24,7 @@ export default function ComplaintHeader({ complaint }: { complaint: Complaint })
                 <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
                     <UserIcon className="w-3 h-3 text-slate-500" />
                 </div>
-                <span>Raised by <span className="font-semibold text-slate-900">Tenant ID: {complaint.raisedById.slice(-5)}</span></span>
+                <span>Raised by <span className="font-semibold text-slate-900">{complaint.raisedByType}</span></span>
             </div>
         </div>
     );

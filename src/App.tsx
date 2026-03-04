@@ -24,6 +24,8 @@ import ExpensesPage from './pages/Expense/ExpensesPage';
 import ComplaintsPage from './pages/Complaints/ComplaintsPage';
 import ComplaintDetailsPage from './pages/Complaints/ComplaintDetailsPage';
 import Notifications from './pages/Notifications';
+import UsersPage from './pages/Users/UsersPage';
+import UserDetailsPage from './pages/Users/UserDetailsPage';
 
 function App() {
   return (
@@ -75,8 +77,10 @@ function App() {
               {/* Notifications Module  */}
               <Route path="notifications" element={<Notifications />} />
 
+              {/* Users Module  */}
+              <Route path="users" element={<UsersPage />} />
+              <Route path="users/:userId" element={<UserDetailsPage />} />
             </Route>
-
           </Route>
         </Route>
 

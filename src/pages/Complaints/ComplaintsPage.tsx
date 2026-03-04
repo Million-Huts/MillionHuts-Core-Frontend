@@ -16,7 +16,8 @@ import ComplaintStatCards from "@/components/complaint/ComplaintStatCards";
 import ComplaintTableRow from "@/components/complaint/ComplaintTableRow";
 import AssignModal from "@/components/complaint/AssignModal";
 import CreateComplaintModal from "@/components/complaint/CreateComplaintModal";
-import type { UserType } from "@/interfaces/user";
+import type { PGUser } from "@/interfaces/pgUsers";
+
 
 export default function ComplaintsPage() {
     const { currentPG } = usePG();
@@ -26,7 +27,7 @@ export default function ComplaintsPage() {
 
     const [complaints, setComplaints] = useState<Complaint[]>([]);
     const [stats, setStats] = useState<ComplaintStats | null>(null);
-    const [users, setUsers] = useState<UserType[]>([]);
+    const [users, setUsers] = useState<PGUser[]>([]);
     const [loading, setLoading] = useState(false);
 
     // Filters
@@ -167,9 +168,16 @@ export default function ComplaintsPage() {
                 users={users}
                 onClose={() => setAssignTarget(null)}
                 onAssign={async (userId) => {
-                    await apiPrivate.patch(`/pgs/${pgId}/complaints/${assignTarget?.id}/assign`, { assignedToId: userId, assignedToType: "STAFF" });
-                    setAssignTarget(null);
-                    fetchData();
+                    try {
+                        await apiPrivate.patch(`/pgs/${pgId}/complaints/${assignTarget?.id}/assign`, {
+                            assignedToId: userId,
+                            assignedToType: "STAFF"
+                        });
+                        setAssignTarget(null);
+                        fetchData();
+                    } catch {
+                        toast.error("Failed to assign ticket");
+                    }
                 }}
             />
 

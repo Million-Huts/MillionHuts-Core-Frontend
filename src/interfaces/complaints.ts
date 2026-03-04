@@ -68,6 +68,11 @@ export interface Complaint {
 
     assignedToId?: string | null;
     assignedToType?: ActorType | null;
+    assignedUser?: {
+        id: string;
+        name: string;
+        role: string;
+    }
 
     resolvedAt?: string | null;
     closedAt?: string | null;

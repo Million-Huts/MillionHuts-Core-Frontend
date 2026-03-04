@@ -1,8 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { Complaint } from "@/interfaces/complaints";
 import { UserPlus, Clock } from "lucide-react";
 
-export default function ComplaintTableRow({ complaint: c, onAssign, onClick }: any) {
+interface props {
+    complaint: Complaint,
+    onAssign: () => void;
+    onClick: () => void;
+
+}
+
+export default function ComplaintTableRow({ complaint: c, onAssign, onClick }: props) {
     const priorityColors: any = {
         URGENT: "bg-red-100 text-red-700 border-red-200",
         HIGH: "bg-orange-100 text-orange-700 border-orange-200",
@@ -38,20 +46,20 @@ export default function ComplaintTableRow({ complaint: c, onAssign, onClick }: a
                 <span className="text-slate-600 font-medium">{c.category}</span>
             </td>
             <td className="p-4 text-slate-500">
-                {c.assignedToId ? (
+                {c.assignedToId && c.assignedUser ? (
                     <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">ST</div>
-                        Staff Member
+                        {c.assignedUser.name}
                     </div>
                 ) : (
-                    <span className="text-rose-500 font-semibold italic text-xs">Waiting for staff...</span>
+                    <span className="text-rose-500 font-semibold italic text-xs">Waiting for assignment...</span>
                 )}
             </td>
             <td className="p-4 text-right">
                 <Button
                     size="sm"
                     variant="ghost"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    className={`md:opacity-0 group-hover:opacity-100 transition-opacity ${c.assignedUser !== null ? "hidden" : ""}`}
                     onClick={(e) => { e.stopPropagation(); onAssign(); }}
                 >
                     <UserPlus className="w-4 h-4 mr-2" /> Assign
