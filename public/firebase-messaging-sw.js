@@ -18,8 +18,32 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-    self.registration.showNotification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: "/icon.png",
+    const { title, body } = payload.notification || {};
+    const data = payload.data || {};
+    self.registration.showNotification(title, {
+        body: body,
+        icon: "/icons/icon-512.png",
+        data
     });
+});
+
+self.addEventListener("notificationclick", function (event) {
+    event.notification.close();
+
+    const url = event.notification.data?.url || "/notifications";
+
+    event.waitUntil(
+        clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url.includes(self.location.origin) && "focus" in client) {
+                    client.navigate(url);
+                    return client.focus();
+                }
+            }
+
+            if (clients.openWindow) {
+                return clients.openWindow(url);
+            }
+        })
+    );
 });
