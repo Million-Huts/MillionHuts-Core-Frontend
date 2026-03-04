@@ -30,7 +30,8 @@ messaging.onBackgroundMessage((payload) => {
 self.addEventListener("notificationclick", function (event) {
     event.notification.close();
 
-    const url = event.notification.data?.url || "/notifications";
+
+    const url = "https://app.millionhuts.com" + (event.notification.data?.url || "/notifications");
 
     event.waitUntil(
         clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {

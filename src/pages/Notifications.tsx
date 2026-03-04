@@ -8,18 +8,13 @@ import { useNavigate } from "react-router-dom";
 
 interface Notification {
     id: string;
-
     title: string;
     message: string;
-
     type: string;
-
     entityType?: string | null;
     entityId?: string | null;
     pgId?: string | null;
-
     createdAt: string;
-
     isRead?: boolean;
 }
 

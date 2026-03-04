@@ -1,10 +1,13 @@
+import { useEffect, useState, useCallback } from "react";
+import { useNotificationsSocket } from "@/hooks/useNotificationsSocket"; // Adjust path as needed
 import {
     Bell,
     Megaphone,
     Menu,
     ChevronRight,
     Circle,
-    ArrowRight
+    ArrowRight,
+    Loader2
 } from "lucide-react";
 import {
     DropdownMenu,
@@ -13,62 +16,38 @@ import {
     DropdownMenuTrigger,
     DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { matchPath, useLocation, Link } from "react-router-dom";
+import { matchPath, useLocation, Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { usePG } from "@/context/PGContext";
+import { apiPrivate } from "@/lib/api";
+import { formatDistanceToNow } from "date-fns";
+import toast from "react-hot-toast";
 
 /* =====================================================
-    Page Metadata Configuration
+    Types & Metadata Configuration
 ===================================================== */
+interface Notification {
+    id: string;
+    title: string;
+    message: string;
+    type: string;
+    entityType?: string;
+    entityId?: string;
+    pgId?: string;
+    createdAt: string;
+    isRead: boolean;
+}
 
 const pageMetaConfig = [
-    { pattern: "/dashboard", title: "Dashboard", desc: "Overview of your PG system" },
-    { pattern: "/profile", title: "User Profile", desc: "Manage your personal information" },
-    { pattern: "/pgs", title: "Properties", desc: "Manage your PG portfolio" },
-    // Nested PG Routes
-    { pattern: "/pgs/:pgId/floors", title: "Floors", desc: "Level-wise management" },
-    { pattern: "/pgs/:pgId/floors/:floorId", title: "Floor Details", desc: "Detailed floor view" },
-    { pattern: "/pgs/:pgId/rooms", title: "Rooms", desc: "Inventory and occupancy" },
-    { pattern: "/pgs/:pgId/rooms/:roomId", title: "Room Details", desc: "Maintenance and tenant allocation" },
-    { pattern: "/pgs/:pgId/tenants", title: "Tenants", desc: "Active and past residents" },
-    { pattern: "/pgs/:pgId/tenants/:tenantId", title: "Tenant Details", desc: "Rent history and documents" },
-    // Property Settings Tabs (basic, details, etc)
-    { pattern: "/pgs/:pgId/:tab", title: "Property Settings", desc: "Update property configurations" },
-];
-
-/* =====================================================
-    Dummy Notification Data
-===================================================== */
-
-const DUMMY_NOTIFICATIONS = [
-    {
-        id: "1",
-        title: "New Booking",
-        message: "Rahul Sharma booked Room 204 in Sunrise PG",
-        feature: "room",
-        refId: "room-204",
-        time: "2 mins ago",
-        unread: true,
-    },
-    {
-        id: "2",
-        title: "Rent Overdue",
-        message: "Amit Kumar's rent is overdue by 3 days.",
-        feature: "tenant",
-        refId: "tenant-001",
-        time: "1 hour ago",
-        unread: true,
-    },
-    {
-        id: "3",
-        title: "Maintenance",
-        message: "AC repair requested for Floor 2.",
-        feature: "floor",
-        refId: "floor-2",
-        time: "5 hours ago",
-        unread: false,
-    }
+    { pattern: "/dashboard", title: "Dashboard" },
+    { pattern: "/profile", title: "User Profile" },
+    { pattern: "/pgs", title: "Properties" },
+    { pattern: "/pgs/:pgId/floors", title: "Floors" },
+    { pattern: "/pgs/:pgId/rooms", title: "Rooms" },
+    { pattern: "/pgs/:pgId/tenants", title: "Tenants" },
+    { pattern: "/complaints/:complaintId", title: "Complaint Details" },
+    { pattern: "/notifications", title: "Notifications" },
 ];
 
 interface Props {
@@ -78,14 +57,72 @@ interface Props {
 
 const TopNavbar = ({ mobileOpen, setMobileOpen }: Props) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { currentPG } = usePG();
 
-    /**
-     * Resolve Metadata based on current path
-     */
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    /* =====================================================
+        Notification Logic
+    ===================================================== */
+    const fetchNotifications = async () => {
+        try {
+            setLoading(true);
+            const res = await apiPrivate.get("/notifications");
+            // API returns { data: [...] } based on your notifications page
+            setNotifications(res.data.data || res.data || []);
+        } catch (err) {
+            console.error("Failed to fetch notifications", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle New Incoming Socket Notifications
+    const handleNewNotification = useCallback((newNotif: Notification) => {
+        setNotifications((prev) => [newNotif, ...prev]);
+
+        // Optional: Show a small popup toast when a notification arrives
+        toast.success(newNotif.title, {
+            icon: '🔔',
+            style: { borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }
+        });
+    }, []);
+
+    // Initialize Socket Hook
+    useNotificationsSocket(handleNewNotification);
+
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    const handleNotifClick = async (n: Notification) => {
+        // 1. Mark as read in API
+        if (!n.isRead) {
+            try {
+                await apiPrivate.patch(`notifications/${n.id}/read`);
+                setNotifications(prev =>
+                    prev.map(item => item.id === n.id ? { ...item, isRead: true } : item)
+                );
+            } catch (err) { console.error(err); }
+        }
+
+        // 2. Redirect based on type
+        if (n.entityType === "COMPLAINT" && n.entityId) {
+            const url = n.pgId
+                ? `/pgs/${n.pgId}/complaints/${n.entityId}`
+                : `/complaints/${n.entityId}`;
+            navigate(url);
+        }
+    };
+
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+
+    /** Resolve Metadata based on current path */
     const activeMeta = pageMetaConfig.find(route =>
         matchPath({ path: route.pattern, end: true }, location.pathname)
-    ) || { title: "MillionHuts", desc: "Property Management" };
+    ) || { title: "MillionHuts" };
 
     return (
         <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/80 px-4 backdrop-blur-md md:px-6">
@@ -102,17 +139,16 @@ const TopNavbar = ({ mobileOpen, setMobileOpen }: Props) => {
                 </Button>
 
                 <div className="hidden flex-col md:flex">
-                    {/* Dynamic Breadcrumb-style title */}
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-0.5">
-                        <span className="hover:text-foreground cursor-default transition-colors">MillionHuts</span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mb-0.5 font-medium">
+                        <span>MillionHuts</span>
                         {currentPG && (
                             <>
                                 <ChevronRight className="h-3 w-3" />
-                                <span className="font-medium text-primary/80">{currentPG.name}</span>
+                                <span className="text-primary/80">{currentPG.name}</span>
                             </>
                         )}
                     </div>
-                    <h1 className="text-lg font-bold leading-none tracking-tight">
+                    <h1 className="text-sm font-bold leading-none tracking-tight uppercase">
                         {activeMeta.title}
                     </h1>
                 </div>
@@ -121,7 +157,6 @@ const TopNavbar = ({ mobileOpen, setMobileOpen }: Props) => {
             {/* RIGHT: Actions */}
             <div className="flex items-center gap-2 md:gap-4">
 
-                {/* Announcement Button */}
                 <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-foreground">
                     <Megaphone className="h-5 w-5" />
                 </Button>
@@ -131,60 +166,83 @@ const TopNavbar = ({ mobileOpen, setMobileOpen }: Props) => {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="relative rounded-full text-muted-foreground hover:text-foreground">
                             <Bell className="h-5 w-5" />
-                            {DUMMY_NOTIFICATIONS.some(n => n.unread) && (
-                                <span className="absolute right-2 top-2 flex h-2 w-2">
-                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+                            {unreadCount > 0 && (
+                                <span className="absolute right-2 top-2 flex h-2.5 w-2.5">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-500 opacity-75"></span>
+                                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-rose-500 border-2 border-white"></span>
                                 </span>
                             )}
                         </Button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align="end" className="w-80 p-0 shadow-2xl border-sidebar-border">
-                        <div className="flex items-center justify-between p-4 border-b">
+                    <DropdownMenuContent align="end" className="w-80 p-0 shadow-2xl border-slate-200 rounded-2xl overflow-hidden">
+                        <div className="flex items-center justify-between p-4 border-b bg-slate-50/50">
                             <DropdownMenuLabel className="p-0 font-bold">Notifications</DropdownMenuLabel>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                                {DUMMY_NOTIFICATIONS.filter(n => n.unread).length} New
-                            </span>
+                            {unreadCount > 0 && (
+                                <span className="text-[10px] font-black uppercase tracking-wider text-white bg-rose-500 px-2 py-0.5 rounded-full">
+                                    {unreadCount} New
+                                </span>
+                            )}
                         </div>
 
-                        <div className="max-h-[350px] overflow-y-auto">
-                            {DUMMY_NOTIFICATIONS.map((notif) => (
-                                <DropdownMenuItem
-                                    key={notif.id}
-                                    className="flex flex-col items-start gap-1 p-4 cursor-pointer focus:bg-accent border-b border-sidebar-border last:border-0"
-                                >
-                                    <div className="flex w-full items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            {notif.unread && <Circle className="h-2 w-2 fill-primary text-primary" />}
-                                            <span className={cn("text-sm font-semibold", notif.unread ? "text-foreground" : "text-muted-foreground")}>
-                                                {notif.title}
+                        <div className="max-h-[380px] overflow-y-auto">
+                            {loading && notifications.length === 0 ? (
+                                <div className="p-10 flex flex-col items-center gap-2 text-muted-foreground">
+                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                    <span className="text-xs font-medium">Loading...</span>
+                                </div>
+                            ) : notifications.length === 0 ? (
+                                <div className="p-10 text-center text-xs text-muted-foreground font-medium">
+                                    No notifications yet.
+                                </div>
+                            ) : (
+                                notifications.slice(0, 10).map((notif) => (
+                                    <DropdownMenuItem
+                                        key={notif.id}
+                                        onClick={() => handleNotifClick(notif)}
+                                        className={cn(
+                                            "flex flex-col items-start gap-1 p-4 cursor-pointer border-b last:border-0 transition-colors",
+                                            !notif.isRead ? "bg-indigo-50/30 hover:bg-indigo-50/60" : "hover:bg-slate-50"
+                                        )}
+                                    >
+                                        <div className="flex w-full items-center justify-between mb-1">
+                                            <div className="flex items-center gap-2">
+                                                {!notif.isRead && <Circle className="h-2 w-2 fill-indigo-600 text-indigo-600" />}
+                                                <span className={cn("text-sm font-bold", !notif.isRead ? "text-slate-900" : "text-slate-600")}>
+                                                    {notif.title}
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-medium text-slate-400">
+                                                {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })}
                                             </span>
                                         </div>
-                                        <span className="text-[10px] text-muted-foreground">{notif.time}</span>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                                        {notif.message}
-                                    </p>
+                                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                            {notif.message}
+                                        </p>
 
-                                    {/* Action Link for the specific feature */}
-                                    <div className="mt-1 flex items-center gap-1 text-[10px] font-bold text-primary uppercase tracking-tight">
-                                        View {notif.feature} <ArrowRight className="h-3 w-3" />
-                                    </div>
-                                </DropdownMenuItem>
-                            ))}
+                                        {notif.entityType && (
+                                            <div className="mt-2 flex items-center gap-1 text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                                View {notif.entityType.toLowerCase()} <ArrowRight className="h-3 w-3" />
+                                            </div>
+                                        )}
+                                    </DropdownMenuItem>
+                                ))
+                            )}
                         </div>
 
-                        <Link to="/notifications" className="block p-3 text-center text-xs font-semibold text-primary hover:bg-primary/5 transition-colors border-t">
-                            View All Notifications
+                        <Link
+                            to={`/pgs/${currentPG?.id}/notifications`}
+                            className="block p-4 text-center text-xs font-bold text-slate-900 hover:bg-slate-50 transition-colors border-t uppercase tracking-widest"
+                        >
+                            View All Activity
                         </Link>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Mobile Page Info (Condensed) */}
-                <div className="md:hidden border-l pl-4 flex flex-col items-end">
-                    <span className="text-sm font-bold truncate max-w-[100px]">{activeMeta.title}</span>
-                    <span className="text-[10px] text-muted-foreground uppercase">{currentPG?.name || 'No PG'}</span>
+                {/* Mobile Page Info */}
+                <div className="md:hidden border-l pl-3 flex flex-col items-end">
+                    <span className="text-xs font-black uppercase truncate max-w-[80px]">{activeMeta.title}</span>
+                    <span className="text-[9px] text-muted-foreground font-bold truncate max-w-[80px]">{currentPG?.name || 'MH'}</span>
                 </div>
             </div>
         </header>
