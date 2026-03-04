@@ -10,6 +10,7 @@ import type { UserType } from "@/interfaces/user";
 import { usePG } from "./PGContext";
 import { connectSocket, getSocket } from "@/lib/socket";
 import { initFcm } from "@/services/initFcm";
+import { getFcmToken } from "@/services/fcm";
 
 interface AuthContextType {
     user: UserType | null;
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             setUser(user);
             if (!getSocket())
-                connectSocket(user.id);
+                connectSocket();
             setPGsFromAuth(pgs || []);
         } catch {
             setUser(null);
@@ -79,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const { user } = res.data.data;
 
         setUser(user);
-        connectSocket(user.id);
+        connectSocket();
         fetchMe();
     };
 
@@ -89,6 +90,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = async () => {
         try {
+            const deviceToken = await getFcmToken();
+            await apiPrivate.post('/device/deactivate', { fcmToken: deviceToken })
             await apiPrivate.post("/auth/logout");
         } finally {
             setUser(null);

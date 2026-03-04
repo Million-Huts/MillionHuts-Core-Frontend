@@ -65,7 +65,7 @@ export default function RoomDetails() {
     const occupancyPercentage = (room.occupiedCount / room.capacity) * 100;
 
     return (
-        <div className="p-6 max-w-5xl mx-auto space-y-8">
+        <div className="md:p-6 p-1 max-w-5xl mx-auto space-y-8">
             {/* Header / Breadcrumb */}
             <div className="flex items-center justify-between">
                 <Button

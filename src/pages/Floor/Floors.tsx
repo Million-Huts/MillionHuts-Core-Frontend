@@ -73,7 +73,7 @@ export default function Floors() {
     };
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-1 md:p-8 max-w-7xl mx-auto space-y-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-6">
                 <div>

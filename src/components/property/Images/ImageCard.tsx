@@ -3,7 +3,7 @@ import { Trash2, Star, Maximize2 } from "lucide-react";
 
 export default function ImageCard({ image, onClick, onDelete, onMakeCover }: any) {
     return (
-        <div className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted border border-border/40 transition-all hover:shadow-xl">
+        <div className="group relative aspect-[4/3] overflow-hidden md:rounded-2xl rounded-lg bg-muted border border-border/40 transition-all hover:shadow-xl">
             <img
                 src={image.url}
                 alt="Property"

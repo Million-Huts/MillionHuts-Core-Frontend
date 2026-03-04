@@ -10,14 +10,12 @@ INIT SOCKET
 ========================================
 */
 
-export const connectSocket = (userId: string) => {
+export const connectSocket = () => {
     if (socket && socket.connected) return socket;
 
     socket = io(CORE_URL, {
-        query: {
-            userId,
-        },
-        transports: ["websocket"],
+        withCredentials: true,
+        transports: ["websocket"]
     });
 
     socket.on("connect", () => {

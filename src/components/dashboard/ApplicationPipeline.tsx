@@ -3,7 +3,7 @@ import { UserPlus, Clock } from "lucide-react";
 
 export default function ApplicationPipeline({ data }: any) {
     return (
-        <Card className="border-none rounded-3xl shadow-sm bg-white">
+        <Card className="border-none md:rounded-3xl rounded-lg shadow-sm bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-bold uppercase text-slate-500">Applications</CardTitle>
                 <UserPlus className="h-4 w-4 text-slate-400" />

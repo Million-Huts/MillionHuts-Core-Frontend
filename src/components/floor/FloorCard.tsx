@@ -11,7 +11,7 @@ export default function FloorCard({ floor }: { floor: Floor }) {
 
     return (
         <Card
-            className="group relative overflow-hidden border-2 transition-all hover:border-primary hover:shadow-xl cursor-pointer rounded-3xl"
+            className="group relative overflow-hidden border-2 transition-all hover:border-primary hover:shadow-xl cursor-pointer md:rounded-3xl rounded-lg"
             onClick={() => navigate(`/pgs/${currentPG?.id}/floors/${floor.id}`)}
         >
             <CardContent className="p-6">

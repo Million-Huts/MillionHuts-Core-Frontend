@@ -72,7 +72,7 @@ export default function ComplaintsPage() {
     }, [searchParams])
 
     return (
-        <div className="p-6 max-w-[1600px] mx-auto space-y-8">
+        <div className="md:p-6 p-1 max-w-[1600px] mx-auto space-y-8">
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>

@@ -14,7 +14,7 @@ export default function RoomCard({ room }: { room: Room }) {
 
     return (
         <Card
-            className="group relative overflow-hidden border-2 transition-all hover:border-indigo-500 hover:shadow-2xl cursor-pointer rounded-[2rem]"
+            className="group relative overflow-hidden border-2 transition-all hover:border-indigo-500 hover:shadow-2xl cursor-pointer md:rounded-[2rem] rounded-lg"
             onClick={() => navigate(`/pgs/${currentPG?.id}/rooms/${room.id}`)}
         >
             <CardContent className="p-6">
@@ -53,7 +53,7 @@ export default function RoomCard({ room }: { room: Room }) {
                 </div>
 
                 <div className="absolute top-4 right-4 translate-x-8 -translate-y-8 group-hover:translate-x-0 group-hover:translate-y-0 transition-all">
-                    <div className="bg-indigo-600 p-2 rounded-bl-2xl text-white shadow-lg">
+                    <div className="bg-indigo-600 p-2 md:rounded-bl-2xl rounded-bl-lg text-white md:shadow-lg shadow-sm">
                         <ArrowUpRight className="h-4 w-4" />
                     </div>
                 </div>

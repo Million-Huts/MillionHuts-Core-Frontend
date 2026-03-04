@@ -87,7 +87,7 @@ export default function Tenants() {
                 rooms={rooms}
             />
 
-            <Tabs value={tabValue} className="w-full">
+            <Tabs value={tabValue} onValueChange={(val) => setTabValue(val)} className="w-full">
                 <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
                     <TabsTrigger value="residents" className="rounded-lg gap-2">
                         <Users className="h-4 w-4" /> Staying Tenants

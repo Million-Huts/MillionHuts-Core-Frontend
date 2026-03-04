@@ -25,7 +25,7 @@ export default function PolicyAccordion({
     return (
         <Accordion type="single" collapsible>
             <AccordionItem value={policy.id} className="bg-white rounded-lg">
-                <div className="flex items-center justify-between px-4 py-2">
+                <div className="flex items-center justify-between md:px-4 px-1 py-2">
                     <AccordionTrigger className="text-left">
                         {policy.title}
                     </AccordionTrigger>

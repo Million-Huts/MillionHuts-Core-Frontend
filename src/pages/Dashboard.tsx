@@ -40,7 +40,7 @@ export default function Dashboard() {
     const { stats, alerts, modules, actions } = data;
 
     return (
-        <div className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="md:p-8 max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
@@ -80,7 +80,7 @@ export default function Dashboard() {
 
 function DashboardLoadingSkeleton() {
     return (
-        <div className="p-8 space-y-8">
+        <div className="md:p-8 space-y-8">
             <div className="flex justify-between"><Skeleton className="h-12 w-64" /><Skeleton className="h-10 w-48" /></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6"><Skeleton className="h-48 rounded-3xl" /><Skeleton className="h-48 rounded-3xl" /><Skeleton className="h-48 rounded-3xl" /></div>
             <div className="grid grid-cols-4 gap-4"><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-24 rounded-xl" /></div>

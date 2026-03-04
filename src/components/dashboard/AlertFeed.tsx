@@ -12,9 +12,9 @@ export default function AlertFeed({ alerts }: { alerts: any[] }) {
                 alerts.map((alert, i) => (
                     <div
                         key={i}
-                        className={`p-4 rounded-2xl border flex gap-3 shadow-sm transition-all hover:scale-[1.02] ${alert.severity === 'HIGH' ? 'bg-rose-50 border-rose-200 text-rose-900' :
-                                alert.severity === 'MEDIUM' ? 'bg-amber-50 border-amber-200 text-amber-900' :
-                                    'bg-blue-50 border-blue-200 text-blue-900'
+                        className={`p-4 md:rounded-2xl rounded-lg border flex gap-3 shadow-sm transition-all hover:scale-[1.02] ${alert.severity === 'HIGH' ? 'bg-rose-50 border-rose-200 text-rose-900' :
+                            alert.severity === 'MEDIUM' ? 'bg-amber-50 border-amber-200 text-amber-900' :
+                                'bg-blue-50 border-blue-200 text-blue-900'
                             }`}
                     >
                         {alert.severity === 'HIGH' ? <ShieldAlert className="h-5 w-5 shrink-0" /> : <Info className="h-5 w-5 shrink-0" />}

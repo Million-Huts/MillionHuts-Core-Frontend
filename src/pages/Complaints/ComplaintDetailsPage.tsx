@@ -48,7 +48,7 @@ export default function ComplaintDetailsPage() {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-4 md:p-8">
+        <div className="min-h-screen bg-slate-50/50 p-1 md:p-8">
             <div className="max-w-6xl mx-auto space-y-6">
                 {/* Top Navigation */}
                 <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">

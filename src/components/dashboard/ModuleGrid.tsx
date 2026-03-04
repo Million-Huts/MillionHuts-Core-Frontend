@@ -49,7 +49,7 @@ export default function ModuleGrid({ modules }: any) {
 
 function ModuleCard({ title, icon: Icon, stats }: any) {
     return (
-        <Card className="border-none shadow-sm hover:shadow-md transition-shadow rounded-3xl overflow-hidden">
+        <Card className="border-none shadow-sm hover:shadow-md transition-shadow md:rounded-3xl rounded-lg overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-bold uppercase text-slate-500 tracking-tighter">{title}</CardTitle>
                 <Icon className="w-4 h-4 text-slate-400" />

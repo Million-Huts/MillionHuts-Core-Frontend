@@ -34,7 +34,7 @@ export default function Properties() {
     }, []);
 
     return (
-        <div className="container mx-auto p-6 space-y-8">
+        <div className="container mx-auto md:p-6 space-y-8">
             {/* Header Section */}
             <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -44,7 +44,7 @@ export default function Properties() {
 
                 <Button
                     onClick={() => setOpenCreate(true)}
-                    className="shadow-lg shadow-primary/20 transition-transform active:scale-95"
+                    className="shadow-lg shadow-primary/20 transition-transform active:scale-95 w-fit"
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     Add New Property

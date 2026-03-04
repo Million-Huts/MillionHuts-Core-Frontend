@@ -6,25 +6,51 @@ import axios, {
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 /* =====================================================
-   PUBLIC INSTANCE
+    TYPES & CONFIG
+===================================================== */
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+    _retry?: boolean;
+}
+
+/* =====================================================
+    STATE FOR QUEUEING
+===================================================== */
+let isRefreshing = false;
+let failedQueue: {
+    resolve: (token?: string) => void;
+    reject: (error: any) => void;
+}[] = [];
+
+/**
+ * Iterates through the queue to resolve or reject pending requests
+ */
+const processQueue = (error: any) => {
+    failedQueue.forEach((prom) => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve();
+        }
+    });
+    failedQueue = [];
+};
+
+/* =====================================================
+    INSTANCES
 ===================================================== */
 export const api = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
 });
 
-/* =====================================================
-   PRIVATE INSTANCE
-===================================================== */
 export const apiPrivate = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
 });
 
 /* =====================================================
-   GLOBAL HANDLERS
+    GLOBAL HANDLERS & HELPERS
 ===================================================== */
-
 let onUnauthorized: (() => void) | null = null;
 let currentPGId: string | null = null;
 
@@ -37,26 +63,11 @@ export const setCurrentPGId = (pgId: string | null) => {
 };
 
 /* =====================================================
-   TYPES
+    REQUEST INTERCEPTOR — PG ID INJECTION
 ===================================================== */
-
-interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-    _retry?: boolean;
-}
-
-/* =====================================================
-   REQUEST INTERCEPTOR — PG ID INJECTION
-===================================================== */
-
 apiPrivate.interceptors.request.use((config) => {
     if (!config.url) return config;
 
-    /**
-     * Replace :pgId placeholder automatically
-     *
-     * Example:
-     * /pg/:pgId/floors  ->  /pg/123/floors
-     */
     if (currentPGId && config.url.includes(":pgId")) {
         config.url = config.url.replace(":pgId", currentPGId);
     }
@@ -65,31 +76,50 @@ apiPrivate.interceptors.request.use((config) => {
 });
 
 /* =====================================================
-   RESPONSE INTERCEPTOR — TOKEN REFRESH
+    RESPONSE INTERCEPTOR — ATOMIC REFRESH
 ===================================================== */
-
 apiPrivate.interceptors.response.use(
     (response) => response,
-
     async (error: AxiosError) => {
-        const prevRequest = error.config as CustomAxiosRequestConfig;
-
+        const originalRequest = error.config as CustomAxiosRequestConfig;
         const status = error.response?.status;
 
+        // Trigger on 401 (Unauthorized) or 403 (Forbidden/Expired)
+        // Ensure we aren't already retrying or hitting the refresh/login endpoints
         if (
-            status === 401 &&
-            !prevRequest?._retry &&
-            !prevRequest?.url?.includes("/auth/refresh")
+            (status === 401 || status === 403) &&
+            !originalRequest._retry &&
+            !originalRequest.url?.includes("/auth/refresh")
         ) {
-            prevRequest._retry = true;
 
-            try {
-                await api.post("/auth/refresh");
-                return apiPrivate(prevRequest);
-            } catch (refreshError) {
-                onUnauthorized?.();
-                return Promise.reject(refreshError);
+            // IF ALREADY REFRESHING: Add this request to the queue
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({ resolve, reject });
+                })
+                    .then(() => apiPrivate(originalRequest))
+                    .catch((err) => Promise.reject(err));
             }
+
+            // START REFRESH PROCESS
+            originalRequest._retry = true;
+            isRefreshing = true;
+
+            return new Promise((resolve, reject) => {
+                api.post("/auth/refresh")
+                    .then(() => {
+                        processQueue(null); // Resolve all pending requests in queue
+                        resolve(apiPrivate(originalRequest));
+                    })
+                    .catch((refreshError) => {
+                        processQueue(refreshError); // Reject all pending requests
+                        onUnauthorized?.(); // Force logout in AuthContext
+                        reject(refreshError);
+                    })
+                    .finally(() => {
+                        isRefreshing = false;
+                    });
+            });
         }
 
         return Promise.reject(error);

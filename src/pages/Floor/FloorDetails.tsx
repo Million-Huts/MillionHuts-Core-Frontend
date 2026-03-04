@@ -49,12 +49,12 @@ export default function FloorDetails() {
     if (loading && !floor) return (
         <div className="p-8 space-y-6 max-w-7xl mx-auto">
             <Skeleton className="h-10 w-48" />
-            <Skeleton className="h-64 w-full rounded-3xl" />
+            <Skeleton className="h-64 w-full md:rounded-3xl rounded-lg" />
         </div>
     );
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-1 md:p-8 max-w-7xl mx-auto space-y-8">
             {/* Header / Breadcrumb */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
@@ -69,14 +69,14 @@ export default function FloorDetails() {
                         <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-3">Live</Badge>
                     </h1>
                 </div>
-                <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="rounded-full gap-2 border-2">
-                    <Edit3 className="h-4 w-4" /> Edit Floor Structure
+                <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="rounded-3xl rounded-lg gap-2 border-2">
+                    <Edit3 className="h-4 w-4" /> Edit Floor Details
                 </Button>
             </div>
 
             {/* Quick Stats Card */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-card border rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                <div className="bg-card border md:rounded-3xl rounded-lg p-6 shadow-sm flex items-center gap-4">
                     <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                         <DoorOpen className="h-6 w-6" />
                     </div>
@@ -86,7 +86,7 @@ export default function FloorDetails() {
                     </div>
                 </div>
 
-                <div className="md:col-span-2 bg-card border rounded-3xl p-6 shadow-sm flex flex-col justify-center">
+                <div className="md:col-span-2 bg-card border md:rounded-3xl rounded-lg p-6 shadow-sm flex flex-col justify-center">
                     <p className="text-xs font-bold text-muted-foreground uppercase mb-2 flex items-center gap-1">
                         <MapPinned className="h-3 w-3" /> Shared Facilities
                     </p>

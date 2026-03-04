@@ -9,9 +9,9 @@ export default function OverviewStats({ stats }: any) {
     ];
 
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {cards.map((c, i) => (
-                <div key={i} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-4">
+                <div key={i} className="bg-white p-6 md:rounded-3xl rounded-lg shadow-sm border border-slate-100 flex items-center gap-4">
                     <div className={`p-4 rounded-2xl ${c.bg} ${c.color}`}>
                         <c.icon className="h-6 w-6" />
                     </div>

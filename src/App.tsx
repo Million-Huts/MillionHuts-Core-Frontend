@@ -24,23 +24,8 @@ import ExpensesPage from './pages/Expense/ExpensesPage';
 import ComplaintsPage from './pages/Complaints/ComplaintsPage';
 import ComplaintDetailsPage from './pages/Complaints/ComplaintDetailsPage';
 import Notifications from './pages/Notifications';
-import { useEffect } from 'react';
-import { getSocket } from './lib/socket';
 
 function App() {
-  useEffect(() => {
-    const socket = getSocket();
-
-    if (!socket) return;
-
-    socket.on("notification:new", (data) => {
-      console.log("New notification:", data);
-    });
-
-    return () => {
-      socket.off("notification:new");
-    };
-  }, [])
   return (
     <>
       <Routes>

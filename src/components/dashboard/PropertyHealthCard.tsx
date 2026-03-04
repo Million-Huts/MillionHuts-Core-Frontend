@@ -4,7 +4,7 @@ import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function PropertySetupCard({ score, flags }: any) {
     return (
-        <Card className="border-none bg-primary text-white shadow-xl shadow-primary rounded-3xl">
+        <Card className="border-none bg-primary text-white shadow-xl shadow-primary md:rounded-3xl rounded-lg">
             <CardContent className="p-6 space-y-4">
                 <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg">Setup Health</h3>
