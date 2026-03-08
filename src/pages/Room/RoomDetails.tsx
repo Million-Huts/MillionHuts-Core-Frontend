@@ -89,12 +89,12 @@ export default function RoomDetails() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Left Column: Room Info Card */}
                 <div className="md:col-span-1 space-y-6">
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border space-y-6">
+                    <div className="bg-background rounded-3xl p-6 shadow-sm border space-y-6">
                         <div>
                             <Badge variant="secondary" className="mb-2 bg-primary/10 text-primary border-none">
                                 {room.roomType}
                             </Badge>
-                            <h1 className="text-3xl font-bold tracking-tight">Room {room.name}</h1>
+                            <h1 className="text-3xl font-bold tracking-tight text-foreground">Room {room.name}</h1>
                             <p className="text-muted-foreground flex items-center gap-2 mt-1">
                                 <Users size={16} /> {room.sharing} Sharing
                             </p>

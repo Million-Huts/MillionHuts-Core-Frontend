@@ -111,7 +111,7 @@
   --primary: oklch(0.623 0.214 259.815);
   --primary-foreground: oklch(0.129 0.042 264.695);
 
-  --card: oklch(0.18 0.005 285.823);
+  --card: oklch(0.19 0.01 280);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.18 0.005 285.823);
   --popover-foreground: oklch(0.985 0 0);
@@ -143,11 +143,16 @@
 
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    @apply transition-colors duration-500 ease-in-out;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   a,
   button {
     @apply transition-all duration-200 ease-in-out;
+  }
+
+  @utility glass {
+    @apply bg-background/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl;
   }
 }

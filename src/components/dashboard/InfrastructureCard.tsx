@@ -5,7 +5,7 @@ export default function InfrastructureCard({ data }: any) {
     const isIncomplete = data.missingRooms > 0;
 
     return (
-        <Card className={`border-none md:rounded-3xl rounded-lg shadow-sm ${isIncomplete ? 'bg-amber-50/50' : 'bg-white'}`}>
+        <Card className={`border-none md:rounded-3xl rounded-lg shadow-sm ${isIncomplete ? 'bg-amber-50/50' : 'bg-background'}`}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-bold uppercase text-slate-500">Infrastructure</CardTitle>
                 <Building2 className="h-4 w-4 text-slate-400" />

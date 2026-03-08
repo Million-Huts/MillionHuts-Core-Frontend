@@ -4,10 +4,13 @@ export interface UserType {
     email?: string;
     phone?: string;
     password?: string;
-    profileImageUrl?: string;
+    profileImageUrl?: string | null;
     role?: "SUPER_ADMIN" | "ADMIN" | "USER";
     isActive?: boolean;
     passwordChangedAt?: string | null; //date time
     lastLoginAt?: string | null; //Date time
     emailVerified?: boolean;
+    mfaEnabled?: boolean;
+    mfaSecret?: string;
+    mfaTempSecret?: string;
 }

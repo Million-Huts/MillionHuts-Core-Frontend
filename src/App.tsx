@@ -26,6 +26,7 @@ import ComplaintDetailsPage from './pages/Complaints/ComplaintDetailsPage';
 import Notifications from './pages/Notifications';
 import UsersPage from './pages/Users/UsersPage';
 import UserDetailsPage from './pages/Users/UserDetailsPage';
+import ForgotPassword from './pages/Auth/ForgotPassword';
 
 function App() {
   return (
@@ -34,6 +35,10 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+
+        {/* Password recovery */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Private Routes */}
         <Route element={<ProtectedRoute />}>

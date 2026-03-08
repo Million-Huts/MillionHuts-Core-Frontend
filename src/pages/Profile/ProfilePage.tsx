@@ -1,54 +1,92 @@
-import { useState } from "react";
+import { motion } from "framer-motion";
 import ProfileHeader from "@/components/profile/ProfileHeader";
-import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ProfileDetails from "@/components/profile/ProfileDetails";
-import ChangePassword from "@/components/profile/ChangePassword";
+import ChangePasswordFlow from "@/components/profile/ChangePasswordFlow";
+import MFASection from "@/components/profile/MFASection";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogTrigger,
+    DialogFooter
+} from "@/components/ui/dialog";
+import { useState } from "react";
 import EditProfileModal from "@/components/profile/EditProfileModal";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProfilePage() {
-    const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
-    const [openEdit, setOpenEdit] = useState(false);
-
+    const [profileEdit, setProfileEdit] = useState(false);
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-background pb-20">
             <ProfileHeader />
 
-            {/* Main Content Grid - mt-12 prevents overlap with the header text */}
-            <div className="mx-auto max-w-6xl px-4 mt-8 md:mt-12 pb-20">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div className="mx-auto max-w-3xl px-4 -mt-8 relative z-10 space-y-6">
+                {/* 1. Account Details */}
+                <SectionWrapper delay={0}>
+                    <EditProfileModal open={profileEdit} onClose={() => setProfileEdit(false)} />
+                    {!profileEdit && (
+                        <ProfileDetails onEdit={() => setProfileEdit(true)} />
+                    )}
+                </SectionWrapper>
 
-                    {/* Sidebar: Above content on mobile, Left on desktop */}
-                    <div className="col-span-12 md:col-span-3">
-                        <ProfileSidebar
-                            activeTab={activeTab}
-                            setActiveTab={setActiveTab}
-                        />
-                    </div>
+                {/* 2. Security: Password Change (Step-based) */}
+                <SectionWrapper delay={0.1}>
+                    <ChangePasswordFlow />
+                </SectionWrapper>
 
-                    {/* Content Area */}
-                    <div className="col-span-12 md:col-span-9 bg-card border rounded-3xl p-6 shadow-sm min-h-[400px]">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activeTab}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                {activeTab === "profile" && (
-                                    <ProfileDetails onEdit={() => setOpenEdit(true)} />
-                                )}
-                                {activeTab === "password" && (
-                                    <ChangePassword />
-                                )}
-                            </motion.div>
-                        </AnimatePresence>
+                {/* 3. Multi-Factor Authentication */}
+                <SectionWrapper delay={0.2}>
+                    <MFASection />
+                </SectionWrapper>
+
+                {/* 4. Danger Zone */}
+                <SectionWrapper delay={0.3}>
+                    <div className="p-6 bg-destructive/5 border border-destructive/20 rounded-[2rem]">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-semibold text-destructive">Danger Zone</h3>
+                                <p className="text-sm text-muted-foreground">Permanently remove your account and all associated data.</p>
+                            </div>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="destructive" className="rounded-full">Delete Account</Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle className="flex items-center gap-2">
+                                            <AlertTriangle className="text-destructive" /> Are you absolutely sure?
+                                        </DialogTitle>
+                                        <DialogDescription>
+                                            This action cannot be undone. This will permanently delete your account
+                                            and remove your data from our servers.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button variant="outline">Cancel</Button>
+                                        <Button variant="destructive">Confirm Deletion</Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                     </div>
-                </div>
+                </SectionWrapper>
             </div>
-
-            <EditProfileModal open={openEdit} onClose={() => setOpenEdit(false)} />
         </div>
+    );
+}
+
+function SectionWrapper({ children, delay }: { children: React.ReactNode, delay: number }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay }}
+            className="bg-card border border-border shadow-sm rounded-[2.5rem] overflow-hidden p-6 md:p-8"
+        >
+            {children}
+        </motion.div>
     );
 }

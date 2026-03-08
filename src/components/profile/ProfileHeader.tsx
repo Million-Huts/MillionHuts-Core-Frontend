@@ -1,4 +1,4 @@
-import { Camera, Trash2, User as UserIcon } from "lucide-react";
+import { Camera, Trash2, User as UserIcon, Check } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
@@ -11,12 +11,12 @@ export default function ProfileHeader() {
         if (!file) return;
 
         const formData = new FormData();
-        formData.append("profileImage", file);
+        formData.append("image", file); // Backend expects "image"
 
         try {
-            const res = await apiPrivate.patch('/users/update-avatar', formData);
-            setUser(res.data.data.user);
-            toast.success("Profile picture updated!");
+            const res = await apiPrivate.post('/users/profile-image', formData);
+            setUser({ ...user, profileImageUrl: res.data.data.profileImageUrl });
+            toast.success("Avatar updated!");
         } catch (error) {
             toast.error("Failed to upload image");
         }
@@ -24,9 +24,9 @@ export default function ProfileHeader() {
 
     const handleRemoveImage = async () => {
         try {
-            const res = await apiPrivate.delete('/users/remove-avatar');
-            setUser(res.data.data.user);
-            toast.success("Profile picture removed");
+            await apiPrivate.delete('/users/profile-image');
+            setUser({ ...user, profileImageUrl: null });
+            toast.success("Avatar removed");
         } catch (error) {
             toast.error("Error removing image");
         }
@@ -34,44 +34,41 @@ export default function ProfileHeader() {
 
     return (
         <div className="relative w-full">
-            {/* Cover Gradient - Reduced height to prevent swallowing the name */}
-            <div className="h-40 w-full bg-gradient-to-r from-indigo-600 to-violet-700 md:h-48" />
+            <div className="h-56 w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 md:h-64" />
 
-            {/* Profile Info Bar */}
-            <div className="mx-auto max-w-6xl px-4">
-                <div className="relative -mt-16 flex flex-col items-center md:flex-row md:items-end md:gap-6">
-                    {/* Avatar Container */}
-                    <div className="relative group shadow-2xl rounded-full">
-                        <div className="h-32 w-32 rounded-full border-4 border-background bg-muted overflow-hidden flex items-center justify-center">
+            <div className="mx-auto max-w-3xl px-4">
+                <div className="relative -mt-20 flex flex-col items-center">
+                    <div className="relative group">
+                        <div className="h-40 w-40 rounded-[2.5rem] border-8 border-background bg-muted overflow-hidden flex items-center justify-center shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
                             {user?.profileImageUrl ? (
-                                <img
-                                    src={user.profileImageUrl}
-                                    alt={user.name}
-                                    className="h-full w-full object-cover"
-                                />
+                                <img src={user.profileImageUrl} alt={user.name} className="h-full w-full object-cover" />
                             ) : (
-                                <UserIcon className="h-16 w-16 text-muted-foreground" />
+                                <UserIcon className="h-20 w-20 text-muted-foreground/40" />
                             )}
                         </div>
 
-                        {/* Hover Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                            <label className="cursor-pointer p-2 hover:bg-white/20 rounded-full text-white">
-                                <Camera className="h-5 w-5" />
-                                <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-                            </label>
-                            {user?.profileImageUrl && (
-                                <button onClick={handleRemoveImage} className="p-2 hover:bg-white/20 rounded-full text-red-400">
-                                    <Trash2 className="h-5 w-5" />
-                                </button>
-                            )}
+                        {/* Hover Overlay with Glassmorphism */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-[2rem]">
+                            <div className="flex gap-2">
+                                <label className="cursor-pointer p-3 bg-white/20 hover:bg-white/40 rounded-2xl text-white transition-colors">
+                                    <Camera className="h-6 w-6" />
+                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                                </label>
+                                {user?.profileImageUrl && (
+                                    <button onClick={handleRemoveImage} className="p-3 bg-red-500/20 hover:bg-red-500/40 rounded-2xl text-red-200 transition-colors">
+                                        <Trash2 className="h-6 w-6" />
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Text Details - Positioned to side on desktop, center on mobile */}
-                    <div className="mt-4 text-center md:mb-4 md:mt-0 md:text-left">
-                        <h2 className="text-2xl font-bold text-foreground md:text-3xl">{user?.name}</h2>
-                        <p className="text-sm font-medium text-muted-foreground">{user?.email}</p>
+                    <div className="mt-6 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                            <h2 className="text-3xl font-bold tracking-tight text-foreground">{user?.name}</h2>
+                            {user?.isActive && <Check className="w-5 h-5 bg-primary text-primary-foreground rounded-full p-1" />}
+                        </div>
+                        <p className="text-muted-foreground font-medium">{user?.email}</p>
                     </div>
                 </div>
             </div>

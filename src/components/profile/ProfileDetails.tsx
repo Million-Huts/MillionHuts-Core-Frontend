@@ -1,49 +1,48 @@
-import { Mail, Phone, User as UserIcon, ShieldCheck } from "lucide-react";
+import { Mail, Phone, User as UserIcon, ShieldCheck, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { Badge } from "@/components/ui/badge";
 
 interface Props { onEdit: () => void; }
 
 export default function ProfileDetails({ onEdit }: Props) {
     const { user } = useAuth();
 
-    const InfoRow = ({ icon: Icon, label, value }: any) => (
-        <div className="flex items-center gap-4 p-4 border rounded-xl bg-card/50">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                <Icon className="h-5 w-5" />
-            </div>
-            <div className="flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</p>
-                <p className="text-sm font-medium">{value || "Not provided"}</p>
-            </div>
+    const InfoBlock = ({ icon: Icon, label, value }: any) => (
+        <div className="space-y-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 flex items-center gap-1.5">
+                <Icon size={12} /> {label}
+            </p>
+            <p className="text-sm font-semibold text-foreground/90">{value || "—"}</p>
         </div>
     );
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Account Details</h3>
-                <Button onClick={onEdit} variant="outline" size="sm" className="rounded-full px-6">
+        <div className="space-y-8">
+            <div className="flex items-end justify-between border-b pb-6">
+                <div>
+                    <h3 className="text-2xl font-bold">Personal Information</h3>
+                    <p className="text-sm text-muted-foreground">Manage your public profile and contact details.</p>
+                </div>
+                <Button onClick={onEdit} variant="outline" className="rounded-2xl border-primary/20 hover:bg-primary/5">
                     Edit Profile
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <InfoRow icon={UserIcon} label="Full Name" value={user?.name} />
-                <InfoRow icon={Mail} label="Email Address" value={user?.email} />
-                <InfoRow icon={Phone} label="Contact Number" value={user?.phone} />
-                <InfoRow icon={ShieldCheck} label="Account Role" value={user?.role} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-12">
+                <InfoBlock icon={UserIcon} label="Full Name" value={user?.name} />
+                <InfoBlock icon={Mail} label="Email Address" value={user?.email} />
+                <InfoBlock icon={Phone} label="Contact Number" value={user?.phone} />
+                <InfoBlock icon={ShieldCheck} label="Primary Role" value={user?.role} />
             </div>
 
-            <div className="p-4 rounded-xl border bg-accent/20 flex items-center justify-between">
-                <div>
-                    <p className="text-sm font-semibold">Status</p>
-                    <p className="text-xs text-muted-foreground">Your account is currently {user?.isActive ? 'active' : 'inactive'}</p>
+            <div className="pt-6 border-t flex items-center justify-between text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 italic">
+                    <Calendar size={14} /> Account active since {new Date().getFullYear()}
                 </div>
-                <Badge variant={user?.isActive ? "default" : "destructive"}>
-                    {user?.isActive ? "Active" : "Inactive"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                    System Verified
+                </div>
             </div>
         </div>
     );

@@ -23,6 +23,7 @@ import { usePG } from "@/context/PGContext";
 import { apiPrivate } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
+import ThemeToggle from "../ui/ThemeToggle";
 
 /* =====================================================
     Types & Metadata Configuration
@@ -160,6 +161,8 @@ const TopNavbar = ({ mobileOpen, setMobileOpen }: Props) => {
                 <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-foreground">
                     <Megaphone className="h-5 w-5" />
                 </Button>
+
+                <ThemeToggle />
 
                 {/* Notifications Dropdown */}
                 <DropdownMenu>
