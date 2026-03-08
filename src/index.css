@@ -152,7 +152,9 @@
     @apply transition-all duration-200 ease-in-out;
   }
 
-  @utility glass {
-    @apply bg-background/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl;
-  }
+}
+
+
+@utility glass {
+  @apply bg-background/60 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-xl;
 }
