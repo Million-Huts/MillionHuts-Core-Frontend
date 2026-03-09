@@ -1,11 +1,9 @@
-// components/property/Rules/CreatePolicyModal.tsx
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogDescription,
-    DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,7 +12,14 @@ import { apiPrivate } from "@/lib/api";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: any) {
+type Props = {
+    pgId: string;
+    open: boolean;
+    onClose: () => void;
+    onCreated: () => void;
+}
+
+export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: Props) {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,11 +31,11 @@ export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: an
             await apiPrivate.post(`/pgs/${pgId}/rules/sections`, {
                 title: formData.get("title"),
             });
-            toast.success("New policy category created");
+            toast.success("Policy category created");
             onCreated();
             onClose();
         } catch {
-            toast.error("Failed to create policy");
+            toast.error("Failed to create policy category");
         } finally {
             setLoading(false);
         }
@@ -38,34 +43,29 @@ export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: an
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-scroll">
-                <div className="flex flex-col items-center pt-4">
-                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4">
-                        <ShieldPlus className="h-6 w-6" />
+            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+                <div className="p-8 pb-4 flex flex-col items-center text-center">
+                    <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center text-primary mb-6 shadow-inner">
+                        <ShieldPlus className="h-8 w-8" />
                     </div>
                     <DialogHeader>
-                        <DialogTitle className="text-center text-xl">Create Policy Category</DialogTitle>
-                        <DialogDescription className="text-center">
-                            Group your rules under a clear heading (e.g., "Visitor Policy" or "Security").
+                        <DialogTitle className="text-2xl font-black tracking-tighter">New Policy Category</DialogTitle>
+                        <DialogDescription className="font-medium text-muted-foreground mt-1">
+                            Group your rules under a clear heading, like "Visitor Policy" or "Security."
                         </DialogDescription>
                     </DialogHeader>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-                    <div className="space-y-2">
-                        <Input
-                            name="title"
-                            placeholder="e.g. Late Night Entry"
-                            required
-                            className="h-12 border-muted-foreground/20 focus-visible:ring-primary"
-                        />
-                    </div>
-
-                    <DialogFooter>
-                        <Button type="submit" className="w-full h-11" disabled={loading}>
-                            {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Create Category"}
-                        </Button>
-                    </DialogFooter>
+                <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-6">
+                    <Input
+                        name="title"
+                        placeholder="e.g., House Rules"
+                        required
+                        className="h-14 rounded-2xl border-border bg-muted/30 px-5 text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
+                    />
+                    <Button type="submit" className="w-full h-14 rounded-full font-black tracking-wide shadow-lg shadow-primary/20" disabled={loading}>
+                        {loading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : "Create Category"}
+                    </Button>
                 </form>
             </DialogContent>
         </Dialog>

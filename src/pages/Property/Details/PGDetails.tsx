@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { apiPrivate } from "@/lib/api";
+import toast from "react-hot-toast";
 
 import DetailsView from "@/components/property/details/DetailsView";
 import DetailsForm from "@/components/property/details/DetailsForm";
@@ -17,9 +18,11 @@ export default function PGDetails() {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
+                setLoading(true);
                 const res = await apiPrivate.get(`/pgs/${pgId}/details`);
                 setDetails(res.data.data.details);
-            } catch {
+            } catch (err: any) {
+                toast.error("Failed to load property details");
                 setDetails(null);
             } finally {
                 setLoading(false);
@@ -30,21 +33,25 @@ export default function PGDetails() {
 
     if (loading) {
         return (
-            <div className="flex h-64 items-center justify-center">
+            <div className="flex flex-col items-center justify-center min-h-[400px] w-full gap-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">
+                    Retrieving Property Assets...
+                </p>
             </div>
         );
     }
 
     return (
-        <div className="max-w-4xl mx-auto pb-10">
+        <div className="max-w-4xl mx-auto pb-20">
             <AnimatePresence mode="wait">
                 {!editing ? (
                     <motion.div
                         key="view"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
                     >
                         <DetailsView
                             details={details}
@@ -54,9 +61,10 @@ export default function PGDetails() {
                 ) : (
                     <motion.div
                         key="edit"
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
                     >
                         <DetailsForm
                             details={details}

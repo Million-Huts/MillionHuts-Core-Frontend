@@ -1,5 +1,5 @@
 import FloorCard from "./FloorCard";
-import type { Floor } from "@/pages/Floor/Floors";
+import type { Floor } from "@/interfaces/floor";
 
 export default function FloorGrid({ floors }: { floors: Floor[] }) {
     return (

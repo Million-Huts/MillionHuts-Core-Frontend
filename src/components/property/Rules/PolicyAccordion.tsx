@@ -5,7 +5,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, GripVertical } from "lucide-react";
 import type { Policy } from "@/pages/Property/Details/PGRules";
 import RuleItemRow from "@/components/property/Rules/RuleItemRow";
 
@@ -23,39 +23,62 @@ export default function PolicyAccordion({
     onDeleteRule,
 }: Props) {
     return (
-        <Accordion type="single" collapsible>
-            <AccordionItem value={policy.id} className="bg-white rounded-lg">
-                <div className="flex items-center justify-between md:px-4 px-1 py-2">
-                    <AccordionTrigger className="text-left">
+        <Accordion type="single" collapsible className="w-full">
+            <AccordionItem
+                value={policy.id}
+                className="border border-border rounded-[1.5rem] bg-card overflow-hidden shadow-sm transition-all hover:shadow-md"
+            >
+                {/* Header Area */}
+                <div className="flex items-center justify-between px-6 py-2">
+                    <AccordionTrigger className="hover:no-underline py-4 text-lg font-black tracking-tighter">
                         {policy.title}
                     </AccordionTrigger>
 
-                    <div className="flex gap-2">
-                        <Button size="icon" variant="outline" onClick={onAddRule}>
-                            <Plus size={16} />
+                    <div className="flex items-center gap-2">
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={onAddRule}
+                            className="rounded-full gap-2 font-bold"
+                        >
+                            <Plus size={16} /> Add Rule
                         </Button>
-                        <Button size="icon" variant="destructive" onClick={onDeletePolicy}>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={onDeletePolicy}
+                            className="rounded-full text-muted-foreground hover:text-destructive"
+                        >
                             <Trash2 size={16} />
                         </Button>
                     </div>
                 </div>
 
-                <AccordionContent className="px-4 pb-4 bg-white">
-                    {!Array.isArray(policy.items) || policy.items.length === 0 ? (
-                        <p className="text-sm text-gray-500">
-                            No rules present. Add new rules.
-                        </p>
-                    ) : (
-                        <div className="space-y-2 bg-white">
-                            {policy.items.map((item) => (
-                                <RuleItemRow
-                                    key={item.id}
-                                    item={item}
-                                    onDelete={() => onDeleteRule(item.id)}
-                                />
-                            ))}
-                        </div>
-                    )}
+                {/* Content Area */}
+                <AccordionContent className="px-6 pb-6 pt-0">
+                    <div className="space-y-3">
+                        {(!Array.isArray(policy.items) || policy.items.length === 0) ? (
+                            <div className="py-8 text-center rounded-2xl border-2 border-dashed border-muted bg-muted/20">
+                                <p className="text-sm font-medium text-muted-foreground">
+                                    No rules defined for this category yet.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {policy.items.map((item) => (
+                                    <div key={item.id} className="group flex items-center gap-3">
+                                        <GripVertical className="h-4 w-4 text-muted-foreground/30 cursor-grab" />
+                                        <div className="flex-1">
+                                            <RuleItemRow
+                                                item={item}
+                                                onDelete={() => onDeleteRule(item.id)}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

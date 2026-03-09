@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X, Plus, Check, Settings2 } from "lucide-react";
 import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
-import type { Floor } from "@/pages/Floor/Floors";
+import type { Floor } from "@/interfaces/floor";
 
 interface Props {
     open: boolean;
@@ -79,7 +79,7 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[480px] rounded-3xl max-h-[90vh] overflow-y-auto border-none shadow-2xl">
+            <DialogContent className="sm:max-w-[480px] rounded-3xl max-h-[90vh] overflow-y-auto border-none ">
                 <DialogHeader>
                     <div className="h-12 w-12 bg-amber-100 rounded-2xl flex items-center justify-center mb-2">
                         <Settings2 className="h-6 w-6 text-amber-600" />
@@ -97,13 +97,13 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                                 value={label}
                                 onChange={e => setLabel(e.target.value)}
                                 required
-                                className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                                className="rounded-xl bg-muted/30 transition-all"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Room Capacity</Label>
                             <Select value={totalRooms} onValueChange={setTotalRooms}>
-                                <SelectTrigger className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                                <SelectTrigger className="rounded-xl bg-muted/30">
                                     <SelectValue placeholder="Rooms" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl">
@@ -130,7 +130,7 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                                         type="button"
                                         onClick={() => togglePlace(suggestion)}
                                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${isSelected
-                                            ? "bg-primary border-primary text-white shadow-md shadow-primary"
+                                            ? "bg-primary border-primary text-white "
                                             : "bg-white border-slate-200 text-slate-600 hover:border-primary"
                                             }`}
                                     >
@@ -181,7 +181,7 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
 
                     <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                         <Button type="button" variant="ghost" onClick={onClose} className="rounded-xl font-semibold">Cancel</Button>
-                        <Button type="submit" disabled={loading} className="rounded-xl px-8 font-bold shadow-lg shadow-amber-100 bg-primary">
+                        <Button type="submit" disabled={loading} className="rounded-xl px-8 font-bold bg-primary">
                             {loading ? "Saving..." : "Update Floor"}
                         </Button>
                     </div>

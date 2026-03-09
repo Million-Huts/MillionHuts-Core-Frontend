@@ -1,33 +1,81 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Building2, AlertTriangle, CheckCircle2, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function InfrastructureCard({ data }: any) {
+interface InfrastructureData {
+    createdRooms: number;
+    floors: number;
+    missingRooms: number;
+    floorsWithMissingRooms: number;
+}
+
+interface InfrastructureCardProps {
+    data: InfrastructureData;
+}
+
+export default function InfrastructureCard({ data }: InfrastructureCardProps) {
     const isIncomplete = data.missingRooms > 0;
 
     return (
-        <Card className={`border-none md:rounded-3xl rounded-lg shadow-sm ${isIncomplete ? 'bg-amber-50/50' : 'bg-background'}`}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-bold uppercase text-slate-500">Infrastructure</CardTitle>
-                <Building2 className="h-4 w-4 text-slate-400" />
+        <Card className={cn(
+            "border-border bg-card md:rounded-[2rem] rounded-xl shadow-sm transition-all hover:shadow-md overflow-hidden",
+            isIncomplete && "ring-1 ring-amber-500/10"
+        )}>
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+                <div className="space-y-1">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                        Infrastructure
+                    </CardTitle>
+                    <p className="text-xs font-medium text-muted-foreground/60">Property Architecture</p>
+                </div>
+                <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                    <Layers className="h-5 w-5" />
+                </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+
+            <CardContent className="space-y-6">
                 <div className="flex justify-between items-end">
-                    <div>
-                        <p className="text-3xl font-black text-slate-900">{data.createdRooms}</p>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Created Rooms</p>
+                    <div className="space-y-1">
+                        <p className="text-4xl font-black tracking-tighter text-foreground">
+                            {data.createdRooms}
+                        </p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                            Rooms Created
+                        </p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-xl font-bold text-slate-600">{data.floors}</p>
-                        <p className="text-xs font-bold text-slate-400 uppercase">Total Floors</p>
+                    <div className="text-right space-y-1">
+                        <div className="flex items-center justify-end gap-1.5 text-foreground">
+                            <Building2 className="h-4 w-4 text-primary" />
+                            <p className="text-xl font-black tracking-tight">{data.floors}</p>
+                        </div>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                            Total Floors
+                        </p>
                     </div>
                 </div>
 
-                <div className={`p-3 rounded-2xl flex items-center gap-3 ${isIncomplete ? 'bg-amber-100 text-amber-700' : 'bg-emerald-50 text-emerald-700'}`}>
-                    {isIncomplete ? <AlertTriangle className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
-                    <div className="text-xs font-bold leading-tight">
-                        {isIncomplete
-                            ? `${data.missingRooms} rooms pending setup across ${data.floorsWithMissingRooms} floors`
-                            : "All rooms configured correctly"}
+                {/* Status Indicator */}
+                <div className={cn(
+                    "p-4 rounded-2xl flex items-center gap-4 border transition-colors",
+                    isIncomplete
+                        ? "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-500"
+                        : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                )}>
+                    <div className={cn(
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full shadow-sm",
+                        isIncomplete ? "bg-amber-500 text-white" : "bg-emerald-500 text-white"
+                    )}>
+                        {isIncomplete ? <AlertTriangle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                    </div>
+                    <div className="space-y-0.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">
+                            Status
+                        </p>
+                        <p className="text-xs font-bold leading-tight">
+                            {isIncomplete
+                                ? `${data.missingRooms} pending setup on ${data.floorsWithMissingRooms} floors`
+                                : "Architecture fully configured"}
+                        </p>
                     </div>
                 </div>
             </CardContent>

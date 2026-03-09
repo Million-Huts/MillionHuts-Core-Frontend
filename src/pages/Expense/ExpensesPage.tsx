@@ -89,50 +89,49 @@ export default function ExpensesPage() {
         }
     };
 
+
     return (
-        <div className="md:p-6 max-w-7xl mx-auto space-y-6">
+        <div className="md:p-6 p-4 max-w-7xl mx-auto space-y-8">
             {/* HEADER */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Expense Tracker</h1>
-                    <p className="text-muted-foreground text-sm">Manage and track your PG operations costs.</p>
+                    <h1 className="text-4xl font-black tracking-tighter">Expense Tracker</h1>
+                    <p className="text-muted-foreground font-medium mt-1">
+                        Monitor your operational costs and cash flow.
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" className="gap-2" onClick={() => navigate(`/pgs/${pgId}/expense/report`)}>
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" className="gap-2 rounded-full font-bold" onClick={() => navigate(`/pgs/${pgId}/expense/report`)}>
                         <FileText className="w-4 h-4" /> View Report
                     </Button>
-                    <Button className="gap-2 shadow-lg" onClick={() => setModalOpen(true)}>
+                    <Button className="gap-2 rounded-full font-black shadow-xl shadow-primary/20" onClick={() => setModalOpen(true)}>
                         <Plus className="w-4 h-4" /> Add Expense
                     </Button>
                 </div>
             </div>
 
             {/* FILTERS SECTION */}
-            <ExpenseFilters filters={filters} setFilters={setFilters} onApply={fetchExpenses} />
-
-            {/* DATA TABLE */}
-            <div className={`bg-card border rounded-xl shadow-sm overflow-hidden relative ${loading ? "min-h-[50vh]" : ""}`}>
-                <LoadingOverlay isLoading={loading} message="Loading Expenses..." />
-                <ExpenseTable
-                    expenses={expenses}
-                    onDelete={handleDeleteClick}
-                    page={page}
-                    setPage={setPage}
-                    totalPages={totalPages}
-                />
-
+            <div className="bg-card border p-4 rounded-[2rem]">
+                <ExpenseFilters filters={filters} setFilters={setFilters} onApply={fetchExpenses} />
             </div>
 
-            {/* MODAL */}
-            <AddExpenseModal
-                isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                pgId={pgId!}
-                onRefresh={fetchExpenses}
-            />
+            {/* DATA TABLE */}
+            <div className="bg-card border rounded-[2rem] shadow-sm overflow-hidden relative min-h-[50vh]">
+                <LoadingOverlay isLoading={loading} message="Loading Expenses..." />
+                <div className="p-2">
+                    <ExpenseTable
+                        expenses={expenses}
+                        onDelete={handleDeleteClick}
+                        page={page}
+                        setPage={setPage}
+                        totalPages={totalPages}
+                    />
+                </div>
+            </div>
 
-            {/* CONFIRM DELETE MODAL */}
+            {/* Modals remain unchanged ... */}
+            <AddExpenseModal isOpen={modalOpen} onClose={() => setModalOpen(false)} pgId={pgId!} onRefresh={fetchExpenses} />
             <ConfirmDeleteModal
                 isOpen={deleteModalOpen}
                 title="Permanently Delete Expense?"

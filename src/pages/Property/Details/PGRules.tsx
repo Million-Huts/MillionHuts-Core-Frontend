@@ -1,4 +1,3 @@
-// pages/Property/PGRules/PGRulesPage.tsx
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Plus, Loader2 } from "lucide-react";
@@ -30,16 +29,15 @@ export default function PGRulesPage() {
     const [loading, setLoading] = useState(true);
     const [openCreatePolicy, setOpenCreatePolicy] = useState(false);
     const [activePolicyId, setActivePolicyId] = useState<string | null>(null);
-
-    // Deletion States
     const [deleteTarget, setDeleteTarget] = useState<{ type: 'policy' | 'rule', id: string } | null>(null);
 
     const fetchRules = useCallback(async () => {
         try {
+            setLoading(true);
             const res = await apiPrivate.get(`/pgs/${pgId}/rules`);
             setPolicies(res.data.data.sections);
         } catch {
-            toast.error("Could not load policies");
+            toast.error("Failed to load policies");
         } finally {
             setLoading(false);
         }
@@ -55,7 +53,7 @@ export default function PGRulesPage() {
                 : `/pgs/${pgId}/rules/items/${deleteTarget.id}`;
 
             await apiPrivate.delete(url);
-            toast.success(`${deleteTarget.type === 'policy' ? 'Policy' : 'Rule'} deleted`);
+            toast.success(`${deleteTarget.type === 'policy' ? 'Policy' : 'Rule'} deleted successfully`);
             fetchRules();
         } catch {
             toast.error("Deletion failed");
@@ -64,21 +62,23 @@ export default function PGRulesPage() {
         }
     };
 
-    if (loading) return (
-        <div className="flex h-64 flex-col items-center justify-center gap-2">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground font-medium">Loading Policies...</p>
-        </div>
-    );
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] w-full gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">Syncing Policies...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8 max-w-4xl">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
+        <div className="space-y-8 pb-20 max-w-4xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Rules & Policies</h2>
-                    <p className="text-muted-foreground text-sm">Define code of conduct and operational policies for residents.</p>
+                    <h2 className="text-3xl font-black tracking-tighter">Rules & Policies</h2>
+                    <p className="text-muted-foreground font-medium">Define the code of conduct for your residents.</p>
                 </div>
-                <Button onClick={() => setOpenCreatePolicy(true)} className="gap-2 shadow-sm">
+                <Button onClick={() => setOpenCreatePolicy(true)} className="rounded-full px-6 gap-2">
                     <Plus className="h-4 w-4" /> Create Category
                 </Button>
             </div>
@@ -86,14 +86,14 @@ export default function PGRulesPage() {
             {policies.length === 0 ? (
                 <EmptyRulesState onCreate={() => setOpenCreatePolicy(true)} />
             ) : (
-                <div className="grid gap-4">
+                <div className="space-y-4">
                     {policies.map((policy) => (
                         <PolicyAccordion
                             key={policy.id}
                             policy={policy}
                             onAddRule={() => setActivePolicyId(policy.id)}
                             onDeletePolicy={() => setDeleteTarget({ type: 'policy', id: policy.id })}
-                            onDeleteRule={(ruleId) => setDeleteTarget({ type: 'rule', id: ruleId })}
+                            onDeleteRule={(ruleId: string) => setDeleteTarget({ type: 'rule', id: ruleId })}
                         />
                     ))}
                 </div>
@@ -117,7 +117,7 @@ export default function PGRulesPage() {
             <ConfirmDeleteModal
                 isOpen={!!deleteTarget}
                 title={`Delete ${deleteTarget?.type === 'policy' ? 'Policy Category' : 'Rule'}?`}
-                description="This action cannot be undone and will be removed from tenant view immediately."
+                description="This action is irreversible and will update the tenant portal immediately."
                 onClose={() => setDeleteTarget(null)}
                 onConfirm={handleConfirmDelete}
             />

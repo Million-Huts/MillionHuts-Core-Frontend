@@ -2,46 +2,83 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, RotateCcw } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import type { Dispatch, SetStateAction } from "react";
 
-export default function ExpenseFilters({ filters, setFilters, onApply }: any) {
-    const categories = ["ALL", "MESS", "MAINTENANCE", "REPAIR", "UTILITIES", "SALARY", "PURCHASE", "RENT", "OTHER"];
-    const methods = ["ALL", "CASH", "UPI", "BANK_TRANSFER", "CARD", "CHEQUE"];
+type Props = {
+    filters: {
+        search: string;
+        category: string;
+        paymentMethod: string;
+        status: string;
+        fromDate: string;
+        toDate: string;
+    };
+    setFilters: Dispatch<SetStateAction<{
+        search: string;
+        category: string;
+        paymentMethod: string;
+        status: string;
+        fromDate: string;
+        toDate: string;
+    }>>;
+    onApply: () => Promise<void>
+}
+
+export default function ExpenseFilters({ filters, setFilters, onApply }: Props) {
+    const categories = ["ALL", "MESS", "MAINTENANCE", "REPAIR", "ELECTRICITY", "SALARY", "WATER", "RENT", "OTHER", "INTERNET", "SUPPLIES"];
+    const methods = ["ALL", "CASH", "UPI", "BANK_TRANSFER", "CARD", "OTHER"];
 
     return (
-        <div className="bg-muted/30 p-4 rounded-xl border space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                <div className="lg:col-span-2">
+        <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="lg:col-span-2 space-y-1">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Search</Label>
                     <Input
-                        placeholder="Search by title..."
+                        placeholder="Search title..."
                         value={filters.search}
                         onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                        className="h-12 rounded-2xl bg-muted/30 border-none"
                     />
                 </div>
 
-                <Select value={filters.category} onValueChange={(v) => setFilters({ ...filters, category: v })}>
-                    <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
-                    <SelectContent>
-                        {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                </Select>
+                <div className="space-y-1">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</Label>
+                    <Select value={filters.category} onValueChange={(v) => setFilters({ ...filters, category: v })}>
+                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                        <SelectContent className="rounded-2xl">
+                            {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
 
-                <Select value={filters.paymentMethod} onValueChange={(v) => setFilters({ ...filters, paymentMethod: v })}>
-                    <SelectTrigger><SelectValue placeholder="Method" /></SelectTrigger>
-                    <SelectContent>
-                        {methods.map(m => <SelectItem key={m} value={m}>{m.replace('_', ' ')}</SelectItem>)}
-                    </SelectContent>
-                </Select>
+                <div className="space-y-1">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Method</Label>
+                    <Select value={filters.paymentMethod} onValueChange={(v) => setFilters({ ...filters, paymentMethod: v })}>
+                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                        <SelectContent className="rounded-2xl">
+                            {methods.map(m => <SelectItem key={m} value={m}>{m.replace('_', ' ')}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
 
-                <Input type="date" value={filters.fromDate} onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })} />
-                <Input type="date" value={filters.toDate} onChange={(e) => setFilters({ ...filters, toDate: e.target.value })} />
+                <div className="space-y-1">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">From</Label>
+                    <Input type="date" value={filters.fromDate} onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                </div>
+
+                <div className="space-y-1">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">To</Label>
+                    <Input type="date" value={filters.toDate} onChange={(e) => setFilters({ ...filters, toDate: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                </div>
             </div>
 
-            <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setFilters({ search: "", category: "ALL", paymentMethod: "ALL", status: "ALL", fromDate: "", toDate: "" })}>
-                    <RotateCcw className="w-3 h-3 mr-2" /> Reset
+            <div className="flex justify-end gap-2 pt-2">
+                <Button variant="ghost" className="rounded-full font-bold" onClick={() => setFilters({ search: "", category: "ALL", paymentMethod: "ALL", status: "ALL", fromDate: "", toDate: "" })}>
+                    <RotateCcw className="w-4 h-4 mr-2" /> Reset
                 </Button>
-                <Button size="sm" onClick={onApply} className="px-8">
-                    <Search className="w-3 h-3 mr-2" /> Apply Filters
+                <Button onClick={onApply} className="rounded-full font-black shadow-lg shadow-primary/20 px-8">
+                    <Search className="w-4 h-4 mr-2" /> Apply Filters
                 </Button>
             </div>
         </div>

@@ -1,89 +1,116 @@
-// pages/Property/PGDetails/components/DetailsView.tsx
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Edit3, Info as InfoIcon, Utensils, IndianRupee, PlusCircle } from "lucide-react";
+import { Edit3, Info as InfoIcon, Utensils, IndianRupee, PlusCircle, Building2, Phone, FileText, Layers } from "lucide-react";
 import type { Details } from "@/interfaces/pg";
 
 export default function DetailsView({ details, onEdit }: { details: Details | null; onEdit: () => void }) {
     if (!details) {
         return (
-            <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-2xl bg-muted/30">
-                <p className="text-muted-foreground mb-4 text-center">No extended details configured for this property yet.</p>
-                <Button onClick={onEdit} className="gap-2">
-                    <PlusCircle className="h-4 w-4" /> Add Property Details
+            <div className="flex flex-col items-center justify-center p-16 border-2 border-dashed rounded-[2rem] bg-muted/20 border-border/50">
+                <div className="p-4 rounded-full bg-primary/10 mb-4 text-primary">
+                    <InfoIcon className="h-8 w-8" />
+                </div>
+                <h3 className="text-lg font-black tracking-tight mb-1">Configuration Needed</h3>
+                <p className="text-muted-foreground mb-6 max-w-sm text-center">Set up your PG's operational rules to enable booking and tenant management.</p>
+                <Button onClick={onEdit} className="rounded-full px-8 h-12 font-bold gap-2">
+                    <PlusCircle className="h-4 w-4" /> Configure Property
                 </Button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold tracking-tight">Technical Details</h2>
-                <Button variant="outline" size="sm" onClick={onEdit} className="gap-2">
+                <div>
+                    <h2 className="text-3xl font-black tracking-tighter">Property Specifications</h2>
+                    <p className="text-muted-foreground font-medium">Operational, financial, and structural overview.</p>
+                </div>
+                <Button variant="outline" onClick={onEdit} className="rounded-full gap-2 px-6">
                     <Edit3 className="h-4 w-4" /> Edit Details
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Core Logistics */}
-                <SectionCard title="Logistics" icon={InfoIcon}>
-                    <Info label="PG Type" value={details.pgType} isBadge />
-                    <Info label="Contact" value={details.contactNumber} />
-                    <Info label="Floors" value={details.totalFloors} />
-                    <Info label="Reg No." value={details.registrationNo} />
-                </SectionCard>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="rounded-[2rem] border-border/50 shadow-sm">
+                    <CardContent className="p-8 space-y-6">
+                        <h4 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <InfoIcon className="h-4 w-4 text-primary" /> Logistics & Structure
+                        </h4>
+                        <div className="grid grid-cols-2 gap-4">
+                            <InfoRow label="PG Category" value={details.pgType} icon={Building2} />
+                            <InfoRow label="Total Floors" value={details.totalFloors} icon={Layers} />
+                            <InfoRow label="Contact Number" value={details.contactNumber} icon={Phone} />
+                            <InfoRow label="Registration" value={details.registrationNo} icon={FileText} />
+                        </div>
+                    </CardContent>
+                </Card>
 
-                {/* Food & Mess */}
-                <SectionCard title="Mess & Food" icon={Utensils}>
-                    <Info label="Mess Availability" value={details.messAvailable ? "Available" : "Not Available"} />
-                    <Info label="Dietary Preference" value={details.messType} />
-                </SectionCard>
+                <Card className="rounded-[2rem] border-border/50 shadow-sm">
+                    <CardContent className="p-8 space-y-6">
+                        <h4 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <Utensils className="h-4 w-4 text-primary" /> Food & Dining
+                        </h4>
+                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/30 border border-border/50">
+                            <div className="p-3 bg-background rounded-xl border shadow-sm text-primary">
+                                <Utensils className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mess Status</p>
+                                <p className="text-sm font-semibold">{details.messAvailable ? "Available" : "Not Provided"}</p>
+                            </div>
+                            {details.messAvailable && (
+                                <Badge variant="secondary" className="ml-auto font-bold rounded-full">{details.messType}</Badge>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
 
-                {/* Financials */}
-                <SectionCard title="Rent & Financials" icon={IndianRupee} className="md:col-span-2">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <Info label="Min Rent" value={`₹${details.rentStart ?? 0}`} />
-                        <Info label="Max Rent" value={`₹${details.rentUpto ?? 0}`} />
-                        <Info label="Rent Cycle Day" value={`${details.rentCycleDay}${getOrdinal(details.rentCycleDay)}`} />
-                        <Info label="Notice Period" value={`${details.noticePeriod} Days`} />
-                    </div>
-                </SectionCard>
+                <Card className="lg:col-span-2 rounded-[2rem] border-border/50 shadow-sm">
+                    <CardContent className="p-8 space-y-6">
+                        <h4 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <IndianRupee className="h-4 w-4 text-primary" /> Financial Framework
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <Stat label="Min Rent" value={`₹${details.rentStart}`} />
+                            <Stat label="Max Rent" value={`₹${details.rentUpto}`} />
+                            <Stat label="Rent Cycle" value={`${details.rentCycleDay}${getOrdinal(details.rentCycleDay)}`} />
+                            <Stat label="Notice Period" value={`${details.noticePeriod} Days`} />
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
 }
 
-function SectionCard({ title, icon: Icon, children, className }: any) {
+function InfoRow({ label, value, icon: Icon }: any) {
     return (
-        <Card className={className}>
-            <CardHeader className="pb-3 border-b mb-4">
-                <CardTitle className="text-sm font-bold flex items-center gap-2 text-muted-foreground uppercase tracking-wider">
-                    <Icon className="h-4 w-4" /> {title}
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">{children}</CardContent>
-        </Card>
+        <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/30">
+            <Icon className="h-4 w-4 mt-1 text-muted-foreground" />
+            <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+                <p className="text-sm font-semibold">{value || "—"}</p>
+            </div>
+        </div>
     );
 }
 
-function Info({ label, value, isBadge }: { label: string; value?: any; isBadge?: boolean }) {
+function Stat({ label, value }: { label: string; value: string }) {
     return (
-        <div>
-            <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
-            {isBadge && value ? (
-                <Badge variant="secondary" className="font-medium">{value}</Badge>
-            ) : (
-                <p className="font-semibold text-sm">{value ?? "—"}</p>
-            )}
+        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10">
+            <p className="text-[10px] font-black uppercase tracking-widest text-primary/70">{label}</p>
+            <p className="text-xl font-black mt-1">{value}</p>
         </div>
     );
 }
 
 function getOrdinal(d: any) {
-    if (d > 3 && d < 21) return 'th';
-    switch (d % 10) {
+    if (!d) return "";
+    const n = parseInt(d);
+    if (n > 3 && n < 21) return 'th';
+    switch (n % 10) {
         case 1: return "st";
         case 2: return "nd";
         case 3: return "rd";

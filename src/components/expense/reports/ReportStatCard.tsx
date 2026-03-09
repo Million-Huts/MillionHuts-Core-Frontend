@@ -11,26 +11,27 @@ interface StatCardProps {
 
 export default function ReportStatCard({ title, value, icon: Icon, color, description }: StatCardProps) {
     return (
-        <Card className="border-none shadow-sm bg-white overflow-hidden relative">
-            <CardContent className="p-6">
+        <Card className="border-none shadow-sm bg-card rounded-[2rem] overflow-hidden relative">
+            <CardContent className="p-8">
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                             {title}
                         </p>
-                        <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
+                        <h3 className="text-3xl font-black tracking-tighter text-foreground">
                             {value}
                         </h3>
                         {description && (
-                            <p className="text-xs text-slate-400 mt-1">{description}</p>
+                            <p className="text-xs font-medium text-muted-foreground mt-1">{description}</p>
                         )}
                     </div>
-                    <div className={`p-4 rounded-2xl bg-slate-50 border border-slate-100`}>
-                        <Icon className={`w-6 h-6 ${color}`} />
+                    <div className="p-4 rounded-2xl bg-muted/30">
+                        <Icon className={`w-7 h-7 ${color}`} />
                     </div>
                 </div>
-                {/* Subtle decorative background shape */}
-                <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full opacity-5 ${color.replace('text', 'bg')}`} />
+
+                {/* Decorative background accent */}
+                <div className={`absolute -right-6 -bottom-6 w-32 h-32 rounded-full opacity-[0.03] ${color.replace('text', 'bg')}`} />
             </CardContent>
         </Card>
     );

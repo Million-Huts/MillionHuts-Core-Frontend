@@ -1,31 +1,56 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, CreditCard, UserCog, Ghost } from "lucide-react";
+import {
+    Building2,
+    CreditCard,
+    UserCog,
+    Wrench,
+    ArrowRight,
+    type LucideIcon
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+
+interface ModuleStats {
+    label: string;
+    value: string | number;
+    highlight?: boolean;
+}
+
+interface ModuleCardProps {
+    title: string;
+    icon: LucideIcon;
+    stats: ModuleStats[];
+    index: number;
+}
 
 export default function ModuleGrid({ modules }: any) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Floor/Room Module */}
+            {/* Infrastructure Module */}
             <ModuleCard
+                index={0}
                 title="Infrastructure"
-                icon={Building}
+                icon={Building2}
                 stats={[
                     { label: "Floors", value: modules.floor.floors },
-                    { label: "Occupied Rooms", value: `${modules.floor.occupiedRooms}/${modules.floor.createdRooms}` }
+                    { label: "Occupancy", value: `${modules.floor.occupiedRooms}/${modules.floor.createdRooms}` }
                 ]}
             />
 
-            {/* Complaint Module */}
+            {/* Maintenance Module */}
             <ModuleCard
+                index={1}
                 title="Maintenance"
-                icon={Ghost}
+                icon={Wrench}
                 stats={[
-                    { label: "Open Issues", value: modules.complaints.open, highlight: true },
+                    { label: "Open Issues", value: modules.complaints.open, highlight: modules.complaints.open > 0 },
                     { label: "In Progress", value: modules.complaints.inProgress }
                 ]}
             />
 
-            {/* Expense Module */}
+            {/* Finance Module */}
             <ModuleCard
+                index={2}
                 title="Finances"
                 icon={CreditCard}
                 stats={[
@@ -34,8 +59,9 @@ export default function ModuleGrid({ modules }: any) {
                 ]}
             />
 
-            {/* Staff/User Module */}
+            {/* Team Module */}
             <ModuleCard
+                index={3}
                 title="Team"
                 icon={UserCog}
                 stats={[
@@ -47,23 +73,51 @@ export default function ModuleGrid({ modules }: any) {
     );
 }
 
-function ModuleCard({ title, icon: Icon, stats }: any) {
+function ModuleCard({ title, icon: Icon, stats, index }: ModuleCardProps) {
     return (
-        <Card className="border-none shadow-sm hover:shadow-md transition-shadow md:rounded-3xl rounded-lg overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-bold uppercase text-slate-500 tracking-tighter">{title}</CardTitle>
-                <Icon className="w-4 h-4 text-slate-400" />
-            </CardHeader>
-            <CardContent>
-                <div className="flex justify-between items-end mt-2">
-                    {stats.map((s: any, i: number) => (
-                        <div key={i} className={i > 0 ? "text-right" : ""}>
-                            <p className="text-2xl font-black text-slate-800">{s.value}</p>
-                            <p className="text-xs text-slate-400 font-medium">{s.label}</p>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+        >
+            <Card className="group relative border-border bg-card shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 md:rounded-[2rem] rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/10">
+                {/* Subtle Background Glow */}
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-colors" />
+
+                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                        {title}
+                    </CardTitle>
+                    <div className="p-2 rounded-xl bg-muted/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-all">
+                        <Icon className="w-4 h-4" />
+                    </div>
+                </CardHeader>
+
+                <CardContent>
+                    <div className="flex justify-between items-end mt-4">
+                        {stats.map((s, i) => (
+                            <div key={i} className={cn("space-y-1", i > 0 && "text-right")}>
+                                <p className={cn(
+                                    "text-2xl font-black tracking-tighter transition-colors",
+                                    s.highlight ? "text-destructive" : "text-foreground"
+                                )}>
+                                    {s.value}
+                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+                                    {s.label}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Bottom Action Hint */}
+                    <div className="mt-6 flex items-center justify-end">
+                        <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                            View Module <ArrowRight className="h-3 w-3" />
                         </div>
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
+                    </div>
+                </CardContent>
+            </Card>
+        </motion.div>
     );
 }

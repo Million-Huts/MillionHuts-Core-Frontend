@@ -3,13 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
-import type { Floor } from "./Floors";
+import type { Floor } from "@/interfaces/floor";
 import { usePG } from "@/context/PGContext";
-import type { Room } from "../Room/Rooms";
+import type { Room } from "@/interfaces/room";
 import EmptyRoomsState from "@/components/room/EmptyRoomsState";
 import RoomGrid from "@/components/room/RoomGrid";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Edit3, CheckCircle2, DoorOpen, MapPinned } from "lucide-react";
+import { ChevronLeft, Edit3, DoorOpen, MapPinned } from "lucide-react";
 import EditFloorModal from "@/components/floor/EditFloorModal";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -28,75 +28,68 @@ export default function FloorDetails() {
         if (!pgId || !floorId) return;
         setLoading(true);
         try {
-            // Fetch Floor Info
-            const floorRes = await apiPrivate.get(`/pgs/${pgId}/floors/${floorId}`);
+            const [floorRes, roomRes] = await Promise.all([
+                apiPrivate.get(`/pgs/${pgId}/floors/${floorId}`),
+                apiPrivate.get(`/pgs/${pgId}/rooms/floor/${floorId}`)
+            ]);
             setFloor(floorRes.data.data.floor);
-
-            // Fetch Rooms for this Floor
-            const roomRes = await apiPrivate.get(`/pgs/${pgId}/rooms/floor/${floorId}`);
             setRooms(roomRes.data.data.rooms || []);
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Error loading data");
+        } catch {
+            toast.error("Failed to load floor details");
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, [pgId, floorId]);
+    useEffect(() => { fetchData(); }, [pgId, floorId]);
 
     if (loading && !floor) return (
-        <div className="p-8 space-y-6 max-w-7xl mx-auto">
-            <Skeleton className="h-10 w-48" />
-            <Skeleton className="h-64 w-full md:rounded-3xl rounded-lg" />
+        <div className="p-8 max-w-7xl mx-auto space-y-8">
+            <Skeleton className="h-10 w-48 rounded-2xl" />
+            <Skeleton className="h-40 w-full rounded-[2rem]" />
         </div>
     );
 
     return (
-        <div className="p-1 md:p-8 max-w-7xl mx-auto space-y-8">
-            {/* Header / Breadcrumb */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-                    >
+        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
                         <ChevronLeft className="h-4 w-4" /> Back to Floors
                     </button>
-                    <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
-                        Floor {floor?.label}
-                        <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-3">Live</Badge>
+                    <h1 className="text-4xl font-black tracking-tighter mt-2 flex items-center gap-4">
+                        {floor?.label}
+                        <Badge className="rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none px-4">Live</Badge>
                     </h1>
                 </div>
-                <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="rounded-3xl rounded-lg gap-2 border-2">
-                    <Edit3 className="h-4 w-4" /> Edit Floor Details
+                <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="rounded-full h-12 px-6 gap-2">
+                    <Edit3 className="h-4 w-4" /> Configure Floor
                 </Button>
             </div>
 
-            {/* Quick Stats Card */}
+            {/* Metadata Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-card border md:rounded-3xl rounded-lg p-6 shadow-sm flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="bg-card border rounded-[2rem] p-6 flex items-center gap-4 shadow-sm">
+                    <div className="h-14 w-14 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                         <DoorOpen className="h-6 w-6" />
                     </div>
                     <div>
-                        <p className="text-xs font-bold text-muted-foreground uppercase">Capacity</p>
-                        <p className="text-xl font-bold">{floor?.totalRooms} Rooms</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Capacity</p>
+                        <p className="text-xl font-black">{floor?.totalRooms} Rooms</p>
                     </div>
                 </div>
 
-                <div className="md:col-span-2 bg-card border md:rounded-3xl rounded-lg p-6 shadow-sm flex flex-col justify-center">
-                    <p className="text-xs font-bold text-muted-foreground uppercase mb-2 flex items-center gap-1">
+                <div className="md:col-span-2 bg-card border rounded-[2rem] p-6 flex flex-col justify-center shadow-sm">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
                         <MapPinned className="h-3 w-3" /> Shared Facilities
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {floor?.publicPlaces.length === 0 ? (
-                            <span className="text-sm text-muted-foreground italic">No common areas defined</span>
+                            <span className="text-sm font-medium text-muted-foreground italic">No common areas defined</span>
                         ) : (
                             floor?.publicPlaces.map((place, idx) => (
-                                <Badge key={idx} variant="secondary" className="rounded-lg py-1 px-3 flex gap-2 items-center font-medium">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-blue-500" />
+                                <Badge key={idx} variant="secondary" className="rounded-full py-1.5 px-4 font-bold tracking-tight">
                                     {place}
                                 </Badge>
                             ))
@@ -105,14 +98,14 @@ export default function FloorDetails() {
                 </div>
             </div>
 
-            {/* Rooms Section */}
-            <div className="space-y-4">
+            {/* Content Section */}
+            <div className="space-y-6">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="text-xl font-bold tracking-tight">Rooms on this Level</h3>
-                    <Badge variant="outline">{rooms.length} Active Units</Badge>
+                    <h3 className="text-2xl font-black tracking-tighter">Rooms Overview</h3>
+                    <Badge variant="outline" className="rounded-full px-4">{rooms.length} Active Units</Badge>
                 </div>
 
-                <div className="bg-muted/30 rounded-[2.5rem] p-2 md:p-6 border-2 border-dashed">
+                <div className="bg-muted/20 rounded-[2.5rem] p-6 md:p-10 border-2 border-dashed border-border">
                     {rooms.length === 0 ? (
                         <EmptyRoomsState onAdd={() => navigate('/rooms/add')} />
                     ) : (
@@ -121,7 +114,6 @@ export default function FloorDetails() {
                 </div>
             </div>
 
-            {/* Edit Modal */}
             {floor && (
                 <EditFloorModal
                     open={isEditModalOpen}

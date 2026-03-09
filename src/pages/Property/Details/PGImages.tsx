@@ -1,4 +1,3 @@
-// pages/Property/PGImages/PGImages.tsx
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Plus, Image as ImageIcon, Loader2 } from "lucide-react";
@@ -28,10 +27,11 @@ export default function PGImages() {
 
     const fetchImages = useCallback(async () => {
         try {
+            setLoading(true);
             const res = await apiPrivate.get(`/pgs/${pgId}/images`);
             setImages(res.data.data.images);
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to load images");
+            toast.error("Failed to load property images");
         } finally {
             setLoading(false);
         }
@@ -49,22 +49,24 @@ export default function PGImages() {
         }
     };
 
-    if (loading) return (
-        <div className="flex h-64 flex-col items-center justify-center gap-2">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground font-medium">Loading Gallery...</p>
-        </div>
-    );
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] w-full gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">Loading Gallery Assets...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Property Gallery</h2>
-                    <p className="text-muted-foreground text-sm">High-quality photos increase booking chances by 40%.</p>
+                    <h2 className="text-3xl font-black tracking-tighter">Property Gallery</h2>
+                    <p className="text-muted-foreground font-medium">High-quality visuals increase booking conversion by 40%.</p>
                 </div>
                 {!uploadMode && (
-                    <Button onClick={() => setUploadMode(true)} className="gap-2 shadow-md">
+                    <Button onClick={() => setUploadMode(true)} className="rounded-full px-6 gap-2">
                         <Plus className="h-4 w-4" /> Add Photos
                     </Button>
                 )}
@@ -72,11 +74,7 @@ export default function PGImages() {
 
             <AnimatePresence mode="wait">
                 {uploadMode ? (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                    >
+                    <motion.div key="upload" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
                         <UploadImagesView
                             pgId={pgId!}
                             onCancel={() => setUploadMode(false)}
@@ -84,24 +82,25 @@ export default function PGImages() {
                         />
                     </motion.div>
                 ) : images.length > 0 ? (
-                    <ImagesGrid
-                        images={images}
-                        onPreview={setPreviewIndex}
-                        onDelete={setDeleteImage}
-                        onMakeCover={handleMakeCover}
-                    />
+                    <motion.div key="grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <ImagesGrid
+                            images={images}
+                            onPreview={setPreviewIndex}
+                            onDelete={setDeleteImage}
+                            onMakeCover={handleMakeCover}
+                        />
+                    </motion.div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-3xl bg-muted/30">
-                        <div className="p-4 bg-background rounded-full shadow-sm mb-4">
-                            <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
+                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-24 rounded-[2rem] border-2 border-dashed bg-muted/20 border-border/50">
+                        <div className="p-4 bg-background rounded-2xl shadow-sm mb-4">
+                            <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
                         </div>
-                        <p className="text-muted-foreground font-medium text-center">Your gallery is empty.</p>
-                        <Button variant="link" onClick={() => setUploadMode(true)}>Upload your first photo</Button>
-                    </div>
+                        <p className="text-muted-foreground font-bold">Your gallery is currently empty.</p>
+                        <Button variant="link" onClick={() => setUploadMode(true)} className="font-bold">Upload your first photo</Button>
+                    </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Modals remain similarly logic-driven but styled via their own components */}
             {previewIndex !== null && (
                 <ImagePreviewModal
                     images={images}
@@ -121,7 +120,7 @@ export default function PGImages() {
                             setImages((prev) => prev.filter((img) => img.id !== deleteImage.id));
                             toast.success("Image removed");
                         } catch {
-                            toast.error("Failed to delete");
+                            toast.error("Failed to delete image");
                         } finally {
                             setDeleteImage(null);
                         }

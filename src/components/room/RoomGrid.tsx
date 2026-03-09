@@ -1,5 +1,5 @@
 import RoomCard from "./RoomCard";
-import type { Room } from "@/pages/Room/Rooms";
+import type { Room } from "@/interfaces/room";
 
 export default function RoomGrid({ rooms }: { rooms: Room[] }) {
     return (

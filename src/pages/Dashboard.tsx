@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePG } from "@/context/PGContext";
 import { apiPrivate } from "@/lib/api";
-import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 // Components
 import OverviewStats from "@/components/dashboard/OverviewStats";
@@ -11,6 +11,10 @@ import InfrastructureCard from "@/components/dashboard/InfrastructureCard";
 import ApplicationPipeline from "@/components/dashboard/ApplicationPipeline";
 import QuickActions from "@/components/dashboard/QuickActions";
 import ModuleGrid from "@/components/dashboard/ModuleGrid";
+import EmptyPG from "@/components/shared/EmptyPG";
+import EmptyState from "@/components/shared/EmptyState";
+import { LayoutDashboard } from "lucide-react";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 
 export default function Dashboard() {
     const { currentPG } = usePG();
@@ -33,21 +37,51 @@ export default function Dashboard() {
         fetchDashboard();
     }, [currentPG?.id]);
 
-    if (loading) return <DashboardLoadingSkeleton />;
+    // Handle case where no PG is selected/exists
+    if (!currentPG) return <EmptyPG />;
 
-    if (!data) return <div className="p-8 text-center">No data found for this property.</div>;
+    // Handle API loading state
+    if (loading) return (
+        <div className="relative min-h-screen">
+            <LoadingOverlay isLoading={loading} message="Loading Dashboard..." variant="block" />
+        </div>
+    )
+
+    // Handle data not found for a specific PG
+    if (!data) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh] p-8">
+                <EmptyState
+                    title="No Dashboard Data"
+                    desc="We couldn't find any operational data for this property. Try completing the property setup."
+                    icon={LayoutDashboard}
+                />
+            </div>
+        );
+    }
 
     const { stats, alerts, modules, actions } = data;
 
     return (
-        <div className="md:p-8 max-w-[1600px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-8"
+        >
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div>
-                    <h1 className="text-4xl font-black tracking-tighter text-slate-900">
+                <div className="space-y-1">
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-foreground">
                         {modules.property.info.name}
                     </h1>
-                    <p className="text-slate-500 font-medium">{modules.property.info.city} • Dashboard Overview</p>
+                    <div className="flex items-center gap-2 text-muted-foreground font-medium">
+                        <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
+                            {modules.property.info.city}
+                        </span>
+                        <span>•</span>
+                        <span>Property Overview</span>
+                    </div>
                 </div>
                 <QuickActions actions={actions} />
             </div>
@@ -74,16 +108,6 @@ export default function Dashboard() {
                     <AlertFeed alerts={alerts} />
                 </div>
             </div>
-        </div>
-    );
-}
-
-function DashboardLoadingSkeleton() {
-    return (
-        <div className="md:p-8 space-y-8">
-            <div className="flex justify-between"><Skeleton className="h-12 w-64" /><Skeleton className="h-10 w-48" /></div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6"><Skeleton className="h-48 rounded-3xl" /><Skeleton className="h-48 rounded-3xl" /><Skeleton className="h-48 rounded-3xl" /></div>
-            <div className="grid grid-cols-4 gap-4"><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-24 rounded-xl" /><Skeleton className="h-24 rounded-xl" /></div>
-        </div>
+        </motion.div>
     );
 }

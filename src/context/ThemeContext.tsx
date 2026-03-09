@@ -1,43 +1,49 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+// 1. Define your theme types to match the CSS classes exactly
+export type Theme = "light" | "dark" | "nord" | "midnight";
 
 interface ThemeContextType {
     theme: Theme;
-    toggleTheme: () => void;
+    setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-    // Initialize from localStorage or system preference
+    // 2. Initialize from localStorage with a fallback to system preference
     const [theme, setTheme] = useState<Theme>(() => {
-        const saved = localStorage.getItem("theme") as Theme;
+        const saved = localStorage.getItem("app-theme") as Theme;
         if (saved) return saved;
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
+        // Fallback to system dark mode if no preference is saved
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
     });
 
+    // 3. Effect to update the DOM whenever the theme changes
     useEffect(() => {
         const root = window.document.documentElement;
-        // Remove both classes to reset
-        root.classList.remove("light", "dark");
-        // Add the current theme class
+
+        // Remove all possible theme classes first
+        root.classList.remove("light", "dark", "nord", "midnight");
+
+        // Add the current selection
         root.classList.add(theme);
-        // Persist
-        localStorage.setItem("theme", theme);
+
+        // Persist the choice
+        localStorage.setItem("app-theme", theme);
     }, [theme]);
 
-    const toggleTheme = () => {
-        setTheme((prev) => (prev === "light" ? "dark" : "light"));
-    };
-
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, setTheme }}>
             {children}
         </ThemeContext.Provider>
     );
 };
 
+// 4. Custom hook for easy access
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) throw new Error("useTheme must be used within ThemeProvider");

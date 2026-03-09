@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { apiPrivate } from "@/lib/api";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import type { Floor } from "@/pages/Floor/Floors";
-import { X, Plus, Sparkles, Check } from "lucide-react";
+import type { Floor } from "@/interfaces/floor";
+import { X, Plus, Check, Building2 } from "lucide-react";
 
 interface Props {
     open: boolean;
@@ -28,7 +28,6 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
     const [showCustomInput, setShowCustomInput] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    // Auto-initialize label when modal opens
     useEffect(() => {
         if (open) {
             setLabel(`Floor ${currentFloorCount + 1}`);
@@ -39,45 +38,30 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
     }, [open, currentFloorCount]);
 
     const togglePlace = (place: string) => {
-        if (publicPlaces.includes(place)) {
-            setPublicPlaces(publicPlaces.filter(p => p !== place));
-        } else {
-            setPublicPlaces([...publicPlaces, place]);
-        }
+        setPublicPlaces(prev => prev.includes(place) ? prev.filter(p => p !== place) : [...prev, place]);
     };
 
     const addCustomPlace = () => {
         const val = placeInput.trim();
-        if (!val) return;
-        if (publicPlaces.includes(val)) {
-            toast.error("Area already added");
-            return;
+        if (val && !publicPlaces.includes(val)) {
+            setPublicPlaces([...publicPlaces, val]);
+            setPlaceInput("");
+            setShowCustomInput(false);
         }
-        setPublicPlaces([...publicPlaces, val]);
-        setPlaceInput("");
-        setShowCustomInput(false);
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSubmitting(true);
-
-        const payload = {
-            pgId,
-            label,
-            totalRooms: Number(roomCount),
-            publicPlaces,
-            autoIncreaseLimit,
-            currentFloorCount
-        };
-
         try {
-            const res = await apiPrivate.post(`/pgs/${pgId}/floors`, payload);
+            const res = await apiPrivate.post(`/pgs/${pgId}/floors`, {
+                pgId, label, totalRooms: Number(roomCount), publicPlaces, autoIncreaseLimit, currentFloorCount
+            });
             onCreated(res.data.data.floor);
-            toast.success("New floor added successfully!");
+            toast.success("Floor added successfully");
             onClose();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to create floor");
+        } catch {
+            toast.error("Failed to create floor");
         } finally {
             setSubmitting(false);
         }
@@ -85,109 +69,72 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[480px] rounded-3xl max-h-[90vh] overflow-y-auto border-none shadow-2xl">
-                <DialogHeader>
-                    <div className="h-12 w-12 bg-indigo-100 rounded-2xl flex items-center justify-center mb-2">
-                        <Sparkles className="h-6 w-6 text-indigo-600" />
+            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+                <div className="p-8 pb-4 bg-muted/20">
+                    <div className="h-16 w-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-6 shadow-inner">
+                        <Building2 className="h-8 w-8" />
                     </div>
-                    <DialogTitle className="text-2xl font-bold">Add New Floor</DialogTitle>
-                    <DialogDescription>Setup the structural details for this level.</DialogDescription>
-                </DialogHeader>
+                    <DialogTitle className="text-2xl font-black tracking-tighter">Add New Floor</DialogTitle>
+                    <DialogDescription className="font-medium text-muted-foreground mt-1">
+                        Define structural details for this level.
+                    </DialogDescription>
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-                    {/* Basic Info Row */}
+                <form onSubmit={handleSubmit} className="p-8 pt-4 space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Floor Label</Label>
-                            <Input
-                                value={label}
-                                onChange={(e) => setLabel(e.target.value)}
-                                placeholder="e.g. 2nd Floor"
-                                required
-                                className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
-                            />
+                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Label</Label>
+                            <Input value={label} onChange={(e) => setLabel(e.target.value)} className="h-12 rounded-2xl bg-muted/30" />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Room Capacity</Label>
+                            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Capacity</Label>
                             <Select value={roomCount} onValueChange={setRoomCount}>
-                                <SelectTrigger className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all">
-                                    <SelectValue placeholder="Rooms" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    {[...Array(15)].map((_, i) => (
-                                        <SelectItem key={i + 1} value={(i + 1).toString()}>
-                                            {i + 1} {i === 0 ? 'Room' : 'Rooms'}
-                                        </SelectItem>
-                                    ))}
+                                <SelectTrigger className="h-12 rounded-2xl bg-muted/30"><SelectValue /></SelectTrigger>
+                                <SelectContent className="rounded-2xl">
+                                    {[...Array(15)].map((_, i) => <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1} Rooms</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
 
-                    {/* Common Areas Selection */}
                     <div className="space-y-3">
-                        <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Common Areas</Label>
-
+                        <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Common Areas</Label>
                         <div className="flex flex-wrap gap-2">
-                            {COMMON_SUGGESTIONS.map((suggestion) => {
-                                const isSelected = publicPlaces.includes(suggestion);
-                                return (
-                                    <button
-                                        key={suggestion}
-                                        type="button"
-                                        onClick={() => togglePlace(suggestion)}
-                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${isSelected
-                                            ? "bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100"
-                                            : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300"
-                                            }`}
-                                    >
-                                        {isSelected && <Check className="h-3 w-3" />}
-                                        {suggestion}
-                                    </button>
-                                );
-                            })}
+                            {COMMON_SUGGESTIONS.map(place => (
+                                <button key={place} type="button" onClick={() => togglePlace(place)}
+                                    className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${publicPlaces.includes(place) ? "bg-primary text-primary-foreground border-primary" : "bg-muted/50 border-transparent hover:border-primary/50"}`}>
+                                    {publicPlaces.includes(place) && <Check className="h-3 w-3 inline mr-2" />}
+                                    {place}
+                                </button>
+                            ))}
 
                             {!showCustomInput && (
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCustomInput(true)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border border-dashed border-slate-300 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 transition-all"
-                                >
-                                    <Plus className="h-3 w-3" />
-                                    Other
+                                <button type="button" onClick={() => setShowCustomInput(true)} className="px-4 py-2 rounded-full text-sm font-bold border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:text-primary transition-all">
+                                    <Plus className="h-3 w-3 inline mr-1" /> Add Custom
                                 </button>
                             )}
                         </div>
 
                         {showCustomInput && (
                             <div className="flex gap-2 animate-in slide-in-from-left-2 duration-300">
-                                <Input
-                                    autoFocus
-                                    value={placeInput}
-                                    onChange={(e) => setPlaceInput(e.target.value)}
-                                    placeholder="Enter custom area..."
-                                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomPlace())}
-                                    className="rounded-xl h-9"
-                                />
-                                <Button type="button" size="sm" onClick={addCustomPlace} className="rounded-xl h-9">Add</Button>
-                                <Button type="button" size="sm" variant="ghost" onClick={() => setShowCustomInput(false)} className="rounded-xl h-9 px-2"><X className="h-4 w-4" /></Button>
+                                <Input autoFocus value={placeInput} onChange={(e) => setPlaceInput(e.target.value)} placeholder="e.g. Yoga Room" className="h-10 rounded-xl" />
+                                <Button type="button" onClick={addCustomPlace} className="rounded-xl h-10 px-4">Add</Button>
+                                <Button type="button" variant="ghost" onClick={() => setShowCustomInput(false)} className="rounded-xl h-10 px-2"><X className="h-4 w-4" /></Button>
                             </div>
                         )}
 
-                        {/* Visual Display for custom items */}
                         <div className="flex flex-wrap gap-2 pt-2">
                             {publicPlaces.filter(p => !COMMON_SUGGESTIONS.includes(p)).map((place, i) => (
-                                <span key={i} className="flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-full text-xs font-bold animate-in zoom-in-50">
-                                    {place}
-                                    <X className="h-3 w-3 cursor-pointer hover:text-red-500" onClick={() => togglePlace(place)} />
+                                <span key={i} className="flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
+                                    {place} <X className="h-3 w-3 cursor-pointer hover:text-destructive" onClick={() => togglePlace(place)} />
                                 </span>
                             ))}
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-xl font-semibold">Cancel</Button>
-                        <Button type="submit" disabled={submitting} className="rounded-xl px-8 font-bold shadow-lg shadow-indigo-100">
+                    <div className="flex justify-end gap-3 pt-4 border-t">
+                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-full h-12 px-6 font-bold">Cancel</Button>
+                        <Button type="submit" disabled={submitting} className="rounded-full h-12 px-8 font-black shadow-lg shadow-primary/20">
                             {submitting ? "Processing..." : "Confirm Floor"}
                         </Button>
                     </div>

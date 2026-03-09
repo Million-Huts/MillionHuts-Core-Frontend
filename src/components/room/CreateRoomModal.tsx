@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { apiPrivate } from "@/lib/api";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import type { Room } from "@/pages/Room/Rooms";
-import type { Floor } from "@/pages/Floor/Floors";
+import type { Room } from "@/interfaces/room";
+import type { Floor } from "@/interfaces/floor";
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from "../ui/select";
 import { Label } from "../ui/label";
-import { AlertCircle, Loader2, Sparkles, X, Plus, Check } from "lucide-react";
+import { AlertCircle, Loader2, Sparkles, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -63,15 +63,12 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
             }
         };
         fetchFloors();
-        // Reset local states
         setFeatures([]);
         setShowCustomFeature(false);
     }, [open, pgId]);
 
     const toggleFeature = (feature: string) => {
-        setFeatures(prev =>
-            prev.includes(feature) ? prev.filter(f => f !== feature) : [...prev, feature]
-        );
+        setFeatures(prev => prev.includes(feature) ? prev.filter(f => f !== feature) : [...prev, feature]);
     };
 
     const addCustomFeature = () => {
@@ -89,15 +86,13 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
-        const payload = {
-            ...formData,
-            pgId,
-            rent: Number(formData.rent),
-            features
-        };
-
         try {
-            const res = await apiPrivate.post(`/pgs/${pgId}/rooms`, payload);
+            const res = await apiPrivate.post(`/pgs/${pgId}/rooms`, {
+                ...formData,
+                pgId,
+                rent: Number(formData.rent),
+                features
+            });
             onCreated(res.data.data.room);
             toast.success("Room registered successfully");
             onClose();
@@ -110,162 +105,103 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[550px] rounded-[2.5rem] max-h-[90vh] overflow-y-auto border-none shadow-2xl">
+            <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-8">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center p-20">
-                        <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />
-                        <p className="mt-4 font-bold text-muted-foreground tracking-tight">Syncing floors...</p>
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                        <p className="mt-4 font-bold text-muted-foreground">Syncing structure...</p>
                     </div>
                 ) : floorError ? (
-                    <div className="p-8 text-center space-y-6">
-                        <div className="mx-auto h-16 w-16 rounded-full bg-red-50 flex items-center justify-center">
-                            <AlertCircle className="h-8 w-8 text-red-500" />
+                    <div className="text-center space-y-6">
+                        <div className="mx-auto h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center">
+                            <AlertCircle className="h-10 w-10 text-destructive" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold italic">Missing Infrastructure</h3>
-                            <p className="text-muted-foreground mt-2 text-sm">You need at least one floor before adding rooms.</p>
+                            <h3 className="text-2xl font-black">Missing Infrastructure</h3>
+                            <p className="text-muted-foreground mt-2">You need to set up floors before adding rooms.</p>
                         </div>
-                        <Button asChild className="w-full rounded-xl h-12 shadow-lg shadow-red-100 bg-red-600 hover:bg-red-700">
-                            <Link to="/floors">Go to Floor Settings</Link>
+                        <Button asChild className="w-full rounded-full h-12">
+                            <Link to="/floors">Configure Floors</Link>
                         </Button>
                     </div>
                 ) : (
                     <>
-                        <DialogHeader>
-                            <div className="h-12 w-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2">
-                                <Sparkles className="h-6 w-6 text-indigo-600" />
+                        <DialogHeader className="mb-6">
+                            <div className="h-14 w-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                                <Sparkles className="h-7 w-7 text-primary" />
                             </div>
-                            <DialogTitle className="text-2xl font-black">Register Room</DialogTitle>
-                            <DialogDescription>Define the specifics for this new unit.</DialogDescription>
+                            <DialogTitle className="text-3xl font-black tracking-tighter">Register Room</DialogTitle>
+                            <DialogDescription className="text-base font-medium">Add a new unit to your PG inventory.</DialogDescription>
                         </DialogHeader>
 
-                        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-                            {/* Identity Row */}
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Room Name / No</Label>
-                                    <Input
-                                        placeholder="e.g. 101"
-                                        required
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
-                                    />
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room ID / No</Label>
+                                    <Input required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Assign to Floor</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Floor Assignment</Label>
                                     <Select onValueChange={v => setFormData({ ...formData, floorId: v })} required>
-                                        <SelectTrigger className="rounded-xl bg-slate-50 border-slate-200"><SelectValue placeholder="Floor" /></SelectTrigger>
-                                        <SelectContent className="rounded-xl">
+                                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue placeholder="Select floor" /></SelectTrigger>
+                                        <SelectContent className="rounded-2xl">
                                             {floors.map(f => <SelectItem key={f.id} value={f.id!}>{f.label}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                 </div>
                             </div>
 
-                            {/* Configuration Row */}
                             <div className="grid grid-cols-3 gap-4">
-                                <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Sharing</Label>
-                                    <Select
-                                        defaultValue="SINGLE"
-                                        onValueChange={v => setFormData({ ...formData, sharing: v, capacity: SHARING_OPTIONS.find(s => s.type === v)?.capacity || 1 })}
-                                    >
-                                        <SelectTrigger className="rounded-xl bg-slate-50 border-slate-200"><SelectValue /></SelectTrigger>
-                                        <SelectContent className="rounded-xl">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sharing</Label>
+                                    <Select defaultValue="SINGLE" onValueChange={v => setFormData({ ...formData, sharing: v, capacity: SHARING_OPTIONS.find(s => s.type === v)?.capacity || 1 })}>
+                                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                        <SelectContent className="rounded-2xl">
                                             {SHARING_OPTIONS.map(s => <SelectItem key={s.type} value={s.type}>{s.type}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Room Type</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room Type</Label>
                                     <Select defaultValue="NORMAL" onValueChange={v => setFormData({ ...formData, roomType: v })}>
-                                        <SelectTrigger className="rounded-xl bg-slate-50 border-slate-200"><SelectValue /></SelectTrigger>
-                                        <SelectContent className="rounded-xl">
+                                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                        <SelectContent className="rounded-2xl">
                                             <SelectItem value="NORMAL">Normal</SelectItem>
                                             <SelectItem value="AC">AC</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Rent (₹)</Label>
-                                    <Input
-                                        type="number"
-                                        placeholder="0.00"
-                                        required
-                                        value={formData.rent}
-                                        onChange={e => setFormData({ ...formData, rent: e.target.value })}
-                                        className="rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
-                                    />
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rent (₹)</Label>
+                                    <Input type="number" required value={formData.rent} onChange={e => setFormData({ ...formData, rent: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
                                 </div>
                             </div>
 
-                            {/* Room Amenities (Chip Selection) */}
                             <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase text-slate-500 ml-1">Room Amenities</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Amenities</Label>
                                 <div className="flex flex-wrap gap-2">
-                                    {COMMON_AMENITIES.map((item) => {
-                                        const isSelected = features.includes(item);
-                                        return (
-                                            <button
-                                                key={item}
-                                                type="button"
-                                                onClick={() => toggleFeature(item)}
-                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${isSelected
-                                                        ? "bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100"
-                                                        : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300"
-                                                    }`}
-                                            >
-                                                {isSelected && <Check className="h-3 w-3" />}
-                                                {item}
-                                            </button>
-                                        );
-                                    })}
-
+                                    {COMMON_AMENITIES.map((item) => (
+                                        <button key={item} type="button" onClick={() => toggleFeature(item)} className={`px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${features.includes(item) ? "bg-primary text-primary-foreground border-primary" : "bg-muted/30 border-transparent hover:border-primary/50"}`}>
+                                            {item}
+                                        </button>
+                                    ))}
                                     {!showCustomFeature && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowCustomFeature(true)}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-dashed border-slate-300 text-slate-400 hover:border-indigo-400 hover:text-indigo-500 transition-all"
-                                        >
-                                            <Plus className="h-3 w-3" />
-                                            Other
+                                        <button type="button" onClick={() => setShowCustomFeature(true)} className="px-4 py-2 rounded-full text-xs font-bold border-2 border-dashed border-muted-foreground/30 hover:border-primary text-muted-foreground">
+                                            <Plus className="h-3 w-3 inline mr-1" /> Add Custom
                                         </button>
                                     )}
                                 </div>
-
                                 {showCustomFeature && (
-                                    <div className="flex gap-2 animate-in slide-in-from-left-1 duration-200 mt-2">
-                                        <Input
-                                            autoFocus
-                                            value={featureInput}
-                                            onChange={(e) => setFeatureInput(e.target.value)}
-                                            placeholder="Enter amenity..."
-                                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomFeature())}
-                                            className="rounded-xl h-9 text-sm"
-                                        />
-                                        <Button type="button" size="sm" onClick={addCustomFeature} className="rounded-xl h-9">Add</Button>
-                                        <Button type="button" size="sm" variant="ghost" onClick={() => setShowCustomFeature(false)} className="rounded-xl h-9 px-2"><X className="h-4 w-4" /></Button>
+                                    <div className="flex gap-2 mt-2 animate-in fade-in">
+                                        <Input autoFocus value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} placeholder="New amenity..." className="h-10 rounded-xl" onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomFeature())} />
+                                        <Button type="button" size="sm" onClick={addCustomFeature} className="h-10 px-4 rounded-xl">Add</Button>
                                     </div>
                                 )}
-
-                                {/* Custom Items Display */}
-                                <div className="flex flex-wrap gap-2 pt-1">
-                                    {features.filter(f => !COMMON_AMENITIES.includes(f)).map((f, i) => (
-                                        <span key={i} className="flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-full text-[10px] font-black animate-in zoom-in-50">
-                                            {f}
-                                            <X className="h-3 w-3 cursor-pointer hover:text-red-500" onClick={() => toggleFeature(f)} />
-                                        </span>
-                                    ))}
-                                </div>
                             </div>
 
-                            <div className="flex justify-end gap-3 pt-6 border-t mt-4">
-                                <Button type="button" variant="ghost" onClick={onClose} className="rounded-xl font-bold">Cancel</Button>
-                                <Button type="submit" disabled={submitting} className="rounded-xl px-12 h-12 shadow-xl shadow-indigo-100 font-black">
-                                    {submitting ? "Processing..." : "Create Room"}
-                                </Button>
-                            </div>
+                            <Button type="submit" disabled={submitting} className="w-full h-14 rounded-full font-black text-lg mt-4 shadow-xl">
+                                {submitting ? "Creating..." : "Register Room"}
+                            </Button>
                         </form>
                     </>
                 )}

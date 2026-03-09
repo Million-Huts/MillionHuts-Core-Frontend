@@ -6,7 +6,7 @@ import CreateFloorModal from "@/components/floor/CreateFloorModal";
 import { usePG } from "@/context/PGContext";
 import toast from "react-hot-toast";
 import EmptyFloorsState from "@/components/floor/EmptyFloorsState";
-import { Plus, Layers, AlertCircle } from "lucide-react";
+import { Plus, AlertCircle, Building2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
     AlertDialog,
@@ -18,15 +18,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-export interface Floor {
-    id?: string;
-    pgId: string;
-    label: string;
-    order?: string;
-    totalRooms: number;
-    publicPlaces: string[];
-}
+import type { Floor } from "@/interfaces/floor";
 
 export default function Floors() {
     const { currentPG } = usePG();
@@ -34,8 +26,6 @@ export default function Floors() {
     const [totalFloors, setTotalFloors] = useState<number>(0);
     const [loading, setLoading] = useState(true);
     const [openCreate, setOpenCreate] = useState(false);
-
-    // NEW: State for the "Increase Limit" prompt
     const [showLimitPrompt, setShowLimitPrompt] = useState(false);
     const [shouldIncreaseLimit, setShouldIncreaseLimit] = useState(false);
 
@@ -47,15 +37,13 @@ export default function Floors() {
             setFloors(res.data.data.floors || []);
             setTotalFloors(res.data.data.totalFloors);
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to load floors");
+            toast.error("Failed to load floor data");
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchFloors();
-    }, [currentPG?.id]);
+    useEffect(() => { fetchFloors(); }, [currentPG?.id]);
 
     const handleAddClick = () => {
         if (floors.length >= totalFloors) {
@@ -66,43 +54,35 @@ export default function Floors() {
         }
     };
 
-    const confirmIncreaseAndOpen = () => {
-        setShouldIncreaseLimit(true);
-        setShowLimitPrompt(false);
-        setOpenCreate(true);
-    };
-
     return (
-        <div className="p-1 md:p-8 max-w-7xl mx-auto space-y-8">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b pb-6">
-                <div>
-                    <div className="flex items-center gap-2 text-primary mb-1">
-                        <Layers className="h-5 w-5" />
-                        <span className="text-sm font-bold uppercase tracking-wider">Structure</span>
+        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10 animate-in fade-in duration-500">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                    <div className="p-4 bg-primary/10 rounded-3xl text-primary">
+                        <Building2 className="h-8 w-8" />
                     </div>
-                    <h1 className="text-3xl font-black tracking-tight">Floor Management</h1>
-                    <p className="text-muted-foreground mt-1 text-sm md:text-base">
-                        Organizing <span className="text-foreground font-semibold">{currentPG?.name}</span> •
-                        <span className="ml-1 px-2 py-0.5 bg-slate-100 rounded-md">
-                            {floors.length} / {totalFloors} Floors Used
-                        </span>
-                    </p>
+                    <div>
+                        <h1 className="text-3xl font-black tracking-tighter">Floor Structure</h1>
+                        <p className="text-muted-foreground font-medium">Manage floors and layouts for {currentPG?.name}</p>
+                    </div>
                 </div>
-                <Button
-                    onClick={handleAddClick}
-                    className="rounded-full shadow-lg shadow-primary/20 gap-2 px-6"
-                >
-                    <Plus className="h-4 w-4" /> Add New Floor
-                </Button>
+
+                <div className="flex items-center gap-4">
+                    <div className="hidden md:flex flex-col items-end">
+                        <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Capacity</span>
+                        <span className="text-lg font-bold">{floors.length} / {totalFloors} Active Floors</span>
+                    </div>
+                    <Button onClick={handleAddClick} className="rounded-full h-12 px-8 font-black shadow-lg shadow-primary/20">
+                        <Plus className="h-4 w-4 mr-2" /> Add Floor
+                    </Button>
+                </div>
             </div>
 
-            {/* Content Area */}
+            {/* Content */}
             {loading ? (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {[1, 2, 3].map((i) => (
-                        <Skeleton key={i} className="h-[180px] w-full rounded-3xl" />
-                    ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-48 rounded-[2rem]" />)}
                 </div>
             ) : floors.length === 0 ? (
                 <EmptyFloorsState onAdd={handleAddClick} />
@@ -110,38 +90,35 @@ export default function Floors() {
                 <FloorGrid floors={floors} />
             )}
 
-            {/* LIMIT INCREASE ALERT DIALOG */}
+            {/* Modals & Dialogs */}
             <AlertDialog open={showLimitPrompt} onOpenChange={setShowLimitPrompt}>
-                <AlertDialogContent>
+                <AlertDialogContent className="rounded-[2rem]">
                     <AlertDialogHeader>
-                        <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mb-2">
-                            <AlertCircle className="w-6 h-6" />
+                        <div className="mx-auto p-4 rounded-full bg-amber-100 text-amber-600 mb-4">
+                            <AlertCircle className="w-8 h-8" />
                         </div>
-                        <AlertDialogTitle className="text-center">Floor Limit Reached</AlertDialogTitle>
+                        <AlertDialogTitle className="text-center text-xl">Capacity Reached</AlertDialogTitle>
                         <AlertDialogDescription className="text-center">
-                            You've reached your maximum of <strong>{totalFloors} floors</strong>.
-                            Would you like to increase the total floor count and add a new one?
+                            You've used all <strong>{totalFloors}</strong> allotted floor slots. Would you like to expand your limit to continue?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter className="sm:justify-center gap-2">
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmIncreaseAndOpen}>
-                            Yes, Increase & Continue
+                    <AlertDialogFooter className="sm:justify-center gap-3">
+                        <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => { setShouldIncreaseLimit(true); setShowLimitPrompt(false); setOpenCreate(true); }}
+                            className="rounded-full px-6"
+                        >
+                            Increase Limit & Continue
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
-            {/* CREATE MODAL */}
             <CreateFloorModal
                 open={openCreate}
-                onClose={() => {
-                    setOpenCreate(false);
-                    setShouldIncreaseLimit(false); // Reset on close
-                }}
-                onCreated={(newFloor) => {
+                onClose={() => { setOpenCreate(false); setShouldIncreaseLimit(false); }}
+                onCreated={(newFloor: any) => {
                     setFloors(prev => [...prev, newFloor]);
-                    // Update the local count since backend increased it
                     if (shouldIncreaseLimit) setTotalFloors(prev => prev + 1);
                 }}
                 pgId={currentPG?.id!}

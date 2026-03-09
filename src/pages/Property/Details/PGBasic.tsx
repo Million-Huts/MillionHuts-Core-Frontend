@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit2, QrCode, MapPin, Building, Hash, Save, X, Loader2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react"; // Standard for React QR codes
+import { Edit2, MapPin, Building, Hash, Save, X, Loader2 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-
 import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
 
@@ -25,6 +23,18 @@ interface PGData {
     pincode: string;
     status: string;
 }
+
+const InfoRow = ({ label, value, icon: Icon }: { label: string, value: string, icon: any }) => (
+    <div className="flex items-start gap-4 p-4 rounded-2xl bg-muted/30 border border-border/50">
+        <div className="p-2.5 rounded-xl bg-background border shadow-sm text-primary">
+            <Icon className="h-4 w-4" />
+        </div>
+        <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+            <p className="text-sm font-semibold text-foreground mt-0.5">{value || "—"}</p>
+        </div>
+    </div>
+);
 
 export default function PGBasic() {
     const { pgId } = useParams();
@@ -48,139 +58,64 @@ export default function PGBasic() {
 
     if (loading) {
         return (
-            <div className="flex h-64 items-center justify-center">
+            <div className="flex flex-col items-center justify-center min-h-[400px] w-full gap-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-xs font-black uppercase tracking-widest text-muted-foreground animate-pulse">
+                    Loading Property data...
+                </p>
             </div>
         );
     }
-
     if (!pg) return null;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className={`max-w-5xl mx-auto space-y-8 pb-20`}>
             <AnimatePresence mode="wait">
                 {!editing ? (
-                    <motion.div
-                        key="view"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                    >
-                        <PGView pg={pg} onEdit={() => setEditing(true)} />
+                    <motion.div key="view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <div className="flex justify-between items-end mb-8">
+                            <div>
+                                <h2 className="text-3xl font-black tracking-tighter">Identity & Location</h2>
+                                <p className="text-muted-foreground font-medium">Core establishment details and QR identifier.</p>
+                            </div>
+                            <Button onClick={() => setEditing(true)} variant="outline" className="rounded-full gap-2 px-6">
+                                <Edit2 className="h-4 w-4" /> Edit Profile
+                            </Button>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <Card className="lg:col-span-2 rounded-[2rem] border-border/50 shadow-sm">
+                                <CardContent className="p-8 space-y-6">
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <InfoRow label="Property Name" value={pg.name} icon={Building} />
+                                        <InfoRow label="Property Code" value={pg.pgCode} icon={Hash} />
+                                        <InfoRow label="City" value={pg.city} icon={MapPin} />
+                                        <InfoRow label="State" value={pg.state} icon={MapPin} />
+                                    </div>
+                                    <InfoRow label="Full Physical Address" value={pg.address} icon={MapPin} />
+                                    <Badge variant="secondary" className="px-4 py-1 font-bold rounded-full">{pg.status.toUpperCase()}</Badge>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="rounded-[2rem] border-primary/10 bg-primary/5 shadow-none flex flex-col items-center justify-center p-8">
+                                <div className="p-4 bg-white rounded-2xl shadow-lg mb-4">
+                                    <QRCodeSVG value={pg.pgCode || "N/A"} size={160} />
+                                </div>
+                                <h4 className="font-black text-[10px] uppercase tracking-widest text-primary">Property QR</h4>
+                            </Card>
+                        </div>
                     </motion.div>
                 ) : (
-                    <motion.div
-                        key="edit"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                    >
-                        <PGEditForm
-                            pg={pg}
-                            onCancel={() => setEditing(false)}
-                            onUpdated={(updated) => {
-                                setPg((prev) => ({ ...prev!, ...updated }));
-                                setEditing(false);
-                            }}
-                        />
-                    </motion.div>
+                    <PGEditForm
+                        pg={pg}
+                        onCancel={() => setEditing(false)}
+                        onUpdated={(updated) => { setPg({ ...pg, ...updated }); setEditing(false); }}
+                    />
                 )}
             </AnimatePresence>
         </div>
     );
 }
-
-/* ================= VIEW COMPONENT ================= */
-
-function PGView({ pg, onEdit }: { pg: PGData; onEdit: () => void }) {
-    return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Property Profile</h2>
-                    <p className="text-muted-foreground">Manage your property's core identification and location</p>
-                </div>
-                <Button onClick={onEdit} variant="outline" size="sm" className="gap-2">
-                    <Edit2 className="h-4 w-4" /> Edit Info
-                </Button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Details */}
-                <Card className="lg:col-span-2 border-none bg-card/50 shadow-sm">
-                    <CardContent className="p-6 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <InfoItem icon={Building} label="Property Name" value={pg.name} />
-                            <InfoItem
-                                icon={Hash}
-                                label="Property Code"
-                                value={pg.pgCode}
-                                badge={pg.pgCode ? "Public ID" : "Not Set"}
-                            />
-                            <InfoItem icon={MapPin} label="City" value={pg.city} />
-                            <InfoItem icon={MapPin} label="State" value={pg.state} />
-                            <div className="md:col-span-2">
-                                <InfoItem icon={MapPin} label="Full Address" value={pg.address} full />
-                            </div>
-                        </div>
-
-                        <Separator className="opacity-50" />
-
-                        <div className="flex items-center gap-4">
-                            <span className="text-sm text-muted-foreground">Account Status:</span>
-                            <Badge variant={pg.status === 'active' ? 'default' : 'secondary'} className="capitalize">
-                                {pg.status}
-                            </Badge>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* QR Code Section */}
-                <Card className="border-primary/10 bg-primary/5 shadow-none">
-                    <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
-                        <div className="p-3 bg-background rounded-xl shadow-sm">
-                            {pg.pgCode ? (
-                                <QRCodeSVG value={pg.pgCode} size={140} className="rounded-sm" />
-                            ) : (
-                                <div className="h-[140px] w-[140px] flex items-center justify-center bg-muted rounded-sm text-muted-foreground">
-                                    <QrCode className="h-10 w-10 opacity-20" />
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            <h4 className="font-bold flex items-center justify-center gap-2">
-                                Property QR
-                            </h4>
-                            <p className="text-xs text-muted-foreground mt-1 px-2">
-                                Scan to quickly find this property or share with potential tenants.
-                            </p>
-                        </div>
-                        {pg.pgCode && (
-                            <code className="bg-background px-3 py-1 rounded text-xs font-mono border">
-                                {pg.pgCode}
-                            </code>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-        </div>
-    );
-}
-
-function InfoItem({ label, value, icon: Icon, badge, full }: any) {
-    return (
-        <div className={full ? "space-y-1.5" : ""}>
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                <Icon className="h-3.5 w-3.5" />
-                <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
-                {badge && <Badge variant="outline" className="text-[9px] h-4 py-0 leading-none">{badge}</Badge>}
-            </div>
-            <p className="text-sm font-medium pl-5.5">{value || "—"}</p>
-        </div>
-    );
-}
-
-/* ================= EDIT FORM COMPONENT ================= */
 
 function PGEditForm({ pg, onCancel, onUpdated }: { pg: PGData; onCancel: () => void; onUpdated: (data: Partial<PGData>) => void }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,15 +124,7 @@ function PGEditForm({ pg, onCancel, onUpdated }: { pg: PGData; onCancel: () => v
         e.preventDefault();
         setIsSubmitting(true);
         const formData = new FormData(e.currentTarget);
-
-        const payload = {
-            name: formData.get("name"),
-            address: formData.get("address"),
-            city: formData.get("city"),
-            state: formData.get("state"),
-            pincode: formData.get("pincode"),
-            pgCode: formData.get("pgCode"), // Now editable/viewable here
-        };
+        const payload = Object.fromEntries(formData);
 
         try {
             await apiPrivate.patch(`/pgs/${pg.id}`, payload);
@@ -211,54 +138,55 @@ function PGEditForm({ pg, onCancel, onUpdated }: { pg: PGData; onCancel: () => v
     };
 
     return (
-        <div className="space-y-6">
+        <motion.form
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleSubmit} className="space-y-8"
+        >
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">Edit Property Details</h2>
-                <p className="text-muted-foreground">Update your property information and access codes</p>
+                <h2 className="text-3xl font-black tracking-tighter">Edit Property</h2>
+                <p className="text-muted-foreground font-medium">Update your property information and access codes.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <Card>
-                    <CardContent className="p-6 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Property Name</Label>
-                                <Input id="name" name="name" defaultValue={pg.name} required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="pgCode">Property Code (Unique)</Label>
-                                <Input id="pgCode" name="pgCode" defaultValue={pg.pgCode} placeholder="e.g. MH-CITY-01" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="city">City</Label>
-                                <Input id="city" name="city" defaultValue={pg.city} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="state">State</Label>
-                                <Input id="state" name="state" defaultValue={pg.state} />
-                            </div>
-                            <div className="space-y-2 md:col-span-2">
-                                <Label htmlFor="pincode">Pincode</Label>
-                                <Input id="pincode" name="pincode" defaultValue={pg.pincode} />
-                            </div>
-                            <div className="space-y-2 md:col-span-2">
-                                <Label htmlFor="address">Full Address</Label>
-                                <Textarea id="address" name="address" defaultValue={pg.address} rows={4} />
-                            </div>
+            <Card className="rounded-[2rem] border-border/50">
+                <CardContent className="p-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
+                            <Input name="name" defaultValue={pg.name} className="rounded-xl h-12" required />
                         </div>
-                    </CardContent>
-                </Card>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Property Code</Label>
+                            <Input name="pgCode" defaultValue={pg.pgCode} className="rounded-xl h-12" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</Label>
+                            <Input name="city" defaultValue={pg.city} className="rounded-xl h-12" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">State</Label>
+                            <Input name="state" defaultValue={pg.state} className="rounded-xl h-12" />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Pincode</Label>
+                            <Input name="pincode" defaultValue={pg.pincode} className="rounded-xl h-12" />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Full Address</Label>
+                            <Textarea name="address" defaultValue={pg.address} className="rounded-xl min-h-[120px]" />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
 
-                <div className="flex items-center gap-3">
-                    <Button type="submit" disabled={isSubmitting} className="gap-2">
-                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                        Save Changes
-                    </Button>
-                    <Button type="button" variant="ghost" onClick={onCancel} className="gap-2">
-                        <X className="h-4 w-4" /> Cancel
-                    </Button>
-                </div>
-            </form>
-        </div>
+            <div className="flex items-center gap-3">
+                <Button type="submit" className="rounded-full px-8 h-12 font-bold" disabled={isSubmitting}>
+                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                    Save Changes
+                </Button>
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-full px-8 h-12 font-bold">
+                    <X className="mr-2 h-4 w-4" /> Cancel
+                </Button>
+            </div>
+        </motion.form>
     );
 }

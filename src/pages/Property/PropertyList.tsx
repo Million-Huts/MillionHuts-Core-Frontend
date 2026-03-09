@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus } from "lucide-react";
+import { Plus, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -21,11 +21,15 @@ export default function Properties() {
 
     useEffect(() => {
         const fetchPGs = async () => {
+            setLoading(true);
             try {
                 const res = await apiPrivate.get("/pgs");
-                const list: PG[] = res.data.data.pgs || [];
+                const list: PG[] = res.data.data.pgs || []; // Fixed key from pgsk to pgs
                 setLocalPGs(list);
+                // Keep global context in sync
                 setPGs(list.map((pg) => ({ id: pg.id, name: pg.name })));
+            } catch (err) {
+                console.error("Failed to fetch properties", err);
             } finally {
                 setLoading(false);
             }
@@ -34,48 +38,80 @@ export default function Properties() {
     }, []);
 
     return (
-        <div className="container mx-auto md:p-6 space-y-8">
-            {/* Header Section */}
-            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Properties</h1>
-                    <p className="text-muted-foreground">Manage and monitor your PG establishments</p>
-                </div>
+        <div className="relative min-h-screen bg-background/50">
+            {/* Subtle background glow for Midnight/Nord themes */}
+            <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
 
-                <Button
-                    onClick={() => setOpenCreate(true)}
-                    className="shadow-lg shadow-primary/20 transition-transform active:scale-95 w-fit"
-                >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add New Property
-                </Button>
-            </header>
+            <div className="container mx-auto p-4 md:p-8 space-y-10 relative z-10">
+                {/* Header Section */}
+                <header className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-primary">
+                            <Building2 className="h-5 w-5" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Management</span>
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-foreground">
+                            Properties
+                        </h1>
+                        <p className="text-muted-foreground font-medium max-w-md leading-relaxed">
+                            Centralized overview of your PG establishments. Manage rooms, floors, and tenant operations.
+                        </p>
+                    </div>
 
-            <Separator className="bg-border/60" />
+                    <Button
+                        size="lg"
+                        onClick={() => setOpenCreate(true)}
+                        className="rounded-full px-8 font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 group"
+                    >
+                        <Plus className="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" />
+                        Add New Property
+                    </Button>
+                </header>
 
-            {/* Content Section */}
-            <main className="min-h-[400px] relative">
-                <LoadingOverlay isLoading={loading} message="Loading Properties..." />
-                <AnimatePresence mode="wait">
-                    {pgs.length === 0 ? (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                        >
-                            <EmptyState onCreate={() => setOpenCreate(true)} />
-                        </motion.div>
-                    ) : (
-                        <PGGrid pgs={pgs} />
-                    )}
-                </AnimatePresence>
-            </main>
+                <Separator className="bg-border/40" />
 
-            <CreatePGModal
-                open={openCreate}
-                onClose={() => setOpenCreate(false)}
-                onCreated={(pg) => setLocalPGs((prev) => [...prev, pg])}
-            />
+                {/* Content Section */}
+                <main className="min-h-[500px]">
+                    <AnimatePresence mode="wait">
+                        {loading ? (
+                            <motion.div
+                                key="loading"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex h-[400px] items-center justify-center"
+                            >
+                                <LoadingOverlay isLoading={true} message="Syncing establishments..." />
+                            </motion.div>
+                        ) : pgs.length === 0 ? (
+                            <motion.div
+                                key="empty"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="flex justify-center pt-12"
+                            >
+                                <EmptyState onCreate={() => setOpenCreate(true)} />
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="grid"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                <PGGrid pgs={pgs} />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </main>
+
+                <CreatePGModal
+                    open={openCreate}
+                    onClose={() => setOpenCreate(false)}
+                    onCreated={(pg) => setLocalPGs((prev) => [...prev, pg])}
+                />
+            </div>
         </div>
     );
 }
