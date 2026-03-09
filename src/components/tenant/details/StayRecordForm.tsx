@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import type { TenantStay } from "@/pages/Tenant/TenantDetails";
 import { Label } from "@/components/ui/label";
 import { usePG } from "@/context/PGContext";
-import type { Room } from "@/pages/Room/Rooms";
+import type { Room } from "@/interfaces/room";
 import {
     Select,
     SelectContent,
