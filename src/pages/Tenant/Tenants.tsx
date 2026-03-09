@@ -106,7 +106,7 @@ export default function Tenants() {
                         <EmptyState
                             title="No residents yet"
                             desc="Once you add tenants or approve applications, they will appear here."
-                            action={() => setOpenSearch(true)}
+                            onAction={() => setOpenSearch(true)}
                         />
                     ) : (
                         <TenantGrid tenants={tenants} />
