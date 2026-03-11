@@ -56,27 +56,27 @@ export default function ExpenseReportPage() {
                     <p className="text-muted-foreground font-medium mt-1">Review operational performance and spending habits.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="rounded-full gap-2 font-bold" onClick={() => window.print()}>
+                    <Button variant="outline" className="rounded-sm gap-2 font-bold" onClick={() => window.print()}>
                         <Printer className="w-4 h-4" /> Print PDF
                     </Button>
-                    <Button className="rounded-full gap-2 font-black shadow-lg" onClick={() => setIsExportModalOpen(true)}>
+                    <Button className="rounded-sm gap-2 font-black shadow-lg" onClick={() => setIsExportModalOpen(true)}>
                         <FileSpreadsheet className="w-4 h-4" /> Export Excel
                     </Button>
                 </div>
             </div>
 
             {/* Filters */}
-            <Card className="border-none bg-muted/30 rounded-[2rem] p-6 print:hidden">
+            <Card className="border-none bg-muted/30 rounded-sm p-6 print:hidden">
                 <div className="flex flex-wrap items-end gap-6">
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Start Date</Label>
-                        <Input type="date" className="h-12 rounded-2xl bg-background border-none w-48" value={filters.fromDate} onChange={e => setFilters({ ...filters, fromDate: e.target.value })} />
+                        <Input type="date" className="rounded-sm bg-background border-none w-48" value={filters.fromDate} onChange={e => setFilters({ ...filters, fromDate: e.target.value })} />
                     </div>
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">End Date</Label>
-                        <Input type="date" className="h-12 rounded-2xl bg-background border-none w-48" value={filters.toDate} onChange={e => setFilters({ ...filters, toDate: e.target.value })} />
+                        <Input type="date" className="rounded-sm bg-background border-none w-48" value={filters.toDate} onChange={e => setFilters({ ...filters, toDate: e.target.value })} />
                     </div>
-                    <Button onClick={fetchReport} className="h-12 rounded-full px-8 font-black gap-2">
+                    <Button onClick={fetchReport} className="rounded-sm px-8 font-black gap-2">
                         <Filter className="w-4 h-4" /> Update Report
                     </Button>
                 </div>
@@ -91,12 +91,12 @@ export default function ExpenseReportPage() {
 
             {/* Visuals */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <Card className="rounded-[2rem] border-none shadow-sm p-6 h-[400px]"><ReportCharts data={categoryData} type="pie" /></Card>
-                <Card className="rounded-[2rem] border-none shadow-sm p-6 h-[400px]"><ReportCharts data={expenses} type="bar" /></Card>
+                <Card className="rounded-sm border-none shadow-sm p-6 h-[400px]"><ReportCharts data={categoryData} type="pie" /></Card>
+                <Card className="rounded-sm border-none shadow-sm p-6 h-[400px]"><ReportCharts data={expenses} type="bar" /></Card>
             </div>
 
             {/* Table */}
-            <div className="rounded-[2rem] border overflow-hidden shadow-sm bg-card">
+            <div className="rounded-sm border overflow-x-scroll shadow-sm bg-card">
                 <table className="w-full text-sm">
                     <thead className="bg-muted/30">
                         <tr>

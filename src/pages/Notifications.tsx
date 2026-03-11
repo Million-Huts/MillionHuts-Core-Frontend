@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
 import { apiPrivate } from "@/lib/api";
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Check, Trash2, MailOpen, Inbox } from "lucide-react";
 
 interface Notification {
     id: string;
@@ -20,27 +19,13 @@ interface Notification {
 
 export default function Notifications() {
     const router = useNavigate();
-
-    const [notifications, setNotifications] = useState<
-        Notification[]
-    >([]);
-
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
-
-    /*
-    ================================
-    FETCH
-    ================================
-    */
 
     const fetchNotifications = async () => {
         try {
             setLoading(true);
-
-            const res = await apiPrivate.get(
-                "/notifications"
-            );
-
+            const res = await apiPrivate.get("/notifications");
             setNotifications(res.data.data || []);
         } catch {
             toast.error("Failed to load notifications");
@@ -49,208 +34,104 @@ export default function Notifications() {
         }
     };
 
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
-
-    /*
-    ================================
-    ROUTE HANDLER
-    ================================
-    */
+    useEffect(() => { fetchNotifications(); }, []);
 
     const handleRedirect = (n: Notification) => {
         if (!n.entityType || !n.entityId) return;
+        if (!n.isRead) markAsRead(n.id);
 
-        switch (n.entityType) {
-            case "COMPLAINT":
-                if (n.pgId) {
-                    router(
-                        `/pgs/${n.pgId}/complaints/${n.entityId}`
-                    );
-                } else {
-                    router(
-                        `/complaints/${n.entityId}`
-                    );
-                }
-                break;
-
-            default:
-                break;
-        }
+        const path = n.pgId
+            ? `/pgs/${n.pgId}/complaints/${n.entityId}`
+            : `/complaints/${n.entityId}`;
+        router(path);
     };
-
-    /*
-    ================================
-    MARK READ
-    ================================
-    */
 
     const markAsRead = async (id: string) => {
         try {
-            await apiPrivate.patch(
-                `notifications/${id}/read`
-            );
-
-            setNotifications((prev) =>
-                prev.map((n) =>
-                    n.id === id
-                        ? { ...n, isRead: true }
-                        : n
-                )
-            );
-        } catch {
-            toast.error("Failed");
-        }
+            await apiPrivate.patch(`notifications/${id}/read`);
+            setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, isRead: true } : n));
+        } catch { toast.error("Update failed"); }
     };
-
-    /*
-    ================================
-    MARK ALL
-    ================================
-    */
 
     const markAll = async () => {
         try {
-            await apiPrivate.patch(
-                `notifications/read-all`
-            );
-
-            setNotifications((prev) =>
-                prev.map((n) => ({
-                    ...n,
-                    isRead: true,
-                }))
-            );
-
-            toast.success("All marked as read");
-        } catch {
-            toast.error("Failed");
-        }
+            await apiPrivate.patch(`notifications/read-all`);
+            setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+            toast.success("Inbox cleared");
+        } catch { toast.error("Action failed"); }
     };
 
-    /*
-    ================================
-    DELETE
-    ================================
-    */
-
-    const deleteNotification = async (
-        id: string
-    ) => {
+    const deleteNotification = async (id: string) => {
         try {
-            await apiPrivate.delete(
-                `notifications/${id}`
-            );
-
-            setNotifications((prev) =>
-                prev.filter((n) => n.id !== id)
-            );
+            await apiPrivate.delete(`notifications/${id}`);
+            setNotifications((prev) => prev.filter((n) => n.id !== id));
         } catch {
             toast.error("Failed");
         }
     };
-
-    /*
-    ================================
-    UI
-    ================================
-    */
 
     return (
-        <div className="p-6 max-w-3xl mx-auto space-y-4">
-
-            {/* HEADER */}
-            <div className="flex justify-between items-center">
-
-                <h1 className="text-xl font-semibold">
-                    Notifications
-                </h1>
-
-                <Button size="sm" onClick={markAll}>
-                    Mark All Read
+        <div className="p-8 max-w-2xl mx-auto space-y-8">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-border pb-6">
+                <div>
+                    <h1 className="text-2xl font-black tracking-tighter">System Inbox</h1>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                        {notifications.filter(n => !n.isRead).length} Unread Notifications
+                    </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={markAll} className="rounded-sm font-bold gap-2">
+                    <MailOpen className="w-3.5 h-3.5" /> Mark All Read
                 </Button>
             </div>
 
-            {/* LIST */}
-            <div className="space-y-3">
+            {/* List */}
+            <div className="space-y-4">
+                {loading && <div className="text-center py-20 text-muted-foreground font-bold">Syncing inbox...</div>}
 
-                {loading && (
-                    <div className="text-center py-10">
-                        Loading...
+                {!loading && notifications.length === 0 && (
+                    <div className="text-center py-20 border-2 border-dashed border-border rounded-sm flex flex-col items-center">
+                        <Inbox className="w-10 h-10 text-muted-foreground/30 mb-4" />
+                        <p className="text-muted-foreground font-bold">No new activity</p>
                     </div>
                 )}
-
-                {!loading &&
-                    notifications.length === 0 && (
-                        <div className="text-center py-10 text-muted-foreground">
-                            No notifications
-                        </div>
-                    )}
 
                 {notifications.map((n) => (
                     <div
                         key={n.id}
-                        className={`border rounded-xl p-4 space-y-2 cursor-pointer ${!n.isRead
-                            ? "bg-blue-50 border-blue-200"
-                            : ""
+                        className={`group relative border rounded-sm p-5 transition-all duration-300 ${!n.isRead
+                            ? "bg-primary/5 border-primary/20 shadow-sm"
+                            : "bg-card border-border hover:border-primary/20"
                             }`}
                     >
-                        <div
-                            onClick={() =>
-                                handleRedirect(n)
-                            }
-                            className="space-y-2"
-                        >
-                            <div className="flex justify-between">
+                        <div className="flex gap-4">
+                            <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${!n.isRead ? 'bg-primary shadow-[0_0_8px] shadow-primary' : 'bg-border'}`} />
 
-                                <div className="font-medium">
-                                    {n.title}
-                                </div>
-
-                                {!n.isRead && (
-                                    <span className="text-xs text-blue-600">
-                                        New
+                            <div className="flex-1 cursor-pointer" onClick={() => handleRedirect(n)}>
+                                <div className="flex items-center justify-between mb-1">
+                                    <div>
+                                        <h3 className="font-black text-sm tracking-tight">{n.title}</h3>
+                                        <p className="text-sm text-muted-foreground leading-relaxed">{n.message}</p>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                                        {new Date(n.createdAt).toLocaleDateString()}
                                     </span>
+                                </div>
+                            </div>
+                            {/* Hover Actions */}
+                            <div className="transition-opacity flex gap-1">
+                                {!n.isRead && (
+                                    <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full" onClick={() => markAsRead(n.id)}>
+                                        <Check className="w-3.5 h-3.5" />
+                                    </Button>
                                 )}
-                            </div>
-
-                            <div className="text-sm text-muted-foreground">
-                                {n.message}
-                            </div>
-
-                            <div className="text-xs text-muted-foreground">
-                                {new Date(
-                                    n.createdAt
-                                ).toLocaleString()}
-                            </div>
-                        </div>
-
-                        {/* ACTIONS */}
-                        <div className="flex gap-2 pt-2">
-
-                            {!n.isRead && (
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() =>
-                                        markAsRead(n.id)
-                                    }
-                                >
-                                    Mark Read
+                                <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-rose-500 hover:text-rose-600 hover:bg-rose-50" onClick={() => deleteNotification(n.id)}>
+                                    <Trash2 className="w-3.5 h-3.5" />
                                 </Button>
-                            )}
-
-                            <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() =>
-                                    deleteNotification(n.id)
-                                }
-                            >
-                                Delete
-                            </Button>
+                            </div>
                         </div>
+
+
                     </div>
                 ))}
             </div>

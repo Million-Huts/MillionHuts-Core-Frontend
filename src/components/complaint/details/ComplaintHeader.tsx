@@ -1,30 +1,59 @@
 import { Badge } from "@/components/ui/badge";
 import type { Complaint } from "@/interfaces/complaints";
-import { Calendar, User as UserIcon, Tag } from "lucide-react";
+import { Calendar, User as UserIcon, Tag, Fingerprint } from "lucide-react";
 
 export default function ComplaintHeader({ complaint }: { complaint: Complaint }) {
     return (
-        <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-                <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-100 px-3 py-1">
-                    <Tag className="w-3 h-3 mr-1" /> {complaint.category}
+        <div className="space-y-6">
+            {/* Meta Row */}
+            <div className="flex flex-wrap items-center gap-4">
+                <Badge
+                    variant="outline"
+                    className="bg-primary/5 text-primary border-primary/10 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm"
+                >
+                    <Tag className="w-3 h-3 mr-2 opacity-70" />
+                    {complaint.category}
                 </Badge>
-                <span className="text-slate-300">|</span>
-                <div className="flex items-center text-sm text-slate-500 gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(complaint.createdAt).toLocaleDateString()}
+
+                <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+
+                <div className="flex items-center text-[11px] font-bold text-muted-foreground uppercase tracking-tight gap-2 bg-muted/30 px-3 py-1.5 rounded-sm border border-border/40">
+                    <Calendar className="w-3.5 h-3.5 text-primary/60" />
+                    {new Date(complaint.createdAt).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    })}
                 </div>
             </div>
 
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-                {complaint.title}
-            </h1>
+            {/* Title Section */}
+            <div className="space-y-3">
+                <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter leading-none">
+                    {complaint.title}
+                </h1>
 
-            <div className="flex items-center gap-2 text-sm text-slate-600 bg-white w-fit px-3 py-1.5 rounded-full border border-slate-100 shadow-sm">
-                <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
-                    <UserIcon className="w-3 h-3 text-slate-500" />
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 bg-muted/20 px-4 py-2 rounded-2xl border border-border/30">
+                        <Fingerprint className="w-3.5 h-3.5" />
+                        Ref: {complaint.id?.substring(0, 8).toUpperCase()}
+                    </div>
                 </div>
-                <span>Raised by <span className="font-semibold text-slate-900">{complaint.raisedByType}</span></span>
+            </div>
+
+            {/* Author Attribution */}
+            <div className="inline-flex items-center gap-3 bg-card px-4 py-2 rounded-sm border border-border shadow-sm group hover:border-primary/30 transition-colors">
+                <div className="w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                    <UserIcon className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground leading-none mb-1">
+                        Originator
+                    </span>
+                    <span className="text-sm font-bold text-foreground leading-none">
+                        Reported as <span className="text-primary">{complaint.raisedByType}</span>
+                    </span>
+                </div>
             </div>
         </div>
     );

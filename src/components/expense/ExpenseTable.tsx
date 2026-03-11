@@ -21,7 +21,7 @@ export default function ExpenseTable({ expenses, onDelete, page, setPage, totalP
     };
 
     return (
-        <div className="rounded-2xl overflow-hidden border border-border/50">
+        <div className="rounded-sm overflow-x-scroll border border-border/50">
             <Table>
                 <TableHeader className="bg-muted/30">
                     <TableRow className="hover:bg-transparent">

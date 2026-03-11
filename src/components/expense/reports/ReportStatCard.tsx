@@ -11,7 +11,7 @@ interface StatCardProps {
 
 export default function ReportStatCard({ title, value, icon: Icon, color, description }: StatCardProps) {
     return (
-        <Card className="border-none shadow-sm bg-card rounded-[2rem] overflow-hidden relative">
+        <Card className="border-none shadow-sm bg-card rounded-sm overflow-hidden relative">
             <CardContent className="p-8">
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
@@ -25,13 +25,13 @@ export default function ReportStatCard({ title, value, icon: Icon, color, descri
                             <p className="text-xs font-medium text-muted-foreground mt-1">{description}</p>
                         )}
                     </div>
-                    <div className="p-4 rounded-2xl bg-muted/30">
+                    <div className="p-4 rounded-full bg-muted/30">
                         <Icon className={`w-7 h-7 ${color}`} />
                     </div>
                 </div>
 
                 {/* Decorative background accent */}
-                <div className={`absolute -right-6 -bottom-6 w-32 h-32 rounded-full opacity-[0.03] ${color.replace('text', 'bg')}`} />
+                <div className={`absolute -right-6 -bottom-6 w-32 h-32 rounded-sm opacity-[0.03] ${color.replace('text', 'bg')}`} />
             </CardContent>
         </Card>
     );

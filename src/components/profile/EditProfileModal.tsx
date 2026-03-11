@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { apiPrivate } from "@/lib/api";
+import { UserCog } from "lucide-react";
 
 interface Props { open: boolean; onClose: () => void; }
 
@@ -14,7 +15,6 @@ export default function EditProfileModal({ open, onClose }: Props) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
 
-    // Sync form data when user data loads
     useEffect(() => {
         if (user) {
             setFormData({
@@ -30,11 +30,11 @@ export default function EditProfileModal({ open, onClose }: Props) {
         setLoading(true);
         try {
             const res = await apiPrivate.patch(`/users/profile`, formData);
-            setUser({ ...user, ...res.data.data }); // Merge new data
-            toast.success("Profile updated!");
+            setUser({ ...user, ...res.data.data });
+            toast.success("Identity registry updated");
             onClose();
         } catch (error: any) {
-            toast.error(error.response?.data?.error || "Failed to update");
+            toast.error(error.response?.data?.error || "Sync failed");
         } finally {
             setLoading(false);
         }
@@ -42,48 +42,55 @@ export default function EditProfileModal({ open, onClose }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-lg rounded-[2rem] p-8">
-                <DialogHeader className="space-y-3">
-                    <DialogTitle className="text-2xl font-bold">Update Profile</DialogTitle>
-                    <DialogDescription>Modify your account identity and contact information.</DialogDescription>
+            <DialogContent className="sm:max-w-lg rounde-sm p-8 border border-border shadow-2xl max-h-[90vh] overflow-y-scroll">
+                <DialogHeader className="mb-6">
+                    <DialogTitle className="flex items-center gap-3 text-xl font-black tracking-tighter">
+                        <div className="p-2 bg-slate-950 rounded-full">
+                            <UserCog className="w-4 h-4 text-white" />
+                        </div>
+                        Edit Identity
+                    </DialogTitle>
+                    <DialogDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground mt-2">
+                        Modify your account contact registry.
+                    </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit} className="space-y-5 pt-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider ml-1">Full Name</Label>
+                        <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Full Name</Label>
                         <Input
-                            id="name"
-                            className="rounded-2xl bg-muted/50 border-none focus-visible:ring-primary/20 h-12"
+                            className="rounded-sm border-border bg-muted/30 font-bold focus:ring-primary/20"
                             value={formData.name}
                             onChange={e => setFormData({ ...formData, name: e.target.value })}
                         />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider ml-1">Email</Label>
+                            <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Email</Label>
                             <Input
-                                id="email"
                                 type="email"
-                                className="rounded-2xl bg-muted/50 border-none focus-visible:ring-primary/20 h-12"
+                                className="rounded-sm border-border bg-muted/30 font-bold focus:ring-primary/20"
                                 value={formData.email}
                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider ml-1">Phone</Label>
+                            <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Phone</Label>
                             <Input
-                                id="phone"
-                                className="rounded-2xl bg-muted/50 border-none focus-visible:ring-primary/20 h-12"
+                                className="rounded-sm border-border bg-muted/30 font-bold focus:ring-primary/20"
                                 value={formData.phone}
                                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
                             />
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 mt-8">
-                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-2xl px-6">Cancel</Button>
-                        <Button type="submit" disabled={loading} className="rounded-2xl px-8 shadow-lg shadow-primary/20">
-                            {loading ? "Updating..." : "Save Changes"}
+                    <div className="flex gap-3 mt-8">
+                        <Button type="button" variant="ghost" onClick={onClose} className="flex-1 rounded-sm font-black uppercase tracking-widest text-[10px]">
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={loading} className="flex-[2] rounded-sm font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20">
+                            {loading ? "SYNCING..." : "Save Changes"}
                         </Button>
                     </div>
                 </form>

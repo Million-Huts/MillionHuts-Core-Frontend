@@ -63,7 +63,7 @@ export default function ExportConfigModal({ isOpen, onClose, filters, pgId }: Pr
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-8">
+            <DialogContent className="sm:max-w-[500px] rounded-sm p-8 max-h-[90vh] overflow-y-scroll">
                 <DialogHeader className="mb-6">
                     <div className="h-14 w-14 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
                         <FileSpreadsheet className="h-7 w-7 text-green-600" />
@@ -77,7 +77,7 @@ export default function ExportConfigModal({ isOpen, onClose, filters, pgId }: Pr
                 <div className="grid grid-cols-2 gap-3 mb-8">
                     {AVAILABLE_FIELDS.map(field => (
                         <div key={field.id}
-                            className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${selectedFields.includes(field.id)
+                            className={`flex items-center space-x-3 p-4 rounded-sm border-2 transition-all cursor-pointer ${selectedFields.includes(field.id)
                                 ? "border-primary bg-primary/5"
                                 : "border-muted bg-muted/30 hover:border-muted-foreground/20"
                                 }`}
@@ -89,8 +89,8 @@ export default function ExportConfigModal({ isOpen, onClose, filters, pgId }: Pr
                 </div>
 
                 <div className="flex gap-3">
-                    <Button variant="ghost" className="flex-1 rounded-full font-bold" onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleExport} className="flex-1 rounded-full font-black shadow-lg bg-green-600 hover:bg-green-700" disabled={isDownloading}>
+                    <Button variant="ghost" className="flex-1 rounded-sm font-bold" onClick={onClose}>Cancel</Button>
+                    <Button onClick={handleExport} className="flex-1 rounded-sm font-black shadow-lg bg-green-600 hover:bg-green-700" disabled={isDownloading}>
                         {isDownloading ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : "Download File"}
                     </Button>
                 </div>

@@ -102,22 +102,22 @@ export default function ExpensesPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="gap-2 rounded-full font-bold" onClick={() => navigate(`/pgs/${pgId}/expense/report`)}>
+                    <Button variant="outline" className="gap-2 rounded-sm font-bold" onClick={() => navigate(`/pgs/${pgId}/expense/report`)}>
                         <FileText className="w-4 h-4" /> View Report
                     </Button>
-                    <Button className="gap-2 rounded-full font-black shadow-xl shadow-primary/20" onClick={() => setModalOpen(true)}>
+                    <Button className="gap-2 rounded-sm font-black shadow-xl shadow-primary/20" onClick={() => setModalOpen(true)}>
                         <Plus className="w-4 h-4" /> Add Expense
                     </Button>
                 </div>
             </div>
 
             {/* FILTERS SECTION */}
-            <div className="bg-card border p-4 rounded-[2rem]">
+            <div className="bg-card border p-4 rounded-sm">
                 <ExpenseFilters filters={filters} setFilters={setFilters} onApply={fetchExpenses} />
             </div>
 
             {/* DATA TABLE */}
-            <div className="bg-card border rounded-[2rem] shadow-sm overflow-hidden relative min-h-[50vh]">
+            <div className="bg-card border rounded-sm shadow-sm overflow-x-scroll relative min-h-[50vh]">
                 <LoadingOverlay isLoading={loading} message="Loading Expenses..." />
                 <div className="p-2">
                     <ExpenseTable

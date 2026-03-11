@@ -4,27 +4,23 @@ import ProfileDetails from "@/components/profile/ProfileDetails";
 import ChangePasswordFlow from "@/components/profile/ChangePasswordFlow";
 import MFASection from "@/components/profile/MFASection";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogTrigger,
-    DialogFooter
+    Dialog, DialogContent, DialogHeader, DialogTitle,
+    DialogDescription, DialogTrigger, DialogFooter
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import EditProfileModal from "@/components/profile/EditProfileModal";
 
 export default function ProfilePage() {
     const [profileEdit, setProfileEdit] = useState(false);
+
     return (
-        <div className="min-h-screen bg-background pb-20">
+        <div className="w-full pb-20">
             <ProfileHeader />
 
-            <div className="mx-auto max-w-3xl px-4 -mt-8 relative z-10 space-y-6">
-                {/* 1. Account Details */}
+            <div className="mx-auto max-w-3xl px-4 relative z-10 space-y-8">
+                {/* 1. Account Identity */}
                 <SectionWrapper delay={0}>
                     <EditProfileModal open={profileEdit} onClose={() => setProfileEdit(false)} />
                     {!profileEdit && (
@@ -32,45 +28,47 @@ export default function ProfilePage() {
                     )}
                 </SectionWrapper>
 
-                {/* 2. Security: Password Change (Step-based) */}
+                {/* 2. Authentication Flow */}
                 <SectionWrapper delay={0.1}>
                     <ChangePasswordFlow />
                 </SectionWrapper>
 
-                {/* 3. Multi-Factor Authentication */}
+                {/* 3. Multi-Factor Auth */}
                 <SectionWrapper delay={0.2}>
                     <MFASection />
                 </SectionWrapper>
 
                 {/* 4. Danger Zone */}
                 <SectionWrapper delay={0.3}>
-                    <div className="p-6 bg-destructive/5 border border-destructive/20 rounded-[2rem]">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-semibold text-destructive">Danger Zone</h3>
-                                <p className="text-sm text-muted-foreground">Permanently remove your account and all associated data.</p>
-                            </div>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="destructive" className="rounded-full">Delete Account</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle className="flex items-center gap-2">
-                                            <AlertTriangle className="text-destructive" /> Are you absolutely sure?
-                                        </DialogTitle>
-                                        <DialogDescription>
-                                            This action cannot be undone. This will permanently delete your account
-                                            and remove your data from our servers.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                        <Button variant="outline">Cancel</Button>
-                                        <Button variant="destructive">Confirm Deletion</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                        <div>
+                            <h3 className="text-sm font-black uppercase tracking-widest text-destructive">Danger Zone</h3>
+                            <p className="text-[11px] font-medium text-muted-foreground mt-1">Permanently purge your account and all associated data from the registry.</p>
                         </div>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="destructive" className="h-12 rounded-sm font-black uppercase tracking-widest text-[10px] gap-2">
+                                    <Trash2 size={14} /> Delete Account
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="rounded-sm border-border max-h-[90vh] overflow-y-scroll">
+                                <DialogHeader>
+                                    <DialogTitle className="flex items-center gap-3 text-lg font-black tracking-tighter">
+                                        <div className="p-2 bg-destructive/10 rounded-full text-destructive">
+                                            <AlertTriangle size={20} />
+                                        </div>
+                                        Absolute Termination?
+                                    </DialogTitle>
+                                    <DialogDescription className="text-xs font-medium mt-2">
+                                        This action is irreversible. All property management data, tickets, and user access will be deleted permanently.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="mt-6 gap-2">
+                                    <Button variant="outline" className="rounded-sm font-bold">Cancel</Button>
+                                    <Button variant="destructive" className="rounded-sm font-black uppercase tracking-widest text-[10px]">Confirm Deletion</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </SectionWrapper>
             </div>
@@ -81,10 +79,10 @@ export default function ProfilePage() {
 function SectionWrapper({ children, delay }: { children: React.ReactNode, delay: number }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay }}
-            className="bg-card border border-border shadow-sm rounded-[2.5rem] overflow-hidden p-6 md:p-8"
+            transition={{ delay, duration: 0.4 }}
+            className="bg-card border border-border shadow-sm rounded-sm p-8"
         >
             {children}
         </motion.div>

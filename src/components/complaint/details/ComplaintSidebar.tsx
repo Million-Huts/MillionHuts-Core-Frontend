@@ -3,7 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Save, X, Trash2, AlertTriangle, User } from "lucide-react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import { Edit2, Save, X, Trash2, AlertTriangle, User, ShieldCheck, Activity } from "lucide-react";
 import { apiPrivate } from "@/lib/api";
 import toast from "react-hot-toast";
 import {
@@ -19,7 +26,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 
-// Define the nested staff interface to match the new response
 interface PGStaff {
     role: string;
     isActive: boolean;
@@ -29,37 +35,19 @@ interface PGStaff {
     };
 }
 
-interface ComplaintSidebarProps {
-    complaint: any;
-    users: PGStaff[]; // Updated type
-    onRefresh: () => void;
-}
-
-export default function ComplaintSidebar({ complaint, users, onRefresh }: ComplaintSidebarProps) {
+export default function ComplaintSidebar({ complaint, users, onRefresh }: any) {
     const [isEditing, setIsEditing] = useState(false);
     const [tempValues, setTempValues] = useState({
         status: complaint.status,
         priority: complaint.priority,
-        assignedToId: complaint.assignedToId || "",
+        assignedToId: complaint.assignedToId || "unassigned",
     });
 
     const navigate = useNavigate();
 
-    const handleDelete = async () => {
-        try {
-            await apiPrivate.delete(`pgs/${complaint.pgId}/complaints/${complaint.id}`);
-            toast.success("Ticket deleted successfully");
-            // Redirect back to the complaints list after deletion
-            navigate(`/pgs/${complaint.pgId}/complaints`);
-        } catch {
-            toast.error("Failed to delete ticket");
-        }
-    };
-
-    // Helper to find staff name from the nested structure
     const getAssigneeName = (id: string) => {
-        const staff = users.find((u) => u.user.id === id);
-        return staff ? staff.user.name : "Not assigned";
+        const staff = users.find((u: PGStaff) => u.user.id === id);
+        return staff ? staff.user.name : "Unassigned";
     };
 
     const handleSave = async () => {
@@ -71,105 +59,129 @@ export default function ComplaintSidebar({ complaint, users, onRefresh }: Compla
             if (tempValues.priority !== complaint.priority)
                 updates.push(apiPrivate.patch(`pgs/${complaint.pgId}/complaints/${complaint.id}/priority`, { priority: tempValues.priority }));
 
-            if (tempValues.assignedToId !== complaint.assignedToId)
+            if (tempValues.assignedToId !== complaint.assignedToId) {
+                const isUnassigned = tempValues.assignedToId === "unassigned";
                 updates.push(apiPrivate.patch(`pgs/${complaint.pgId}/complaints/${complaint.id}/assign`, {
-                    assignedToId: tempValues.assignedToId || null,
-                    assignedToType: tempValues.assignedToId ? "STAFF" : null
+                    assignedToId: isUnassigned ? null : tempValues.assignedToId,
+                    assignedToType: isUnassigned ? null : "STAFF"
                 }));
+            }
 
             await Promise.all(updates);
-            toast.success("Ticket updated successfully");
+            toast.success("System updated");
             setIsEditing(false);
             onRefresh();
         } catch {
-            toast.error("Failed to update ticket");
+            toast.error("Update failed");
         }
     };
 
     return (
-        <div className="space-y-4">
-            <Card className="border-slate-200 shadow-sm overflow-hidden">
-                <CardHeader className="bg-slate-50/50 border-b py-3 flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-bold">Management</CardTitle>
-                    {!isEditing ? (
-                        <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="h-8 w-8 p-0">
-                            <Edit2 className="w-4 h-4 text-slate-500" />
-                        </Button>
-                    ) : (
-                        <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)} className="h-8 w-8 p-0 text-rose-500">
-                            <X className="w-4 h-4" />
-                        </Button>
-                    )}
+        <div className="space-y-6">
+            <Card className="border-border rounded-sm shadow-xl overflow-hidden bg-card">
+                <CardHeader className="bg-slate-950 text-white py-5 px-6 flex flex-row items-center justify-between border-b-0">
+                    <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-primary" />
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em]">Control</CardTitle>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsEditing(!isEditing)}
+                        className={`h-9 w-9 p-0 rounded-full transition-colors ${isEditing ? 'bg-rose-500/20 text-rose-500 hover:bg-rose-500/30' : 'bg-white/5 hover:bg-white/10 text-white'}`}
+                    >
+                        {isEditing ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
+                    </Button>
                 </CardHeader>
 
-                <CardContent className="space-y-5 pt-5">
-                    {/* Status */}
-                    <div className="space-y-2">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Current Status</Label>
+                <CardContent className="space-y-8 pt-8 px-6 pb-8">
+                    {/* Status Engine */}
+                    <div className="space-y-3">
+                        <Label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2">
+                            <Activity className="w-3 h-3" /> Status Engine
+                        </Label>
                         {isEditing ? (
-                            <select
-                                className="w-full p-2 rounded-md border text-sm bg-white"
+                            <Select
                                 value={tempValues.status}
-                                onChange={(e) => setTempValues({ ...tempValues, status: e.target.value })}
+                                onValueChange={(v) => setTempValues({ ...tempValues, status: v })}
                             >
-                                <option value="OPEN">Open</option>
-                                <option value="IN_PROGRESS">In Progress</option>
-                                <option value="RESOLVED">Resolved</option>
-                                <option value="CLOSED">Closed</option>
-                            </select>
+                                <SelectTrigger className="w-full bg-muted/50 border-border rounded-sm h-12 font-bold focus:ring-primary/20">
+                                    <SelectValue placeholder="Select Status" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-sm border-border shadow-2xl">
+                                    <SelectItem value="OPEN" className="font-bold">OPEN</SelectItem>
+                                    <SelectItem value="IN_PROGRESS" className="font-bold">IN PROGRESS</SelectItem>
+                                    <SelectItem value="RESOLVED" className="font-bold">RESOLVED</SelectItem>
+                                    <SelectItem value="CLOSED" className="font-bold">CLOSED</SelectItem>
+                                </SelectContent>
+                            </Select>
                         ) : (
-                            <div>
-                                <Badge variant="secondary" className="capitalize font-semibold">
-                                    {complaint.status.replace('_', ' ').toLowerCase()}
+                            <div className="flex">
+                                <Badge className="bg-primary/10 text-primary border-none px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest">
+                                    {complaint.status.replace('_', ' ')}
                                 </Badge>
                             </div>
                         )}
                     </div>
 
-                    {/* Priority */}
-                    <div className="space-y-2">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Priority</Label>
+                    {/* Priority Matrix */}
+                    <div className="space-y-3">
+                        <Label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em]">Priority Matrix</Label>
                         {isEditing ? (
-                            <select
-                                className="w-full p-2 rounded-md border text-sm bg-white"
+                            <Select
                                 value={tempValues.priority}
-                                onChange={(e) => setTempValues({ ...tempValues, priority: e.target.value })}
+                                onValueChange={(v) => setTempValues({ ...tempValues, priority: v })}
                             >
-                                <option value="LOW">Low</option>
-                                <option value="MEDIUM">Medium</option>
-                                <option value="HIGH">High</option>
-                                <option value="URGENT">Urgent</option>
-                            </select>
+                                <SelectTrigger className="w-full bg-muted/50 border-border rounded-sm h-12 font-bold focus:ring-primary/20">
+                                    <SelectValue placeholder="Select Priority" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-sm border-border shadow-2xl">
+                                    <SelectItem value="LOW" className="font-bold">LOW</SelectItem>
+                                    <SelectItem value="MEDIUM" className="font-bold">MEDIUM</SelectItem>
+                                    <SelectItem value="HIGH" className="font-bold">HIGH</SelectItem>
+                                    <SelectItem value="URGENT" className="font-bold text-rose-500">URGENT</SelectItem>
+                                </SelectContent>
+                            </Select>
                         ) : (
-                            <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                                <div className={`h-2 w-2 rounded-full ${complaint.priority === 'HIGH' || complaint.priority === 'URGENT' ? 'bg-red-500' : 'bg-amber-500'}`} />
-                                {complaint.priority}
+                            <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-sm border border-border/50">
+                                <div className={`h-2.5 w-2.5 rounded-full shadow-[0_0_8px] ${complaint.priority === 'URGENT' || complaint.priority === 'HIGH' ? 'bg-rose-500 shadow-rose-500/50' : 'bg-amber-500 shadow-amber-500/50'
+                                    }`} />
+                                <span className="text-xs font-black uppercase tracking-widest text-foreground">{complaint.priority}</span>
                             </div>
                         )}
                     </div>
 
-                    {/* Assignee */}
-                    <div className="space-y-2">
-                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assignee</Label>
+                    {/* Active Handler */}
+                    <div className="space-y-3">
+                        <Label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em]">Active Handler</Label>
                         {isEditing ? (
-                            <select
-                                className="w-full p-2 rounded-md border text-sm bg-white"
+                            <Select
                                 value={tempValues.assignedToId}
-                                onChange={(e) => setTempValues({ ...tempValues, assignedToId: e.target.value })}
+                                onValueChange={(v) => setTempValues({ ...tempValues, assignedToId: v })}
                             >
-                                <option value="">Unassigned</option>
-                                {users.map((staff) => (
-                                    <option key={staff.user.id} value={staff.user.id}>
-                                        {staff.user.name} ({staff.role})
-                                    </option>
-                                ))}
-                            </select>
+                                <SelectTrigger className="w-full bg-muted/50 border-border rounded-sm h-12 font-bold focus:ring-primary/20">
+                                    <SelectValue placeholder="Assign Staff" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-sm border-border shadow-2xl">
+                                    <SelectItem value="unassigned" className="font-bold text-muted-foreground">UNASSIGNED</SelectItem>
+                                    {users.map((staff: PGStaff) => (
+                                        <SelectItem key={staff.user.id} value={staff.user.id} className="font-bold">
+                                            {staff.user.name.toUpperCase()}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         ) : (
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
-                                <User size={14} className="text-slate-400" />
-                                <span className={complaint.assignedToId ? "font-medium" : "italic"}>
-                                    {getAssigneeName(complaint.assignedToId)}
-                                </span>
+                            <div className="flex items-center gap-4 bg-slate-950/5 p-4 rounded-sm border border-slate-950/5">
+                                <div className="h-10 w-10 bg-slate-950 rounded-full flex items-center justify-center text-white">
+                                    <User size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground leading-none mb-1">Assigned Staff</p>
+                                    <p className="text-sm font-bold text-foreground leading-none">
+                                        {getAssigneeName(complaint.assignedToId)}
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -177,20 +189,20 @@ export default function ComplaintSidebar({ complaint, users, onRefresh }: Compla
                     {isEditing && (
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button className="w-full gap-2 font-bold mt-2" size="sm">
-                                    <Save className="w-4 h-4" /> Save Changes
+                                <Button className="w-full rounded-sm bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 font-black uppercase tracking-widest text-[10px] mt-2 group">
+                                    Commit Changes <Save className="w-3.5 h-3.5 ml-2 group-hover:rotate-12 transition-transform" />
                                 </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="rounded-sm border-none p-8">
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle>Confirm Changes?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        Updating the status or priority may notify the tenant. Are you sure you want to proceed?
+                                    <AlertDialogTitle className="text-2xl font-black tracking-tighter">Sync Updates?</AlertDialogTitle>
+                                    <AlertDialogDescription className="text-muted-foreground font-medium">
+                                        This will modify the ticket state in the global ledger.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={handleSave}>Confirm</AlertDialogAction>
+                                <AlertDialogFooter className="gap-2">
+                                    <AlertDialogCancel className="rounded-sm font-bold">Abort</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleSave} className="rounded-sm font-black bg-slate-950">Execute Update</AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
@@ -198,29 +210,40 @@ export default function ComplaintSidebar({ complaint, users, onRefresh }: Compla
                 </CardContent>
             </Card>
 
-            {/* Delete Section */}
+            {/* Danger Zone */}
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <Button variant="ghost" className="w-full text-rose-500 hover:text-rose-600 hover:bg-rose-50 gap-2 text-[10px] font-black uppercase tracking-widest">
-                        <Trash2 className="w-3.5 h-3.5" /> Delete Ticket
+                    <Button variant="ghost" className="w-full text-rose-500/60 hover:text-rose-600 gap-2 text-[9px] font-black uppercase tracking-[0.2em] rounded-sm">
+                        <Trash2 className="w-3.5 h-3.5" /> Purge Ticket Data
                     </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="rounded-sm border-4 border-rose-500/20 shadow-2xl">
                     <AlertDialogHeader>
-                        <div className="flex items-center gap-2 text-rose-600 mb-2">
+                        <div className="flex items-center gap-3 text-rose-600 mb-4 bg-rose-50 w-fit mx-auto px-4 py-2 rounded-sm">
                             <AlertTriangle className="w-5 h-5" />
-                            <AlertDialogTitle>Permanent Action</AlertDialogTitle>
+                            <span className="text-[10px] font-black uppercase tracking-widest">Permanent Destruction</span>
                         </div>
-                        <AlertDialogDescription>
-                            This will permanently remove the ticket and all associated discussion logs. This action cannot be undone.
+                        <AlertDialogTitle className="text-3xl font-black text-center w-full tracking-tighter leading-none">Delete this record?</AlertDialogTitle>
+                        <AlertDialogDescription className="pt-4 text-base font-medium text-center">
+                            This action is final. All logs, media attachments, and thread history for this complaint will be wiped fully.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogFooter className="mt-8 gap-3">
+                        <AlertDialogCancel className="rounded-sm font-bold px-6">Keep Record</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={handleDelete}
-                            className="bg-rose-600 hover:bg-rose-700"
-                        >Delete Permanently</AlertDialogAction>
+                            onClick={async () => {
+                                try {
+                                    await apiPrivate.delete(`pgs/${complaint.pgId}/complaints/${complaint.id}`);
+                                    toast.success("Ticket purged");
+                                    navigate(`/pgs/${complaint.pgId}/complaints`);
+                                } catch {
+                                    toast.error("Purge failed");
+                                }
+                            }}
+                            className="bg-background text-white rounded-sm font-black px-8 uppercase tracking-widest text-[10px]"
+                        >
+                            Confirm Purge
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

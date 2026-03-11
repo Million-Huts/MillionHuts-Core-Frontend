@@ -38,15 +38,15 @@ export default function ExpenseFilters({ filters, setFilters, onApply }: Props) 
                         placeholder="Search title..."
                         value={filters.search}
                         onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                        className="h-12 rounded-2xl bg-muted/30 border-none"
+                        className=" rounded-sm bg-muted/30 border-none"
                     />
                 </div>
 
                 <div className="space-y-1">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</Label>
                     <Select value={filters.category} onValueChange={(v) => setFilters({ ...filters, category: v })}>
-                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                        <SelectContent className="rounded-2xl">
+                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                        <SelectContent className="rounded-sm">
                             {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                         </SelectContent>
                     </Select>
@@ -55,8 +55,8 @@ export default function ExpenseFilters({ filters, setFilters, onApply }: Props) 
                 <div className="space-y-1">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Method</Label>
                     <Select value={filters.paymentMethod} onValueChange={(v) => setFilters({ ...filters, paymentMethod: v })}>
-                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                        <SelectContent className="rounded-2xl">
+                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                        <SelectContent className="rounded-sm">
                             {methods.map(m => <SelectItem key={m} value={m}>{m.replace('_', ' ')}</SelectItem>)}
                         </SelectContent>
                     </Select>
@@ -64,20 +64,20 @@ export default function ExpenseFilters({ filters, setFilters, onApply }: Props) 
 
                 <div className="space-y-1">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">From</Label>
-                    <Input type="date" value={filters.fromDate} onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                    <Input type="date" value={filters.fromDate} onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })} className="rounded-sm bg-muted/30 border-none" />
                 </div>
 
                 <div className="space-y-1">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">To</Label>
-                    <Input type="date" value={filters.toDate} onChange={(e) => setFilters({ ...filters, toDate: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                    <Input type="date" value={filters.toDate} onChange={(e) => setFilters({ ...filters, toDate: e.target.value })} className="rounded-sm bg-muted/30 border-none" />
                 </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-                <Button variant="ghost" className="rounded-full font-bold" onClick={() => setFilters({ search: "", category: "ALL", paymentMethod: "ALL", status: "ALL", fromDate: "", toDate: "" })}>
+                <Button variant="ghost" className="rounded-sm font-bold" onClick={() => setFilters({ search: "", category: "ALL", paymentMethod: "ALL", status: "ALL", fromDate: "", toDate: "" })}>
                     <RotateCcw className="w-4 h-4 mr-2" /> Reset
                 </Button>
-                <Button onClick={onApply} className="rounded-full font-black shadow-lg shadow-primary/20 px-8">
+                <Button onClick={onApply} className="rounded-sm font-black shadow-lg shadow-primary/20 px-8">
                     <Search className="w-4 h-4 mr-2" /> Apply Filters
                 </Button>
             </div>

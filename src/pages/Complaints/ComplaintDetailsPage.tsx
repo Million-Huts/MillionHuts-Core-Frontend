@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { ArrowLeft, MessageSquare, History, ImageIcon, ChevronDown } from "lucide-react";
+import { ArrowLeft, MessageSquare, History, ImageIcon, ChevronDown, Terminal } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 import { apiPrivate } from "@/lib/api";
@@ -42,81 +42,110 @@ export default function ComplaintDetailsPage() {
     useEffect(() => { fetchData(); }, [complaintId]);
 
     if (loading || !complaint) return (
-        <div className="relative h-screen">
-            <LoadingOverlay isLoading={loading} message="Loading Ticket..." />
+        <div className="relative h-screen bg-background">
+            <LoadingOverlay isLoading={loading} message="Authenticating Ticket Data..." />
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-1 md:p-8">
-            <div className="max-w-6xl mx-auto space-y-6">
+        <div className="min-h-screen bg-background p-4 md:p-8">
+            <div className="max-w-7xl mx-auto space-y-8">
+
                 {/* Top Navigation */}
-                <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
-                    <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-                </Button>
+                <div className="flex items-center justify-between">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(-1)}
+                        className="gap-2 rounded-sm px-4 hover:bg-muted font-bold text-muted-foreground"
+                    >
+                        <ArrowLeft className="w-4 h-4" /> Back to Terminal
+                    </Button>
+                    <div className="hidden md:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                        <Terminal className="w-3 h-3" />
+                        Ticket ID: {complaintId?.substring(0, 8)}...
+                    </div>
+                </div>
 
                 <ComplaintHeader complaint={complaint} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* LEFT COLUMN: Main Content */}
-                    <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                    {/* LEFT COLUMN: Main Content (8 Cols) */}
+                    <div className="lg:col-span-8 space-y-8">
+
                         {/* Description Card */}
-                        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">Initial Report</h3>
-                            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{complaint.description}</p>
+                        <div className="bg-card rounded-sm border-none shadow-sm p-10 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-2 h-full bg-primary/20" />
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-6 flex items-center gap-2">
+                                <span className="h-1.5 w-1.5 rounded-sm bg-primary animate-pulse" />
+                                Initial Report Statement
+                            </h3>
+                            <p className="text-foreground/80 text-lg leading-relaxed font-medium whitespace-pre-wrap">
+                                {complaint.description}
+                            </p>
 
                             {complaint.media.length > 0 && (
-                                <div className="mt-6 pt-6 border-t">
-                                    <h4 className="text-sm font-semibold flex items-center gap-2 mb-4">
-                                        <ImageIcon className="w-4 h-4" /> Attached Evidence
+                                <div className="mt-10 pt-10 border-t border-border/50">
+                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2 mb-6">
+                                        <ImageIcon className="w-4 h-4" /> Attached Evidence ({complaint.media.length})
                                     </h4>
                                     <ComplaintMediaGrid media={complaint.media} />
                                 </div>
                             )}
                         </div>
 
-
-
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Discussion Area - Now Primary */}
-                            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                                <div className="p-4 border-b bg-slate-50/30 flex items-center gap-2">
-                                    <MessageSquare className="w-4 h-4 text-indigo-600" />
-                                    <h3 className="text-sm font-bold text-slate-700">Ticket Discussion</h3>
-                                </div>
-                                <div className="p-6">
-                                    <ComplaintCommentSection
-                                        complaintId={complaintId!}
-                                        pgId={pgId!}
-                                        comments={complaint.comments || []}
-                                        onRefresh={fetchData}
-                                    />
+                        {/* Discussion Area */}
+                        <div className="bg-card rounded-sm shadow-sm overflow-hidden border-none">
+                            <div className="p-8 border-b border-border/50 bg-muted/30 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <MessageSquare className="w-5 h-5 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-black uppercase tracking-widest text-foreground">Communication Thread</h3>
+                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">Internal & Tenant Discussion</p>
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Audit Log - Collapsible and secondary */}
-                            <Collapsible className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                                    <div className="flex items-center gap-2 text-slate-500">
-                                        <History className="w-4 h-4" />
-                                        <span className="text-sm font-semibold">View Audit Log / History</span>
-                                    </div>
-                                    <ChevronDown className="w-4 h-4 text-slate-400" />
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="border-t">
-                                    <ComplaintActivityLog activities={complaint.activities || []} />
-                                </CollapsibleContent>
-                            </Collapsible>
+                            <div className="p-8">
+                                <ComplaintCommentSection
+                                    complaintId={complaintId!}
+                                    pgId={pgId!}
+                                    comments={complaint.comments || []}
+                                    onRefresh={fetchData}
+                                />
+                            </div>
                         </div>
+
+                        {/* Audit Log */}
+                        <Collapsible className="bg-muted/20 rounded-sm overflow-hidden border border-border/40">
+                            <CollapsibleTrigger className="w-full p-6 flex items-center justify-between hover:bg-muted/50 transition-all group">
+                                <div className="flex items-center gap-3 text-muted-foreground">
+                                    <History className="w-5 h-5 group-hover:rotate-[-10deg] transition-transform" />
+                                    <span className="text-xs font-black uppercase tracking-[0.15em]">System Audit Log</span>
+                                </div>
+                                <ChevronDown className="w-4 h-4 text-muted-foreground group-data-[state=open]:rotate-180 transition-transform" />
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                                <div className="p-2 pt-0">
+                                    <div className="bg-background rounded-sm overflow-hidden border border-border/30">
+                                        <ComplaintActivityLog activities={complaint.activities || []} />
+                                    </div>
+                                </div>
+                            </CollapsibleContent>
+                        </Collapsible>
                     </div>
 
-                    {/* RIGHT COLUMN: Controls */}
-                    <div className="space-y-6">
-                        <ComplaintSidebar
-                            complaint={complaint}
-                            users={users}
-                            onRefresh={fetchData}
-                        />
+                    {/* RIGHT COLUMN: Controls (4 Cols) */}
+                    <div className="lg:col-span-4">
+                        <div className="sticky top-8">
+                            <ComplaintSidebar
+                                complaint={complaint}
+                                users={users}
+                                onRefresh={fetchData}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

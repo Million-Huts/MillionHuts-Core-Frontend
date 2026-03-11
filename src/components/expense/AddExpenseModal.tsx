@@ -52,7 +52,7 @@ export default function AddExpenseModal({ isOpen, onClose, pgId, onRefresh }: Pr
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-8 max-h-[90vh] overflow-y-scroll">
+            <DialogContent className="sm:max-w-[500px] rounded-sm p-8 max-h-[90vh] overflow-y-scroll">
                 <DialogHeader className="mb-6">
                     <div className="h-14 w-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                         <Receipt className="h-7 w-7 text-primary" />
@@ -66,15 +66,15 @@ export default function AddExpenseModal({ isOpen, onClose, pgId, onRefresh }: Pr
                 <div className="grid gap-6">
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Title *</Label>
-                        <Input placeholder="e.g. Electricity Bill July" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                        <Input placeholder="e.g. Electricity Bill July" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="rounded-sm bg-muted/30 border-none" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</Label>
                             <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
-                                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                <SelectContent className="rounded-sm">
                                     <SelectItem value="MESS">Mess/Food</SelectItem>
                                     <SelectItem value="MAINTENANCE">Utilities</SelectItem>
                                     <SelectItem value="REPAIR">Repair</SelectItem>
@@ -91,20 +91,20 @@ export default function AddExpenseModal({ isOpen, onClose, pgId, onRefresh }: Pr
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Amount *</Label>
-                            <Input type="number" placeholder="0.00" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                            <Input type="number" placeholder="0.00" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} className="rounded-sm bg-muted/30 border-none" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Date</Label>
-                            <Input type="date" value={form.paymentDate} onChange={e => setForm({ ...form, paymentDate: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                            <Input type="date" value={form.paymentDate} onChange={e => setForm({ ...form, paymentDate: e.target.value })} className="rounded-sm bg-muted/30 border-none" />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Payment Method</Label>
                             <Select value={form.paymentMethod} onValueChange={v => setForm({ ...form, paymentMethod: v })}>
-                                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                <SelectContent className="rounded-sm">
                                     <SelectItem value="CASH">Cash</SelectItem>
                                     <SelectItem value="UPI">UPI</SelectItem>
                                     <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
@@ -117,13 +117,13 @@ export default function AddExpenseModal({ isOpen, onClose, pgId, onRefresh }: Pr
 
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Bill Attachment</Label>
-                        <Input type="file" onChange={e => setForm({ ...form, file: e.target.files?.[0] || null })} className="h-12 rounded-2xl bg-muted/30 border-none file:text-primary file:font-black" />
+                        <Input type="file" onChange={e => setForm({ ...form, file: e.target.files?.[0] || null })} className="rounded-sm bg-muted/30 border-none file:text-primary file:font-black" />
                     </div>
                 </div>
 
                 <div className="pt-6 flex gap-3">
-                    <Button variant="ghost" className="flex-1 rounded-full font-bold" onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleSave} className="flex-1 rounded-full font-black shadow-lg" disabled={submitting}>
+                    <Button variant="ghost" className="flex-1 rounded-sm font-bold" onClick={onClose}>Cancel</Button>
+                    <Button onClick={handleSave} className="flex-1 rounded-sm font-black shadow-lg" disabled={submitting}>
                         {submitting ? <Loader2 className="animate-spin h-4 w-4" /> : "Save Expense"}
                     </Button>
                 </div>
