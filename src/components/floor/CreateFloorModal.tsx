@@ -69,9 +69,9 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+            <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden rounded-sm border-none shadow-2xl max-h-[90vh] overflow-y-scroll">
                 <div className="p-8 pb-4 bg-muted/20">
-                    <div className="h-16 w-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-6 shadow-inner">
+                    <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6 shadow-inner">
                         <Building2 className="h-8 w-8" />
                     </div>
                     <DialogTitle className="text-2xl font-black tracking-tighter">Add New Floor</DialogTitle>
@@ -84,13 +84,13 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Label</Label>
-                            <Input value={label} onChange={(e) => setLabel(e.target.value)} className="h-12 rounded-2xl bg-muted/30" />
+                            <Input value={label} onChange={(e) => setLabel(e.target.value)} className="h-12 rounded-sm bg-muted/30" />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Capacity</Label>
                             <Select value={roomCount} onValueChange={setRoomCount}>
-                                <SelectTrigger className="h-12 rounded-2xl bg-muted/30"><SelectValue /></SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectTrigger className="h-12 rounded-sm bg-muted/30"><SelectValue /></SelectTrigger>
+                                <SelectContent className="rounded-sm">
                                     {[...Array(15)].map((_, i) => <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1} Rooms</SelectItem>)}
                                 </SelectContent>
                             </Select>
@@ -102,14 +102,14 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
                         <div className="flex flex-wrap gap-2">
                             {COMMON_SUGGESTIONS.map(place => (
                                 <button key={place} type="button" onClick={() => togglePlace(place)}
-                                    className={`px-4 py-2 rounded-full text-sm font-bold border-2 transition-all ${publicPlaces.includes(place) ? "bg-primary text-primary-foreground border-primary" : "bg-muted/50 border-transparent hover:border-primary/50"}`}>
+                                    className={`px-4 py-2 rounded-sm text-sm font-bold border-2 transition-all ${publicPlaces.includes(place) ? "bg-primary text-primary-foreground border-primary" : "bg-muted/50 border-transparent hover:border-primary/50"}`}>
                                     {publicPlaces.includes(place) && <Check className="h-3 w-3 inline mr-2" />}
                                     {place}
                                 </button>
                             ))}
 
                             {!showCustomInput && (
-                                <button type="button" onClick={() => setShowCustomInput(true)} className="px-4 py-2 rounded-full text-sm font-bold border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:text-primary transition-all">
+                                <button type="button" onClick={() => setShowCustomInput(true)} className="px-4 py-2 rounded-sm text-sm font-bold border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:text-primary transition-all">
                                     <Plus className="h-3 w-3 inline mr-1" /> Add Custom
                                 </button>
                             )}
@@ -117,9 +117,9 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
 
                         {showCustomInput && (
                             <div className="flex gap-2 animate-in slide-in-from-left-2 duration-300">
-                                <Input autoFocus value={placeInput} onChange={(e) => setPlaceInput(e.target.value)} placeholder="e.g. Yoga Room" className="h-10 rounded-xl" />
-                                <Button type="button" onClick={addCustomPlace} className="rounded-xl h-10 px-4">Add</Button>
-                                <Button type="button" variant="ghost" onClick={() => setShowCustomInput(false)} className="rounded-xl h-10 px-2"><X className="h-4 w-4" /></Button>
+                                <Input autoFocus value={placeInput} onChange={(e) => setPlaceInput(e.target.value)} placeholder="e.g. Yoga Room" className="sm" />
+                                <Button type="button" onClick={addCustomPlace} className="rounded-sm h-10 px-4">Add</Button>
+                                <Button type="button" variant="ghost" onClick={() => setShowCustomInput(false)} className="rounded-full h-10 px-2"><X className="h-4 w-4" /></Button>
                             </div>
                         )}
 
@@ -133,8 +133,8 @@ export default function CreateFloorModal({ open, onClose, onCreated, pgId, autoI
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4 border-t">
-                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-full h-12 px-6 font-bold">Cancel</Button>
-                        <Button type="submit" disabled={submitting} className="rounded-full h-12 px-8 font-black shadow-lg shadow-primary/20">
+                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-sm h-12 px-6 font-bold">Cancel</Button>
+                        <Button type="submit" disabled={submitting} className="rounded-sm h-12 px-8 font-black shadow-lg shadow-primary/20">
                             {submitting ? "Processing..." : "Confirm Floor"}
                         </Button>
                     </div>

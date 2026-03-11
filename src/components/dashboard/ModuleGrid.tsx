@@ -80,15 +80,15 @@ function ModuleCard({ title, icon: Icon, stats, index }: ModuleCardProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
         >
-            <Card className="group relative border-border bg-card shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 md:rounded-[2rem] rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/10">
+            <Card className="group relative border-border bg-card shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 rounded-sm overflow-hidden border-2 border-transparent hover:border-primary/10">
                 {/* Subtle Background Glow */}
-                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-colors" />
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-sm bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-colors" />
 
                 <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                     <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                         {title}
                     </CardTitle>
-                    <div className="p-2 rounded-xl bg-muted/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-all">
+                    <div className="p-2 rounded-sm bg-muted/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-all">
                         <Icon className="w-4 h-4" />
                     </div>
                 </CardHeader>

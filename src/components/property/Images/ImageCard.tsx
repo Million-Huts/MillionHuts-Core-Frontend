@@ -11,7 +11,7 @@ type Props = {
 
 export default function ImageCard({ image, onClick, onDelete, onMakeCover }: Props) {
     return (
-        <div className="group relative aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-muted border border-border/50 transition-all hover:border-primary/50 hover:shadow-lg">
+        <div className="group relative aspect-[4/3] overflow-hidden rounded-sm bg-muted border border-border/50 transition-all hover:border-primary/50 hover:shadow-lg">
             {/* Image Layer */}
             <img
                 src={image.url}

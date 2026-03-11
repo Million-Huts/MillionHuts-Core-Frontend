@@ -19,7 +19,7 @@ export default function PropertySetupCard({ score, flags }: PropertySetupCardPro
     const isComplete = score === 100;
 
     return (
-        <Card className="relative border-none bg-primary overflow-hidden md:rounded-[2rem] rounded-xl shadow-2xl shadow-primary/20 text-primary-foreground">
+        <Card className="relative border-none bg-primary overflow-hidden rounded-sm shadow-2xl shadow-primary/20 text-primary-foreground">
             {/* Background Decorative Pattern */}
             <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10 blur-3xl" />
 
@@ -64,7 +64,7 @@ export default function PropertySetupCard({ score, flags }: PropertySetupCardPro
                 {!isComplete && (
                     <motion.button
                         whileHover={{ x: 5 }}
-                        className="w-full mt-2 flex items-center justify-between p-3 rounded-2xl bg-white/10 border border-white/10 text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all"
+                        className="w-full mt-2 flex items-center justify-between p-3 rounded-sm bg-white/10 border border-white/10 text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-all"
                     >
                         Complete Setup
                         <ArrowRight className="h-4 w-4" />
@@ -78,7 +78,7 @@ export default function PropertySetupCard({ score, flags }: PropertySetupCardPro
 function SetupItem({ label, missing }: { label: string; missing: boolean }) {
     return (
         <div className={cn(
-            "flex items-center justify-between p-3 rounded-2xl transition-colors",
+            "flex items-center justify-between p-3 rounded-sm transition-colors",
             missing ? "bg-black/5 border border-white/5" : "bg-white/5"
         )}>
             <div className="flex items-center gap-3 text-sm">

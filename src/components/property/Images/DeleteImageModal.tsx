@@ -21,7 +21,7 @@ export default function DeleteImageModal({
 }) {
     return (
         <Dialog open onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+            <DialogContent className="sm:max-w-[420px] max-h-[90vh] overflow-y-scroll p-0 overflow-hidden rounded-sm border-none shadow-2xl">
                 <div className="p-8 pb-4">
                     <div className="flex flex-col items-center text-center space-y-4">
                         <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
@@ -38,7 +38,7 @@ export default function DeleteImageModal({
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="mt-6 rounded-2xl overflow-hidden border-4 border-muted/50 aspect-video bg-muted"
+                        className="mt-6 rounded-sm overflow-hidden border-4 border-muted/50 aspect-video bg-muted"
                     >
                         <img
                             src={image.url}
@@ -52,14 +52,14 @@ export default function DeleteImageModal({
                     <Button
                         variant="ghost"
                         onClick={onClose}
-                        className="flex-1 rounded-full h-12 font-bold"
+                        className="flex-1 rounded-sm h-12 font-bold"
                     >
                         Cancel
                     </Button>
                     <Button
                         variant="destructive"
                         onClick={onConfirm}
-                        className="flex-1 rounded-full h-12 font-bold shadow-lg shadow-destructive/20 gap-2"
+                        className="flex-1 rounded-sm h-12 font-bold shadow-lg shadow-destructive/20 gap-2"
                     >
                         <Trash2 className="h-4 w-4" /> Delete Permanently
                     </Button>

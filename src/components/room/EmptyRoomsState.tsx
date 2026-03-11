@@ -15,7 +15,7 @@ export default function EmptyRoomsState({ onAdd }: { onAdd: () => void }) {
 
             <Button
                 onClick={onAdd}
-                className="mt-8 h-12 px-8 rounded-full font-black shadow-xl shadow-primary/20 gap-2"
+                className="mt-8 h-12 px-8 rounded-sm font-black shadow-xl shadow-primary/20 gap-2"
             >
                 <Plus className="h-4 w-4" /> Add Your First Room
             </Button>

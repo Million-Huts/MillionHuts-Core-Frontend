@@ -45,13 +45,13 @@ export default function FloorDetails() {
 
     if (loading && !floor) return (
         <div className="p-8 max-w-7xl mx-auto space-y-8">
-            <Skeleton className="h-10 w-48 rounded-2xl" />
-            <Skeleton className="h-40 w-full rounded-[2rem]" />
+            <Skeleton className="h-10 w-48 rounded-sm" />
+            <Skeleton className="h-40 w-full rounded-sm" />
         </div>
     );
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-2 md:p-8 max-w-7xl mx-auto space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -63,14 +63,14 @@ export default function FloorDetails() {
                         <Badge className="rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none px-4">Live</Badge>
                     </h1>
                 </div>
-                <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="rounded-full h-12 px-6 gap-2">
+                <Button onClick={() => setIsEditModalOpen(true)} variant="outline" className="rounded-sm h-12 px-6 gap-2">
                     <Edit3 className="h-4 w-4" /> Configure Floor
                 </Button>
             </div>
 
             {/* Metadata Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-card border rounded-[2rem] p-6 flex items-center gap-4 shadow-sm">
+                <div className="bg-card border rounded-sm p-6 flex items-center gap-4 shadow-sm">
                     <div className="h-14 w-14 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                         <DoorOpen className="h-6 w-6" />
                     </div>
@@ -80,7 +80,7 @@ export default function FloorDetails() {
                     </div>
                 </div>
 
-                <div className="md:col-span-2 bg-card border rounded-[2rem] p-6 flex flex-col justify-center shadow-sm">
+                <div className="md:col-span-2 bg-card border rounded-sm p-6 flex flex-col justify-center shadow-sm">
                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
                         <MapPinned className="h-3 w-3" /> Shared Facilities
                     </p>
@@ -105,7 +105,7 @@ export default function FloorDetails() {
                     <Badge variant="outline" className="rounded-full px-4">{rooms.length} Active Units</Badge>
                 </div>
 
-                <div className="bg-muted/20 rounded-[2.5rem] p-6 md:p-10 border-2 border-dashed border-border">
+                <div className="bg-muted/20 rounded-sm p-6 md:p-10 border-2 border-dashed border-border">
                     {rooms.length === 0 ? (
                         <EmptyRoomsState onAdd={() => navigate('/rooms/add')} />
                     ) : (

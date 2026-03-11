@@ -105,7 +105,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-8">
+            <DialogContent className="sm:max-w-[550px] rounded-sm max-h-[90vh] overflow-y-scroll p-8">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20">
                         <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -120,7 +120,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                             <h3 className="text-2xl font-black">Missing Infrastructure</h3>
                             <p className="text-muted-foreground mt-2">You need to set up floors before adding rooms.</p>
                         </div>
-                        <Button asChild className="w-full rounded-full h-12">
+                        <Button asChild className="w-full rounded-sm h-12">
                             <Link to="/floors">Configure Floors</Link>
                         </Button>
                     </div>
@@ -138,13 +138,13 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room ID / No</Label>
-                                    <Input required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                                    <Input required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className=" rounded-sm bg-muted/30 border-none" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Floor Assignment</Label>
                                     <Select onValueChange={v => setFormData({ ...formData, floorId: v })} required>
-                                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue placeholder="Select floor" /></SelectTrigger>
-                                        <SelectContent className="rounded-2xl">
+                                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue placeholder="Select floor" /></SelectTrigger>
+                                        <SelectContent className="rounded-sm">
                                             {floors.map(f => <SelectItem key={f.id} value={f.id!}>{f.label}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
@@ -155,17 +155,17 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sharing</Label>
                                     <Select defaultValue="SINGLE" onValueChange={v => setFormData({ ...formData, sharing: v, capacity: SHARING_OPTIONS.find(s => s.type === v)?.capacity || 1 })}>
-                                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                                        <SelectContent className="rounded-2xl">
-                                            {SHARING_OPTIONS.map(s => <SelectItem key={s.type} value={s.type}>{s.type}</SelectItem>)}
+                                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                        <SelectContent className="rounded-sm">
+                                            {SHARING_OPTIONS.map(s => <SelectItem key={s.type} value={s.type} >{s.type}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room Type</Label>
                                     <Select defaultValue="NORMAL" onValueChange={v => setFormData({ ...formData, roomType: v })}>
-                                        <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                                        <SelectContent className="rounded-2xl">
+                                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                        <SelectContent className="rounded-sm">
                                             <SelectItem value="NORMAL">Normal</SelectItem>
                                             <SelectItem value="AC">AC</SelectItem>
                                         </SelectContent>
@@ -173,7 +173,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rent (₹)</Label>
-                                    <Input type="number" required value={formData.rent} onChange={e => setFormData({ ...formData, rent: e.target.value })} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                                    <Input type="number" required value={formData.rent} onChange={e => setFormData({ ...formData, rent: e.target.value })} className="h-12 rounded-sm bg-muted/30 border-none" />
                                 </div>
                             </div>
 
@@ -181,25 +181,25 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Amenities</Label>
                                 <div className="flex flex-wrap gap-2">
                                     {COMMON_AMENITIES.map((item) => (
-                                        <button key={item} type="button" onClick={() => toggleFeature(item)} className={`px-4 py-2 rounded-full text-xs font-bold transition-all border-2 ${features.includes(item) ? "bg-primary text-primary-foreground border-primary" : "bg-muted/30 border-transparent hover:border-primary/50"}`}>
+                                        <button key={item} type="button" onClick={() => toggleFeature(item)} className={`px-4 py-2 rounded-sm text-xs font-bold transition-all border-2 ${features.includes(item) ? "bg-primary text-primary-foreground border-primary" : "bg-muted/30 border-transparent hover:border-primary/50"}`}>
                                             {item}
                                         </button>
                                     ))}
                                     {!showCustomFeature && (
-                                        <button type="button" onClick={() => setShowCustomFeature(true)} className="px-4 py-2 rounded-full text-xs font-bold border-2 border-dashed border-muted-foreground/30 hover:border-primary text-muted-foreground">
+                                        <button type="button" onClick={() => setShowCustomFeature(true)} className="px-4 py-2 rounded-sm text-xs font-bold border-2 border-dashed border-muted-foreground/30 hover:border-primary text-muted-foreground">
                                             <Plus className="h-3 w-3 inline mr-1" /> Add Custom
                                         </button>
                                     )}
                                 </div>
                                 {showCustomFeature && (
                                     <div className="flex gap-2 mt-2 animate-in fade-in">
-                                        <Input autoFocus value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} placeholder="New amenity..." className="h-10 rounded-xl" onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomFeature())} />
-                                        <Button type="button" size="sm" onClick={addCustomFeature} className="h-10 px-4 rounded-xl">Add</Button>
+                                        <Input autoFocus value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} placeholder="New amenity..." className="h-10 rounded-sm" onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomFeature())} />
+                                        <Button type="button" size="sm" onClick={addCustomFeature} className="h-10 px-4 rounded-sm">Add</Button>
                                     </div>
                                 )}
                             </div>
 
-                            <Button type="submit" disabled={submitting} className="w-full h-14 rounded-full font-black text-lg mt-4 shadow-xl">
+                            <Button type="submit" disabled={submitting} className="w-full h-14 rounded-sm font-black text-lg mt-4 shadow-xl">
                                 {submitting ? "Creating..." : "Register Room"}
                             </Button>
                         </form>

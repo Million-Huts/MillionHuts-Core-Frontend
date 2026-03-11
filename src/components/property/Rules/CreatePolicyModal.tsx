@@ -43,9 +43,9 @@ export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: Pr
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-sm border-none shadow-2xl">
                 <div className="p-8 pb-4 flex flex-col items-center text-center">
-                    <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center text-primary mb-6 shadow-inner">
+                    <div className="h-16 w-16 rounded-sm bg-primary/10 flex items-center justify-center text-primary mb-6 shadow-inner">
                         <ShieldPlus className="h-8 w-8" />
                     </div>
                     <DialogHeader>
@@ -61,9 +61,9 @@ export default function CreatePolicyModal({ pgId, open, onClose, onCreated }: Pr
                         name="title"
                         placeholder="e.g., House Rules"
                         required
-                        className="h-14 rounded-2xl border-border bg-muted/30 px-5 text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-14 rounded-sm border-border bg-muted/30 px-5 text-base font-medium transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
                     />
-                    <Button type="submit" className="w-full h-14 rounded-full font-black tracking-wide shadow-lg shadow-primary/20" disabled={loading}>
+                    <Button type="submit" className="w-full h-14 rounded-sm font-black tracking-wide shadow-lg shadow-primary/20" disabled={loading}>
                         {loading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : "Create Category"}
                     </Button>
                 </form>

@@ -8,7 +8,7 @@ interface EmptyStateProps {
 
 export default function EmptyState({ onCreate }: EmptyStateProps) {
     return (
-        <div className="relative w-full max-w-2xl overflow-hidden md:rounded-[3rem] rounded-2xl border-2 border-dashed border-border/60 bg-card/30 p-12 md:p-20 text-center transition-colors hover:border-primary/20">
+        <div className="relative w-full max-w-2xl overflow-hidden rounded-sm border-2 border-dashed border-border/60 bg-card/30 p-12 md:p-20 text-center transition-colors hover:border-primary/20">
             {/* Background Decorative Elements */}
             <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-primary/5 blur-3xl" />
             <div className="absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-primary/5 blur-3xl" />
@@ -16,7 +16,7 @@ export default function EmptyState({ onCreate }: EmptyStateProps) {
             <div className="relative z-10 flex flex-col items-center">
                 {/* Icon Stack */}
                 <div className="relative mb-6">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-[2rem] bg-muted/50 text-muted-foreground/40 shadow-inner">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-sm bg-muted/50 text-muted-foreground/40 shadow-inner">
                         <Building2 className="h-10 w-10" />
                     </div>
                     <motion.div
@@ -48,7 +48,7 @@ export default function EmptyState({ onCreate }: EmptyStateProps) {
                     <Button
                         size="lg"
                         onClick={onCreate}
-                        className="rounded-full px-8 font-black tracking-tight shadow-xl shadow-primary/20 transition-all"
+                        className="rounded-sm px-8 font-black tracking-tight shadow-xl shadow-primary/20 transition-all"
                     >
                         <Plus className="mr-2 h-5 w-5" />
                         Get Started

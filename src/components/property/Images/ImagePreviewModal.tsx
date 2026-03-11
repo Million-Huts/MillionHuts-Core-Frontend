@@ -44,7 +44,7 @@ export default function ImagePreviewModal({ images, index, onClose, onChangeInde
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="max-h-[85vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl"
+                    className="max-h-[85vh] max-w-[90vw] object-contain rounded-sm shadow-2xl"
                 />
             </AnimatePresence>
 

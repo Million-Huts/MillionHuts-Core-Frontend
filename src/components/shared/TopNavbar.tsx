@@ -160,11 +160,11 @@ const TopNavbar = ({ mobileOpen, setMobileOpen }: Props) => {
                         </Button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align="end" className="w-80 p-0 shadow-2xl border-border rounded-2xl overflow-hidden bg-popover">
+                    <DropdownMenuContent align="end" className="w-80 p-0 shadow-2xl border-border rounded-sm overflow-hidden bg-popover">
                         <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
                             <DropdownMenuLabel className="p-0 font-bold text-foreground">Notifications</DropdownMenuLabel>
                             {unreadCount > 0 && (
-                                <span className="text-[10px] font-black uppercase tracking-wider text-primary-foreground bg-primary px-2 py-0.5 rounded-full">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-primary-foreground bg-primary px-2 py-0.5 rounded-sm">
                                     {unreadCount} New
                                 </span>
                             )}

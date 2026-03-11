@@ -66,7 +66,7 @@ export default function PGImages() {
                     <p className="text-muted-foreground font-medium">High-quality visuals increase booking conversion by 40%.</p>
                 </div>
                 {!uploadMode && (
-                    <Button onClick={() => setUploadMode(true)} className="rounded-full px-6 gap-2">
+                    <Button onClick={() => setUploadMode(true)} className="rounded-sm px-6 gap-2">
                         <Plus className="h-4 w-4" /> Add Photos
                     </Button>
                 )}
@@ -91,8 +91,8 @@ export default function PGImages() {
                         />
                     </motion.div>
                 ) : (
-                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-24 rounded-[2rem] border-2 border-dashed bg-muted/20 border-border/50">
-                        <div className="p-4 bg-background rounded-2xl shadow-sm mb-4">
+                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-24 rounded-sm border-2 border-dashed bg-muted/20 border-border/50">
+                        <div className="p-4 bg-background rounded-full shadow-sm mb-4">
                             <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
                         </div>
                         <p className="text-muted-foreground font-bold">Your gallery is currently empty.</p>

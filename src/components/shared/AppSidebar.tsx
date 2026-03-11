@@ -53,7 +53,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
 
         return (
             <Link to={item.to} className={cn(
-                "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                "relative flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all",
                 isActive
                     ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
                     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
@@ -72,7 +72,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                 <div className="flex h-full flex-col w-full overflow-hidden">
                     <div className="flex h-16 items-center px-4 shrink-0">
                         <div className="flex items-center gap-3 w-full justify-center md:justify-start">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Command className="h-5 w-5" /></div>
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground"><Command className="h-5 w-5" /></div>
                             {!collapsed && <span className="text-lg font-bold text-sidebar-foreground">MillionHuts</span>}
                         </div>
                     </div>
@@ -129,7 +129,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                                     key={item.to}
                                     to={item.to}
                                     onClick={() => setMobileOpen(false)}
-                                    className="flex items-center gap-3 p-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                                    className="flex items-center gap-3 p-3 rounded-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
                                 >
                                     <item.icon className="h-5 w-5 text-muted-foreground" />
                                     {item.label}
@@ -158,7 +158,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                                     key={item.to}
                                     to={item.to}
                                     onClick={() => setMobileOpen(false)}
-                                    className="flex items-center gap-3 p-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                                    className="flex items-center gap-3 p-3 rounded-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
                                 >
                                     <item.icon className="h-5 w-5 text-muted-foreground" />
                                     {item.label}
@@ -174,7 +174,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                                 key={item.to}
                                 to={item.to}
                                 onClick={() => setMobileOpen(false)}
-                                className="flex items-center gap-3 p-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                className="flex items-center gap-3 p-3 rounded-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                             >
                                 <item.icon className="h-5 w-5 text-muted-foreground" />
                                 {item.label}

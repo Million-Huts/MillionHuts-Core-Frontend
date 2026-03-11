@@ -45,7 +45,7 @@ export default function Rooms() {
     );
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-0 md:p-8 max-w-7xl mx-auto space-y-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -62,12 +62,12 @@ export default function Rooms() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search units..."
-                            className="pl-11 h-12 rounded-full bg-muted/30 border-none focus:bg-muted/50 transition-all"
+                            className="pl-11 h-12 rounded-sm bg-muted/30 border-none focus:bg-muted/50 transition-all"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <Button onClick={() => setOpenCreate(true)} className="h-12 rounded-full px-8 font-black shadow-lg shadow-primary/20 gap-2">
+                    <Button onClick={() => setOpenCreate(true)} className="h-12 rounded-sm px-8 font-black shadow-lg shadow-primary/20 gap-2">
                         <Plus className="h-4 w-4" /> Add Room
                     </Button>
                 </div>
@@ -78,7 +78,7 @@ export default function Rooms() {
                 {loading ? (
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <Skeleton key={i} className="h-[240px] w-full rounded-[2rem]" />
+                            <Skeleton key={i} className="h-[240px] w-full rounded-sm" />
                         ))}
                     </div>
                 ) : rooms.length === 0 ? (

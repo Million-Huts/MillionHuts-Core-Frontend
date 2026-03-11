@@ -14,7 +14,7 @@ export default function RoomCard({ room }: { room: Room }) {
 
     return (
         <Card
-            className="group relative overflow-hidden border-none bg-card hover:bg-card/80 transition-all hover:shadow-xl hover:shadow-primary/10 cursor-pointer rounded-[2rem] p-2"
+            className="group relative overflow-hidden border-none bg-card hover:bg-card/80 transition-all hover:shadow-xl hover:shadow-primary/10 cursor-pointer rounded-sm p-2"
             onClick={() => navigate(`/pgs/${currentPG?.id}/rooms/${room.id}`)}
         >
             <CardContent className="p-6 space-y-6">
@@ -46,11 +46,11 @@ export default function RoomCard({ room }: { room: Room }) {
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 pt-2 border-t border-muted/50">
-                    <Badge variant="secondary" className="rounded-full px-3 py-1 font-bold tracking-tight">
+                    <Badge variant="secondary" className="rounded-sm px-3 py-1 font-bold tracking-tight">
                         {room.roomType === "AC" ? <Wind className="h-3 w-3 mr-1.5" /> : <Zap className="h-3 w-3 mr-1.5" />}
                         {room.roomType}
                     </Badge>
-                    <Badge variant={isFull ? "destructive" : "outline"} className="rounded-full px-3 py-1 font-bold tracking-tight">
+                    <Badge variant={isFull ? "destructive" : "outline"} className="rounded-sm px-3 py-1 font-bold tracking-tight">
                         {isFull ? "Fully Occupied" : `${availability} Slots Available`}
                     </Badge>
                 </div>

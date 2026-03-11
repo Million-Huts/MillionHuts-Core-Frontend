@@ -91,19 +91,19 @@ export default function DetailsForm({ details, pgId, onCancel, onUpdated }: Prop
                 <p className="text-muted-foreground font-medium">Define your operational structure and house rules.</p>
             </div>
 
-            <Card className="rounded-[2rem] border-border/50 shadow-sm">
+            <Card className="rounded-sm border-border/50 shadow-sm">
                 <CardContent className="p-8 space-y-8">
                     {/* Basic Settings */}
                     <div className="grid md:grid-cols-2 gap-6">
                         <FormField label="Contact Number">
-                            <Input name="contactNumber" defaultValue={details?.contactNumber} className="h-12 rounded-xl" required />
+                            <Input name="contactNumber" defaultValue={details?.contactNumber} className="h-12 rounded-sm" required />
                         </FormField>
                         <FormField label="Registration No (Optional)">
-                            <Input name="registrationNo" defaultValue={details?.registrationNo!} className="h-12 rounded-xl" />
+                            <Input name="registrationNo" defaultValue={details?.registrationNo!} className="h-12 rounded-sm" />
                         </FormField>
                         <FormField label="PG Type">
                             <Select name="pgType" defaultValue={details?.pgType}>
-                                <SelectTrigger className="h-12 rounded-xl"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="h-12 rounded-sm"><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="MENS">Gents PG</SelectItem>
                                     <SelectItem value="WOMENS">Ladies PG</SelectItem>
@@ -112,7 +112,7 @@ export default function DetailsForm({ details, pgId, onCancel, onUpdated }: Prop
                             </Select>
                         </FormField>
                         <FormField label="Total Number of Floors">
-                            <Input type="number" value={numFloors} onChange={(e) => handleFloorCountChange(e.target.value)} disabled={isAlreadyInitialized} className="h-12 rounded-xl" />
+                            <Input type="number" value={numFloors} onChange={(e) => handleFloorCountChange(e.target.value)} disabled={isAlreadyInitialized} className="h-12 rounded-sm" />
                         </FormField>
                     </div>
 
@@ -124,10 +124,10 @@ export default function DetailsForm({ details, pgId, onCancel, onUpdated }: Prop
                             </h3>
                             <div className="grid md:grid-cols-2 gap-4">
                                 {floorConfig.map((floor, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-muted/30 border border-border/50">
-                                        <Input value={floor.label} onChange={(e) => updateFloorData(idx, 'label', e.target.value)} className="h-10 rounded-xl bg-background" />
+                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-sm bg-muted/30 border border-border/50">
+                                        <Input value={floor.label} onChange={(e) => updateFloorData(idx, 'label', e.target.value)} className="h-10 rounded-sm bg-background" />
                                         <Select value={floor.totalRooms.toString()} onValueChange={(val) => updateFloorData(idx, 'totalRooms', toNumber(val))}>
-                                            <SelectTrigger className="w-32 h-10 rounded-xl bg-background"><SelectValue /></SelectTrigger>
+                                            <SelectTrigger className="w-32 h-10 rounded-sm bg-background"><SelectValue /></SelectTrigger>
                                             <SelectContent>{[...Array(10)].map((_, i) => <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1} Rms</SelectItem>)}</SelectContent>
                                         </Select>
                                     </div>
@@ -141,16 +141,16 @@ export default function DetailsForm({ details, pgId, onCancel, onUpdated }: Prop
                         <div className="space-y-4">
                             <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">Rent Financials</h3>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormField label="Min Rent"><Input type="number" name="rentStart" defaultValue={details?.rentStart!} className="rounded-xl" /></FormField>
-                                <FormField label="Max Rent"><Input type="number" name="rentUpto" defaultValue={details?.rentUpto!} className="rounded-xl" /></FormField>
-                                <FormField label="Cycle Day"><Input type="number" name="rentCycleDay" defaultValue={details?.rentCycleDay!} className="rounded-xl" /></FormField>
-                                <FormField label="Late Fee"><Input type="number" name="lateFee" defaultValue={details?.lateFee!} className="rounded-xl" /></FormField>
+                                <FormField label="Min Rent"><Input type="number" name="rentStart" defaultValue={details?.rentStart!} className="rounded-sm" /></FormField>
+                                <FormField label="Max Rent"><Input type="number" name="rentUpto" defaultValue={details?.rentUpto!} className="rounded-sm" /></FormField>
+                                <FormField label="Cycle Day"><Input type="number" name="rentCycleDay" defaultValue={details?.rentCycleDay!} className="rounded-sm" /></FormField>
+                                <FormField label="Late Fee"><Input type="number" name="lateFee" defaultValue={details?.lateFee!} className="rounded-sm" /></FormField>
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">Food & Dining</h3>
-                            <div className="flex items-center justify-between p-5 rounded-2xl bg-muted/30 border border-border/50">
+                            <div className="flex items-center justify-between p-5 rounded-sm bg-muted/30 border border-border/50">
                                 <Label htmlFor="mess" className="flex items-center gap-3 cursor-pointer font-bold">
                                     <UtensilsCrossed className="w-5 h-5 text-primary" /> Mess Facility
                                 </Label>
@@ -159,7 +159,7 @@ export default function DetailsForm({ details, pgId, onCancel, onUpdated }: Prop
                             {isMessAvailable && (
                                 <FormField label="Mess Type">
                                     <Select name="messType" defaultValue={details?.messType}>
-                                        <SelectTrigger className="h-12 rounded-xl"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="h-12 rounded-sm"><SelectValue /></SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="VEG">Vegetarian</SelectItem>
                                             <SelectItem value="NON_VEG">Non-Vegetarian</SelectItem>
@@ -174,11 +174,11 @@ export default function DetailsForm({ details, pgId, onCancel, onUpdated }: Prop
             </Card>
 
             <div className="flex gap-3">
-                <Button type="submit" className="rounded-full px-8 h-12 font-bold" disabled={isSubmitting}>
+                <Button type="submit" className="rounded-sm px-8 h-12 font-bold" disabled={isSubmitting}>
                     {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                     Save Configuration
                 </Button>
-                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-full px-8 h-12 font-bold">
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-sm px-8 h-12 font-bold">
                     <X className="mr-2 h-4 w-4" /> Cancel
                 </Button>
             </div>

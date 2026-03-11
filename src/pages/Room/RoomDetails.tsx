@@ -47,13 +47,13 @@ export default function RoomDetails() {
     const occupancyPercentage = (room.occupiedCount / room.capacity) * 100;
 
     return (
-        <div className="max-w-6xl mx-auto p-6 space-y-8">
+        <div className="max-w-6xl mx-auto md:p-6 p-1 space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2 rounded-full">
+                <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2 rounded-sm">
                     <ChevronLeft size={16} /> Back
                 </Button>
-                <Button variant="outline" className="gap-2 rounded-full font-bold" onClick={() => setIsEditOpen(true)}>
+                <Button variant="outline" className="gap-2 rounded-sm font-bold" onClick={() => setIsEditOpen(true)}>
                     <Edit3 size={14} /> Edit Room
                 </Button>
             </div>
@@ -61,7 +61,7 @@ export default function RoomDetails() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Info Card */}
                 <div className="md:col-span-1 space-y-6">
-                    <div className="bg-card rounded-[2rem] p-8 shadow-sm border space-y-8">
+                    <div className="bg-card rounded-sm p-8 shadow-sm border space-y-8">
                         <div>
                             <Badge variant="secondary" className="rounded-full px-4 mb-3 font-black tracking-widest uppercase">{room.roomType}</Badge>
                             <h1 className="text-4xl font-black tracking-tighter">Room {room.name}</h1>
@@ -77,14 +77,14 @@ export default function RoomDetails() {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-2xl">
+                            <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-sm">
                                 <CreditCard className="text-primary" />
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Monthly Rent</p>
                                     <p className="font-black text-lg">₹{room.rent.toLocaleString()}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-2xl">
+                            <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-sm">
                                 <DoorOpen className="text-primary" />
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</p>
@@ -100,14 +100,14 @@ export default function RoomDetails() {
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-black tracking-tighter">Residents</h2>
                         {room.occupiedCount < room.capacity && (
-                            <Button className="rounded-full font-black gap-2">
+                            <Button className="rounded-sm font-black gap-2">
                                 <UserPlus size={16} /> Add Tenant
                             </Button>
                         )}
                     </div>
 
                     {tenants.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-[2rem] text-center">
+                        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-sm text-center">
                             <LayoutGrid className="h-12 w-12 text-muted-foreground/30 mb-4" />
                             <p className="font-bold text-muted-foreground">No tenants assigned yet.</p>
                         </div>
@@ -115,7 +115,7 @@ export default function RoomDetails() {
                         <div className="grid gap-4">
                             {tenants.map((tenant) => (
                                 <div key={tenant.id} onClick={() => navigate(`/pgs/${currentPG?.id}/tenants/${tenant.id}`)}
-                                    className="group flex items-center justify-between p-4 bg-white rounded-2xl border hover:border-primary/50 transition-all cursor-pointer">
+                                    className="group flex items-center justify-between p-4 bg-background rounded-sm  border hover:border-primary/50 transition-all cursor-pointer">
                                     <div className="flex items-center gap-4">
                                         <Avatar className="h-12 w-12"><AvatarImage src={tenant.profileImage} /><AvatarFallback>{tenant.fullName[0]}</AvatarFallback></Avatar>
                                         <div>

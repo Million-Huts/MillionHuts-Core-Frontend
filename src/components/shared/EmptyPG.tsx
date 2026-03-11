@@ -19,7 +19,7 @@ export default function EmptyPG() {
                     className="max-w-md"
                 >
                     {/* Visual Icon with Theme-Aware Background */}
-                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary shadow-inner">
+                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary shadow-inner">
                         <Building2 className="h-10 w-10" />
                     </div>
 

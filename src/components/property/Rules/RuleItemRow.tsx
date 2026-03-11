@@ -4,7 +4,7 @@ import type { PGRuleItem } from "@/pages/Property/Details/PGRules";
 
 export default function RuleItemRow({ item, onDelete }: { item: PGRuleItem, onDelete: () => void }) {
     return (
-        <div className="group flex items-center justify-between rounded-2xl border border-border bg-background p-5 transition-all hover:border-primary/50 hover:shadow-md">
+        <div className="group flex items-center justify-between rounded-sm border border-border bg-background p-5 transition-all hover:border-primary/50 hover:shadow-md">
             {/* Content Section */}
             <div className="flex items-start gap-4">
                 <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />

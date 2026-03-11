@@ -41,7 +41,7 @@ export default function UploadImagesView({ pgId, onCancel, onUploaded }: Props) 
             {/* Drop Zone */}
             <div
                 className={cn(
-                    "relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center rounded-[2.5rem] border-[3px] border-dashed transition-all",
+                    "relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center rounded-sm border-[3px] border-dashed transition-all",
                     "border-muted-foreground/20 bg-muted/20 hover:border-primary/50 hover:bg-primary/5"
                 )}
                 onDragOver={(e) => e.preventDefault()}
@@ -74,7 +74,7 @@ export default function UploadImagesView({ pgId, onCancel, onUploaded }: Props) 
                     </div>
                     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
                         {files.map((file, i) => (
-                            <div key={i} className="group relative aspect-square overflow-hidden rounded-2xl border-4 border-background shadow-lg">
+                            <div key={i} className="group relative aspect-square overflow-hidden rounded-sm border-4 border-background shadow-lg">
                                 <img src={URL.createObjectURL(file)} className="h-full w-full object-cover" />
                                 <button
                                     onClick={() => removeFile(i)}
@@ -84,7 +84,7 @@ export default function UploadImagesView({ pgId, onCancel, onUploaded }: Props) 
                                 </button>
                             </div>
                         ))}
-                        <label htmlFor="imageUpload" className="flex aspect-square items-center justify-center rounded-2xl border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
+                        <label htmlFor="imageUpload" className="flex aspect-square items-center justify-center rounded-sm border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
                             <ImagePlus className="text-muted-foreground" />
                         </label>
                     </div>
@@ -93,10 +93,10 @@ export default function UploadImagesView({ pgId, onCancel, onUploaded }: Props) 
 
             {/* Actions */}
             <div className="flex items-center gap-3 pt-4">
-                <Button onClick={handleUpload} disabled={files.length === 0 || uploading} className="rounded-full px-8 h-12 font-bold">
+                <Button onClick={handleUpload} disabled={files.length === 0 || uploading} className="rounded-sm px-8 h-12 font-bold">
                     {uploading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Save to Gallery"}
                 </Button>
-                <Button variant="ghost" onClick={onCancel} className="rounded-full px-8 h-12 font-bold">Cancel</Button>
+                <Button variant="ghost" onClick={onCancel} className="rounded-sm px-8 h-12 font-bold">Cancel</Button>
             </div>
         </div>
     );

@@ -9,6 +9,7 @@ import {
     Settings2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePG } from "@/context/PGContext";
 
 interface Props {
     pgId: string;
@@ -16,6 +17,10 @@ interface Props {
 
 export default function PGSidebar({ pgId }: Props) {
     const { pathname } = useLocation();
+    const { pgs } = usePG();
+
+
+    const currentPg = pgs.find((p) => p.id === pgId);
 
     const menuItems = [
         { label: "Basic Info", icon: Info, to: `/pgs/${pgId}/basic`, desc: "Name, address & location" },
@@ -29,7 +34,7 @@ export default function PGSidebar({ pgId }: Props) {
         <div className="flex flex-col h-full py-6 px-3 space-y-8">
             {/* Header */}
             <div className="px-4 flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                <div className="p-2 bg-primary/10 rounded-full text-primary">
                     <Settings2 className="h-5 w-5" />
                 </div>
                 <div>
@@ -49,7 +54,7 @@ export default function PGSidebar({ pgId }: Props) {
                             key={item.to}
                             to={item.to}
                             className={cn(
-                                "group relative flex items-center justify-between p-3.5 rounded-2xl transition-all duration-300",
+                                "group relative flex items-center justify-between p-3.5 rounded-sm transition-all duration-300",
                                 isActive
                                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                                     : "hover:bg-muted/60 text-muted-foreground"
@@ -57,7 +62,7 @@ export default function PGSidebar({ pgId }: Props) {
                         >
                             <div className="flex items-center gap-3.5">
                                 <div className={cn(
-                                    "p-2.5 rounded-xl transition-colors",
+                                    "p-2.5 rounded-full transition-colors",
                                     isActive ? "bg-white/20" : "bg-muted group-hover:bg-background"
                                 )}>
                                     <item.icon className="h-4 w-4" />
@@ -84,12 +89,12 @@ export default function PGSidebar({ pgId }: Props) {
 
             {/* ID Footer */}
             <div className="mt-auto px-4">
-                <div className="p-4 rounded-2xl bg-muted/30 border border-border/50">
+                <div className="p-4 rounded-sm bg-muted/30 border border-border/50">
                     <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                        Property ID
+                        Property
                     </p>
                     <p className="font-mono text-[11px] font-medium text-foreground tracking-tight">
-                        {pgId.toUpperCase()}
+                        {currentPg?.name}
                     </p>
                 </div>
             </div>

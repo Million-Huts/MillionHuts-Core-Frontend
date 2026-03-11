@@ -7,13 +7,13 @@ import type { Details } from "@/interfaces/pg";
 export default function DetailsView({ details, onEdit }: { details: Details | null; onEdit: () => void }) {
     if (!details) {
         return (
-            <div className="flex flex-col items-center justify-center p-16 border-2 border-dashed rounded-[2rem] bg-muted/20 border-border/50">
-                <div className="p-4 rounded-full bg-primary/10 mb-4 text-primary">
+            <div className="flex flex-col items-center justify-center p-16 border-2 border-dashed rounded-sm bg-muted/20 border-border/50">
+                <div className="p-4 rounded-sm bg-primary/10 mb-4 text-primary">
                     <InfoIcon className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-black tracking-tight mb-1">Configuration Needed</h3>
                 <p className="text-muted-foreground mb-6 max-w-sm text-center">Set up your PG's operational rules to enable booking and tenant management.</p>
-                <Button onClick={onEdit} className="rounded-full px-8 h-12 font-bold gap-2">
+                <Button onClick={onEdit} className="rounded-sm px-8 h-12 font-bold gap-2">
                     <PlusCircle className="h-4 w-4" /> Configure Property
                 </Button>
             </div>
@@ -27,13 +27,13 @@ export default function DetailsView({ details, onEdit }: { details: Details | nu
                     <h2 className="text-3xl font-black tracking-tighter">Property Specifications</h2>
                     <p className="text-muted-foreground font-medium">Operational, financial, and structural overview.</p>
                 </div>
-                <Button variant="outline" onClick={onEdit} className="rounded-full gap-2 px-6">
+                <Button variant="outline" onClick={onEdit} className="rounded-sm gap-2 px-6">
                     <Edit3 className="h-4 w-4" /> Edit Details
                 </Button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="rounded-[2rem] border-border/50 shadow-sm">
+                <Card className="rounded-sm border-border/50 shadow-sm">
                     <CardContent className="p-8 space-y-6">
                         <h4 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                             <InfoIcon className="h-4 w-4 text-primary" /> Logistics & Structure
@@ -47,13 +47,13 @@ export default function DetailsView({ details, onEdit }: { details: Details | nu
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-[2rem] border-border/50 shadow-sm">
+                <Card className="rounded-sm border-border/50 shadow-sm">
                     <CardContent className="p-8 space-y-6">
                         <h4 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                             <Utensils className="h-4 w-4 text-primary" /> Food & Dining
                         </h4>
-                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/30 border border-border/50">
-                            <div className="p-3 bg-background rounded-xl border shadow-sm text-primary">
+                        <div className="flex items-center gap-4 p-4 rounded-sm bg-muted/30 border border-border/50">
+                            <div className="p-3 bg-background rounded-sm border shadow-sm text-primary">
                                 <Utensils className="h-5 w-5" />
                             </div>
                             <div>
@@ -67,7 +67,7 @@ export default function DetailsView({ details, onEdit }: { details: Details | nu
                     </CardContent>
                 </Card>
 
-                <Card className="lg:col-span-2 rounded-[2rem] border-border/50 shadow-sm">
+                <Card className="lg:col-span-2 rounded-sm border-border/50 shadow-sm">
                     <CardContent className="p-8 space-y-6">
                         <h4 className="font-black text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                             <IndianRupee className="h-4 w-4 text-primary" /> Financial Framework
@@ -87,7 +87,7 @@ export default function DetailsView({ details, onEdit }: { details: Details | nu
 
 function InfoRow({ label, value, icon: Icon }: any) {
     return (
-        <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/30">
+        <div className="flex items-start gap-3 p-3 rounded-sm bg-muted/30">
             <Icon className="h-4 w-4 mt-1 text-muted-foreground" />
             <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
@@ -99,7 +99,7 @@ function InfoRow({ label, value, icon: Icon }: any) {
 
 function Stat({ label, value }: { label: string; value: string }) {
     return (
-        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10">
+        <div className="p-4 rounded-sm bg-primary/5 border border-primary/10">
             <p className="text-[10px] font-black uppercase tracking-widest text-primary/70">{label}</p>
             <p className="text-xl font-black mt-1">{value}</p>
         </div>

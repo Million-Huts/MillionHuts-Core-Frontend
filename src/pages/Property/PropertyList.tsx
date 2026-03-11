@@ -42,7 +42,7 @@ export default function Properties() {
             {/* Subtle background glow for Midnight/Nord themes */}
             <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
 
-            <div className="container mx-auto p-4 md:p-8 space-y-10 relative z-10">
+            <div className="container mx-auto p-2 md:p-8 space-y-10 relative z-10">
                 {/* Header Section */}
                 <header className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div className="space-y-2">
@@ -61,7 +61,7 @@ export default function Properties() {
                     <Button
                         size="lg"
                         onClick={() => setOpenCreate(true)}
-                        className="rounded-full px-8 font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 group"
+                        className="rounded-sm px-8 font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 group"
                     >
                         <Plus className="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" />
                         Add New Property

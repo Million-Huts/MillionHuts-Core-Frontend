@@ -18,7 +18,7 @@ export default function InfrastructureCard({ data }: InfrastructureCardProps) {
 
     return (
         <Card className={cn(
-            "border-border bg-card md:rounded-[2rem] rounded-xl shadow-sm transition-all hover:shadow-md overflow-hidden",
+            "border-border bg-card rounded-sm shadow-sm transition-all hover:shadow-md overflow-hidden",
             isIncomplete && "ring-1 ring-amber-500/10"
         )}>
             <CardHeader className="flex flex-row items-center justify-between pb-4">
@@ -28,7 +28,7 @@ export default function InfrastructureCard({ data }: InfrastructureCardProps) {
                     </CardTitle>
                     <p className="text-xs font-medium text-muted-foreground/60">Property Architecture</p>
                 </div>
-                <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <div className="h-10 w-10 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
                     <Layers className="h-5 w-5" />
                 </div>
             </CardHeader>
@@ -56,7 +56,7 @@ export default function InfrastructureCard({ data }: InfrastructureCardProps) {
 
                 {/* Status Indicator */}
                 <div className={cn(
-                    "p-4 rounded-2xl flex items-center gap-4 border transition-colors",
+                    "p-4 rounded-sm flex items-center gap-4 border transition-colors",
                     isIncomplete
                         ? "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-500"
                         : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"

@@ -50,7 +50,7 @@ export default function PGLayout() {
                             </div>
                         )}
 
-                        <div className="p-4 md:p-8 max-w-5xl mx-auto">
+                        <div className="p-2 md:p-8 max-w-5xl mx-auto">
                             <Outlet />
                         </div>
                     </motion.div>

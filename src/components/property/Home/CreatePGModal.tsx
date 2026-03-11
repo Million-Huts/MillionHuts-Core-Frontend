@@ -49,14 +49,14 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={() => !isSubmitting && onClose()}>
-            <DialogContent className="sm:max-w-[480px] border-none shadow-2xl overflow-hidden p-0 bg-card">
+            <DialogContent className="sm:max-w-[480px] border-none shadow-2xl max-h-[90vh] overflow-y-scroll p-0 bg-card">
                 {/* Visual Header Accent */}
                 <div className="h-2 bg-primary w-full" />
 
                 <div className="p-8 space-y-6">
                     <DialogHeader>
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                            <div className="p-2 rounded-sm bg-primary/10 text-primary">
                                 <Building2 className="h-5 w-5" />
                             </div>
                             <DialogTitle className="text-2xl font-black tracking-tighter">
@@ -78,7 +78,7 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
                                 name="name"
                                 placeholder="Skyline Residency"
                                 required
-                                className="rounded-xl border-muted bg-muted/30 focus-visible:ring-primary"
+                                className="rounded-sm border-muted bg-muted/30 focus-visible:ring-primary"
                                 disabled={isSubmitting}
                             />
                         </div>
@@ -92,7 +92,7 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
                                 name="address"
                                 placeholder="123, Sector 5, HSR Layout"
                                 required
-                                className="rounded-xl border-muted bg-muted/30"
+                                className="rounded-sm border-muted bg-muted/30"
                                 disabled={isSubmitting}
                             />
                         </div>
@@ -102,13 +102,13 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
                                 <Label htmlFor="city" className="text-[10px] font-black uppercase tracking-widest opacity-70">
                                     City
                                 </Label>
-                                <Input id="city" name="city" placeholder="Bengaluru" required className="rounded-xl border-muted bg-muted/30" disabled={isSubmitting} />
+                                <Input id="city" name="city" placeholder="Bengaluru" required className="rounded-sm border-muted bg-muted/30" disabled={isSubmitting} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="state" className="text-[10px] font-black uppercase tracking-widest opacity-70">
                                     State
                                 </Label>
-                                <Input id="state" name="state" placeholder="Karnataka" required className="rounded-xl border-muted bg-muted/30" disabled={isSubmitting} />
+                                <Input id="state" name="state" placeholder="Karnataka" required className="rounded-sm border-muted bg-muted/30" disabled={isSubmitting} />
                             </div>
                         </div>
 
@@ -124,7 +124,7 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
                                 maxLength={6}
                                 pattern="\d{6}"
                                 title="Please enter a valid 6-digit pincode"
-                                className="rounded-xl border-muted bg-muted/30"
+                                className="rounded-sm border-muted bg-muted/30"
                                 disabled={isSubmitting}
                             />
                         </div>
@@ -135,13 +135,13 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
                                 variant="ghost"
                                 onClick={onClose}
                                 disabled={isSubmitting}
-                                className="rounded-xl font-bold text-muted-foreground"
+                                className="rounded-sm font-bold text-muted-foreground"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                className="rounded-xl px-10 font-black tracking-tight shadow-lg shadow-primary/20"
+                                className="rounded-sm px-10 font-black tracking-tight shadow-lg shadow-primary/20"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? (

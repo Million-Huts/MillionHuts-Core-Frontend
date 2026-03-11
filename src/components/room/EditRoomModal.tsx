@@ -53,7 +53,7 @@ export default function EditRoomModal({ room, open, onClose, onSuccess }: Props)
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-8">
+            <DialogContent className="sm:max-w-[500px] rounded-sm max-h-[90vh] overflow-y-scroll p-8">
                 <DialogHeader className="mb-6">
                     <div className="h-14 w-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                         <Settings2 className="h-7 w-7 text-primary" />
@@ -67,15 +67,15 @@ export default function EditRoomModal({ room, open, onClose, onSuccess }: Props)
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room Name/Number</Label>
-                        <Input name="name" defaultValue={room.name} required className="h-12 rounded-2xl bg-muted/30 border-none" />
+                        <Input name="name" defaultValue={room.name} required className="h-12 rounded-sm bg-muted/30 border-none" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room Type</Label>
                             <Select value={roomType} onValueChange={(val: "AC" | "NORMAL") => setRoomType(val)}>
-                                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                <SelectContent className="rounded-sm">
                                     <SelectItem value="AC">AC</SelectItem>
                                     <SelectItem value="NORMAL">Normal</SelectItem>
                                 </SelectContent>
@@ -84,8 +84,8 @@ export default function EditRoomModal({ room, open, onClose, onSuccess }: Props)
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sharing</Label>
                             <Select value={sharing} onValueChange={setSharing}>
-                                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                                <SelectContent className="rounded-2xl">
+                                <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                <SelectContent className="rounded-sm">
                                     <SelectItem value="SINGLE">Single</SelectItem>
                                     <SelectItem value="DOUBLE">Double</SelectItem>
                                     <SelectItem value="TRIPLE">Triple</SelectItem>
@@ -98,19 +98,19 @@ export default function EditRoomModal({ room, open, onClose, onSuccess }: Props)
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Monthly Rent (₹)</Label>
-                            <Input name="rent" type="number" defaultValue={room.rent} required className="h-12 rounded-2xl bg-muted/30 border-none" />
+                            <Input name="rent" type="number" defaultValue={room.rent} required className="h-12 rounded-sm bg-muted/30 border-none" />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Size (Sq. Ft.)</Label>
-                            <Input name="sizeSqFt" type="number" defaultValue={room.sizeSqFt} className="h-12 rounded-2xl bg-muted/30 border-none" />
+                            <Input name="sizeSqFt" type="number" defaultValue={room.sizeSqFt} className="h-12 rounded-sm bg-muted/30 border-none" />
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Availability Status</Label>
                         <Select value={status} onValueChange={setStatus}>
-                            <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-none"><SelectValue /></SelectTrigger>
-                            <SelectContent className="rounded-2xl">
+                            <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                            <SelectContent className="rounded-sm">
                                 <SelectItem value="AVAILABLE">Available</SelectItem>
                                 <SelectItem value="MAINTENANCE">Maintenance</SelectItem>
                                 <SelectItem value="OCCUPIED">Fully Occupied</SelectItem>
@@ -119,8 +119,8 @@ export default function EditRoomModal({ room, open, onClose, onSuccess }: Props)
                     </div>
 
                     <div className="pt-4 flex gap-3">
-                        <Button type="button" variant="ghost" className="flex-1 rounded-full font-bold" onClick={onClose}>Cancel</Button>
-                        <Button type="submit" className="flex-1 rounded-full font-black shadow-lg" disabled={loading}>
+                        <Button type="button" variant="ghost" className="flex-1 rounded-sm font-bold" onClick={onClose}>Cancel</Button>
+                        <Button type="submit" className="flex-1 rounded-sm font-black shadow-lg" disabled={loading}>
                             {loading ? <Loader2 className="animate-spin h-4 w-4" /> : "Save Changes"}
                         </Button>
                     </div>

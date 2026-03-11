@@ -55,11 +55,11 @@ export default function Floors() {
     };
 
     return (
-        <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10 animate-in fade-in duration-500">
+        <div className="p-2 md:p-8 max-w-7xl mx-auto space-y-10 animate-in fade-in duration-500">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="p-4 bg-primary/10 rounded-3xl text-primary">
+                    <div className="p-4 bg-primary/10 rounded-full text-primary">
                         <Building2 className="h-8 w-8" />
                     </div>
                     <div>
@@ -73,7 +73,7 @@ export default function Floors() {
                         <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Capacity</span>
                         <span className="text-lg font-bold">{floors.length} / {totalFloors} Active Floors</span>
                     </div>
-                    <Button onClick={handleAddClick} className="rounded-full h-12 px-8 font-black shadow-lg shadow-primary/20">
+                    <Button onClick={handleAddClick} className="rounded-sm h-12 px-8 font-black shadow-lg shadow-primary/20">
                         <Plus className="h-4 w-4 mr-2" /> Add Floor
                     </Button>
                 </div>
@@ -82,7 +82,7 @@ export default function Floors() {
             {/* Content */}
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-48 rounded-[2rem]" />)}
+                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-48 rounded-sm" />)}
                 </div>
             ) : floors.length === 0 ? (
                 <EmptyFloorsState onAdd={handleAddClick} />
@@ -92,21 +92,21 @@ export default function Floors() {
 
             {/* Modals & Dialogs */}
             <AlertDialog open={showLimitPrompt} onOpenChange={setShowLimitPrompt}>
-                <AlertDialogContent className="rounded-[2rem]">
+                <AlertDialogContent className="rounded-sm">
                     <AlertDialogHeader>
                         <div className="mx-auto p-4 rounded-full bg-amber-100 text-amber-600 mb-4">
                             <AlertCircle className="w-8 h-8" />
                         </div>
-                        <AlertDialogTitle className="text-center text-xl">Capacity Reached</AlertDialogTitle>
+                        <AlertDialogTitle className="text-center text-xl w-full">Capacity Reached</AlertDialogTitle>
                         <AlertDialogDescription className="text-center">
                             You've used all <strong>{totalFloors}</strong> allotted floor slots. Would you like to expand your limit to continue?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="sm:justify-center gap-3">
-                        <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                        <AlertDialogCancel className="rounded-sm">Cancel</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={() => { setShouldIncreaseLimit(true); setShowLimitPrompt(false); setOpenCreate(true); }}
-                            className="rounded-full px-6"
+                            className="rounded-sm px-6"
                         >
                             Increase Limit & Continue
                         </AlertDialogAction>

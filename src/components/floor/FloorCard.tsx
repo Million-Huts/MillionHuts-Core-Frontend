@@ -11,13 +11,13 @@ export default function FloorCard({ floor }: { floor: Floor }) {
 
     return (
         <Card
-            className="group relative overflow-hidden rounded-[2rem] border-border bg-background p-6 transition-all hover:border-primary/50 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+            className="group relative overflow-hidden rounded-sm border-border bg-background p-6 transition-all hover:border-primary/50 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
             onClick={() => navigate(`/pgs/${currentPG?.id}/floors/${floor.id}`)}
         >
             <div className="flex flex-col h-full justify-between">
                 {/* Header Section */}
                 <div className="flex justify-between items-start mb-6">
-                    <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                    <div className="p-3 rounded-full bg-primary/10 text-primary">
                         <LayoutGrid className="h-6 w-6" />
                     </div>
                     <div className="flex items-center gap-2">

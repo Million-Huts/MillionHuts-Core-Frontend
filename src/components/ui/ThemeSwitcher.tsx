@@ -29,13 +29,13 @@ export default function ThemeSwitcher() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="relative h-10 w-10 rounded-2xl bg-muted/50 hover:bg-accent transition-all duration-300 shadow-sm"
+                    className="relative h-10 w-10 rounded-full bg-muted/50 hover:bg-accent transition-all duration-300 shadow-sm"
                 >
                     <Icon className="h-[1.2rem] w-[1.2rem] transition-all" />
                     <span className="sr-only">Toggle theme</span>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-56 p-2 rounded-[1.5rem] glass border-border/50">
+            <PopoverContent align="end" className="w-56 p-2 rounded-sm glass border-border/50">
                 <div className="grid gap-1">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground px-3 py-2">
                         Select Theme
@@ -45,14 +45,14 @@ export default function ThemeSwitcher() {
                             key={t.id}
                             onClick={() => setTheme(t.id)}
                             className={cn(
-                                "relative flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group",
+                                "relative flex w-full items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-all group",
                                 theme === t.id
                                     ? "bg-primary/10 text-primary"
                                     : "hover:bg-muted text-muted-foreground hover:text-foreground"
                             )}
                         >
                             {/* Theme Swatch */}
-                            <div className={cn("h-6 w-6 rounded-lg border shadow-inner flex items-center justify-center", t.color)}>
+                            <div className={cn("h-6 w-6 rounded-full border shadow-inner flex items-center justify-center", t.color)}>
                                 <t.icon className={cn("h-3 w-3", theme === t.id ? "text-primary" : "text-white/50")} />
                             </div>
 

@@ -38,7 +38,7 @@ export default function ConfirmDeleteModal({
         <Dialog open={isOpen} onOpenChange={() => !isLoading && onClose()}>
             <DialogContent className="sm:max-w-[400px] border-border bg-popover shadow-2xl">
                 <div className="flex flex-col items-center pt-4 text-center">
-                    <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center text-destructive mb-4 animate-pulse">
+                    <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center text-destructive mb-4 animate-pulse">
                         <AlertTriangle className="h-7 w-7" />
                     </div>
                     <DialogHeader className="space-y-2">

@@ -18,7 +18,7 @@ export default function PGCard({ pg }: { pg: PG }) {
             className="h-full"
         >
             <Card
-                className="group relative h-full overflow-hidden rounded-[2rem] border-border bg-card shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 cursor-pointer"
+                className="group relative h-full overflow-hidden rounded-sm border-border bg-card shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 cursor-pointer"
                 onClick={() => navigate(`/pgs/${pg.id}/basic`)}
             >
                 {/* Image Section */}
@@ -57,7 +57,7 @@ export default function PGCard({ pg }: { pg: PG }) {
 
                     {/* Progress Indicator */}
                     {isSetupIncomplete ? (
-                        <div className="space-y-2 rounded-2xl bg-muted/50 p-3 border border-border/50">
+                        <div className="space-y-2 rounded-sm bg-muted/50 p-3 border border-border/50">
                             <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-3 h-3" /> Setup Pending
@@ -67,7 +67,7 @@ export default function PGCard({ pg }: { pg: PG }) {
                             <Progress value={pg.completionPercent} className="h-1.5 bg-muted-foreground/20" />
                         </div>
                     ) : (
-                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-500/5 p-3 rounded-2xl border border-emerald-500/10">
+                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-500/5 p-3 rounded-sm border border-emerald-500/10">
                             <ShieldCheck className="w-4 h-4" />
                             <span className="text-[10px] font-black uppercase tracking-widest">Fully Operational</span>
                         </div>

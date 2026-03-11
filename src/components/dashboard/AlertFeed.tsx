@@ -32,7 +32,7 @@ export default function AlertFeed({ alerts }: AlertFeedProps) {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-border bg-muted/10 p-10 text-center"
+                            className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-border bg-muted/10 p-10 text-center"
                         >
                             <BellOff className="mb-3 h-8 w-8 text-muted-foreground/30" />
                             <p className="text-sm font-medium text-muted-foreground">All clear. No active alerts.</p>
@@ -49,7 +49,7 @@ export default function AlertFeed({ alerts }: AlertFeedProps) {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
                                     className={cn(
-                                        "group relative flex gap-4 rounded-2xl border p-4 transition-all hover:shadow-md",
+                                        "group relative flex gap-4 rounded-sm border p-4 transition-all hover:shadow-md",
                                         isHigh
                                             ? "border-destructive/20 bg-destructive/5 text-destructive"
                                             : isMedium

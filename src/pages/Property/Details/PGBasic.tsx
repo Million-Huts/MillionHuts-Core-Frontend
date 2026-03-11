@@ -25,8 +25,8 @@ interface PGData {
 }
 
 const InfoRow = ({ label, value, icon: Icon }: { label: string, value: string, icon: any }) => (
-    <div className="flex items-start gap-4 p-4 rounded-2xl bg-muted/30 border border-border/50">
-        <div className="p-2.5 rounded-xl bg-background border shadow-sm text-primary">
+    <div className="flex items-start gap-4 p-4 rounded-sm bg-muted/30 border border-border/50">
+        <div className="p-2.5 rounded-full bg-background border shadow-sm text-primary">
             <Icon className="h-4 w-4" />
         </div>
         <div>
@@ -78,13 +78,13 @@ export default function PGBasic() {
                                 <h2 className="text-3xl font-black tracking-tighter">Identity & Location</h2>
                                 <p className="text-muted-foreground font-medium">Core establishment details and QR identifier.</p>
                             </div>
-                            <Button onClick={() => setEditing(true)} variant="outline" className="rounded-full gap-2 px-6">
+                            <Button onClick={() => setEditing(true)} variant="outline" className="rounded-sm gap-2 px-6">
                                 <Edit2 className="h-4 w-4" /> Edit Profile
                             </Button>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <Card className="lg:col-span-2 rounded-[2rem] border-border/50 shadow-sm">
+                            <Card className="lg:col-span-2 rounded-sm border-border/50 shadow-sm">
                                 <CardContent className="p-8 space-y-6">
                                     <div className="grid md:grid-cols-2 gap-4">
                                         <InfoRow label="Property Name" value={pg.name} icon={Building} />
@@ -97,7 +97,7 @@ export default function PGBasic() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="rounded-[2rem] border-primary/10 bg-primary/5 shadow-none flex flex-col items-center justify-center p-8">
+                            <Card className="rounded-sm border-primary/10 bg-primary/5 shadow-none flex flex-col items-center justify-center p-8">
                                 <div className="p-4 bg-white rounded-2xl shadow-lg mb-4">
                                     <QRCodeSVG value={pg.pgCode || "N/A"} size={160} />
                                 </div>
@@ -147,43 +147,43 @@ function PGEditForm({ pg, onCancel, onUpdated }: { pg: PGData; onCancel: () => v
                 <p className="text-muted-foreground font-medium">Update your property information and access codes.</p>
             </div>
 
-            <Card className="rounded-[2rem] border-border/50">
+            <Card className="rounded-sm border-border/50">
                 <CardContent className="p-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
-                            <Input name="name" defaultValue={pg.name} className="rounded-xl h-12" required />
+                            <Input name="name" defaultValue={pg.name} className="rounded-sm h-12" required />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Property Code</Label>
-                            <Input name="pgCode" defaultValue={pg.pgCode} className="rounded-xl h-12" />
+                            <Input name="pgCode" defaultValue={pg.pgCode} className="rounded-sm h-12" />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</Label>
-                            <Input name="city" defaultValue={pg.city} className="rounded-xl h-12" />
+                            <Input name="city" defaultValue={pg.city} className="rounded-sm h-12" />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">State</Label>
-                            <Input name="state" defaultValue={pg.state} className="rounded-xl h-12" />
+                            <Input name="state" defaultValue={pg.state} className="rounded-sm h-12" />
                         </div>
                         <div className="space-y-2 md:col-span-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Pincode</Label>
-                            <Input name="pincode" defaultValue={pg.pincode} className="rounded-xl h-12" />
+                            <Input name="pincode" defaultValue={pg.pincode} className="rounded-sm h-12" />
                         </div>
                         <div className="space-y-2 md:col-span-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Full Address</Label>
-                            <Textarea name="address" defaultValue={pg.address} className="rounded-xl min-h-[120px]" />
+                            <Textarea name="address" defaultValue={pg.address} className="rounded-sm min-h-[120px]" />
                         </div>
                     </div>
                 </CardContent>
             </Card>
 
             <div className="flex items-center gap-3">
-                <Button type="submit" className="rounded-full px-8 h-12 font-bold" disabled={isSubmitting}>
+                <Button type="submit" className="rounded-sm px-8 h-12 font-bold" disabled={isSubmitting}>
                     {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                     Save Changes
                 </Button>
-                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-full px-8 h-12 font-bold">
+                <Button type="button" variant="ghost" onClick={onCancel} className="rounded-sm px-8 h-12 font-bold">
                     <X className="mr-2 h-4 w-4" /> Cancel
                 </Button>
             </div>

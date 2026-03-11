@@ -26,7 +26,7 @@ export default function PolicyAccordion({
         <Accordion type="single" collapsible className="w-full">
             <AccordionItem
                 value={policy.id}
-                className="border border-border rounded-[1.5rem] bg-card overflow-hidden shadow-sm transition-all hover:shadow-md"
+                className="border border-border rounded-sm bg-card overflow-hidden shadow-sm transition-all hover:shadow-md"
             >
                 {/* Header Area */}
                 <div className="flex items-center justify-between px-6 py-2">
@@ -39,7 +39,7 @@ export default function PolicyAccordion({
                             size="sm"
                             variant="ghost"
                             onClick={onAddRule}
-                            className="rounded-full gap-2 font-bold"
+                            className="rounded-sm gap-2 font-bold"
                         >
                             <Plus size={16} /> Add Rule
                         </Button>
@@ -58,7 +58,7 @@ export default function PolicyAccordion({
                 <AccordionContent className="px-6 pb-6 pt-0">
                     <div className="space-y-3">
                         {(!Array.isArray(policy.items) || policy.items.length === 0) ? (
-                            <div className="py-8 text-center rounded-2xl border-2 border-dashed border-muted bg-muted/20">
+                            <div className="py-8 text-center rounded-sm border-2 border-dashed border-muted bg-muted/20">
                                 <p className="text-sm font-medium text-muted-foreground">
                                     No rules defined for this category yet.
                                 </p>

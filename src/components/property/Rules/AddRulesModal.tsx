@@ -58,11 +58,11 @@ export default function AddRulesModal({ pgId, open, policyId, onClose, onAdded }
     };
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-xl p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+        <Dialog open={open} onOpenChange={() => { setRules([{ name: "", description: "" }]); onClose() }}>
+            <DialogContent className="max-w-xl p-0 overflow-hidden rounded-sm border-none shadow-2xl">
                 <div className="p-8 pb-4 border-b bg-muted/20">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+                        <div className="p-3 bg-primary/10 rounded-full text-primary">
                             <ListPlus size={24} />
                         </div>
                         <div>
@@ -76,7 +76,7 @@ export default function AddRulesModal({ pgId, open, policyId, onClose, onAdded }
 
                 <div className="p-8 pt-6 max-h-[60vh] overflow-y-auto space-y-4">
                     {rules.map((rule, i) => (
-                        <div key={i} className="group relative bg-background p-5 rounded-2xl border border-border shadow-sm transition-all">
+                        <div key={i} className="group relative bg-background p-5 rounded-sm border border-border shadow-sm transition-all">
                             {rules.length > 1 && (
                                 <button
                                     onClick={() => removeRuleRow(i)}
@@ -90,13 +90,14 @@ export default function AddRulesModal({ pgId, open, policyId, onClose, onAdded }
                                     placeholder="Rule Name (e.g. No noise after 10 PM)"
                                     value={rule.name}
                                     onChange={(e) => updateRule(i, "name", e.target.value)}
-                                    className="font-bold border-none px-0 text-base shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/40"
+                                    className="font-bold  rounded-sm border-foreground/20 px-2 text-base shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/40"
                                 />
                                 <Textarea
                                     placeholder="Add context or penalty details (optional)..."
                                     value={rule.description}
                                     onChange={(e) => updateRule(i, "description", e.target.value)}
-                                    className="min-h-[60px] resize-none border-none p-0 focus-visible:ring-0 text-sm bg-transparent placeholder:text-muted-foreground/40"
+                                    rows={5}
+                                    className="min-h-[60px] rounded-sm border-foreground/20 px-2 focus-visible:ring-0 text-sm bg-transparent placeholder:text-muted-foreground/40"
                                 />
                             </div>
                         </div>
@@ -105,15 +106,15 @@ export default function AddRulesModal({ pgId, open, policyId, onClose, onAdded }
                     <Button
                         variant="outline"
                         onClick={addRuleRow}
-                        className="w-full border-dashed border-2 h-14 rounded-2xl font-bold text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
+                        className="w-full border-dashed border-2 h-14 rounded-sm font-bold text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
                     >
                         <Plus className="mr-2 h-4 w-4" /> Add Another Rule
                     </Button>
                 </div>
 
                 <div className="p-6 bg-muted/20 border-t flex justify-end gap-3">
-                    <Button variant="ghost" onClick={onClose} className="rounded-full h-12 px-6 font-bold">Cancel</Button>
-                    <Button onClick={handleSubmit} disabled={loading} className="rounded-full h-12 px-8 font-bold shadow-lg shadow-primary/20">
+                    <Button variant="ghost" onClick={onClose} className="rounded-sm h-12 px-6 font-bold">Cancel</Button>
+                    <Button onClick={handleSubmit} disabled={loading} className="rounded-sm h-12 px-8 font-bold shadow-lg shadow-primary/20">
                         {loading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Save Rules"}
                     </Button>
                 </div>

@@ -78,7 +78,7 @@ export default function PGRulesPage() {
                     <h2 className="text-3xl font-black tracking-tighter">Rules & Policies</h2>
                     <p className="text-muted-foreground font-medium">Define the code of conduct for your residents.</p>
                 </div>
-                <Button onClick={() => setOpenCreatePolicy(true)} className="rounded-full px-6 gap-2">
+                <Button onClick={() => setOpenCreatePolicy(true)} className="rounded-sm px-6 gap-2">
                     <Plus className="h-4 w-4" /> Create Category
                 </Button>
             </div>

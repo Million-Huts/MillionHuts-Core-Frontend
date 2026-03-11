@@ -79,9 +79,9 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[480px] rounded-3xl max-h-[90vh] overflow-y-auto border-none ">
+            <DialogContent className="sm:max-w-[480px] rounded-sm max-h-[90vh] overflow-y-auto border-none ">
                 <DialogHeader>
-                    <div className="h-12 w-12 bg-amber-100 rounded-2xl flex items-center justify-center mb-2">
+                    <div className="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center mb-2">
                         <Settings2 className="h-6 w-6 text-amber-600" />
                     </div>
                     <DialogTitle className="text-2xl font-bold">Edit Floor Details</DialogTitle>
@@ -97,16 +97,16 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                                 value={label}
                                 onChange={e => setLabel(e.target.value)}
                                 required
-                                className="rounded-xl bg-muted/30 transition-all"
+                                className="rounded-sm bg-muted/30 transition-all"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">Room Capacity</Label>
                             <Select value={totalRooms} onValueChange={setTotalRooms}>
-                                <SelectTrigger className="rounded-xl bg-muted/30">
+                                <SelectTrigger className="rounded-sm bg-muted/30">
                                     <SelectValue placeholder="Rooms" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-xl">
+                                <SelectContent className="rounded-sm">
                                     {[...Array(15)].map((_, i) => (
                                         <SelectItem key={i + 1} value={(i + 1).toString()}>
                                             {i + 1} {i === 0 ? 'Room' : 'Rooms'}
@@ -129,7 +129,7 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                                         key={suggestion}
                                         type="button"
                                         onClick={() => togglePlace(suggestion)}
-                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${isSelected
+                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-sm font-medium transition-all border ${isSelected
                                             ? "bg-primary border-primary text-white "
                                             : "bg-white border-slate-200 text-slate-600 hover:border-primary"
                                             }`}
@@ -144,7 +144,7 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                                 <button
                                     type="button"
                                     onClick={() => setShowCustomInput(true)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border border-dashed border-slate-300 text-slate-400 hover:border-primary hover:text-primary transition-all"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-sm font-medium border border-dashed border-slate-300 text-slate-400 hover:border-primary hover:text-primary transition-all"
                                 >
                                     <Plus className="h-3 w-3" />
                                     Other
@@ -161,17 +161,17 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                                     onChange={(e) => setPlaceInput(e.target.value)}
                                     placeholder="Enter custom area..."
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomPlace())}
-                                    className="rounded-xl h-9"
+                                    className="rounded-sm h-9"
                                 />
-                                <Button type="button" size="sm" onClick={addCustomPlace} className="rounded-xl h-9 bg-primary">Add</Button>
-                                <Button type="button" size="sm" variant="ghost" onClick={() => setShowCustomInput(false)} className="rounded-xl h-9 px-2"><X className="h-4 w-4" /></Button>
+                                <Button type="button" size="sm" onClick={addCustomPlace} className="rounded-sm h-9 bg-primary">Add</Button>
+                                <Button type="button" size="sm" variant="ghost" onClick={() => setShowCustomInput(false)} className="rounded-full h-9 px-2"><X className="h-4 w-4" /></Button>
                             </div>
                         )}
 
                         {/* Display for unique/custom areas */}
                         <div className="flex flex-wrap gap-2 pt-2">
                             {publicPlaces.filter(p => !COMMON_SUGGESTIONS.includes(p)).map((place, i) => (
-                                <span key={i} className="flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-full text-xs font-bold animate-in zoom-in-50">
+                                <span key={i} className="flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-sm text-xs font-bold animate-in zoom-in-50">
                                     {place}
                                     <X className="h-3 w-3 cursor-pointer hover:text-red-500" onClick={() => togglePlace(place)} />
                                 </span>
@@ -180,8 +180,8 @@ export default function EditFloorModal({ open, onClose, floor, pgId, onUpdated }
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-xl font-semibold">Cancel</Button>
-                        <Button type="submit" disabled={loading} className="rounded-xl px-8 font-bold bg-primary">
+                        <Button type="button" variant="ghost" onClick={onClose} className="rounded-sm font-semibold">Cancel</Button>
+                        <Button type="submit" disabled={loading} className="rounded-sm px-8 font-bold bg-primary">
                             {loading ? "Saving..." : "Update Floor"}
                         </Button>
                     </div>
