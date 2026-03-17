@@ -27,6 +27,7 @@ import Notifications from './pages/Notifications';
 import UsersPage from './pages/Users/UsersPage';
 import UserDetailsPage from './pages/Users/UserDetailsPage';
 import ForgotPassword from './pages/Auth/ForgotPassword';
+import Overview from './pages/Overview';
 
 function App() {
   return (
@@ -43,7 +44,10 @@ function App() {
         {/* Private Routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<ProtectedLayout />}>
+            <Route path="/overview" element={<Overview />} />
+
             <Route path="/dashboard" element={<Dashboard />} />
+
             <Route path="/profile" element={<Profile />} />
 
             <Route path="/pgs" element={<Properties />} />
@@ -90,7 +94,7 @@ function App() {
         </Route>
 
         {/* Default Redirect */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/overview" replace />} />
       </Routes >
       <Toaster position='top-center' reverseOrder={false} />
     </>

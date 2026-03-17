@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSearchParams } from "react-router-dom";
 import type { Room } from "@/interfaces/room";
+import type { Floor } from "@/interfaces/floor";
 
 export default function Rooms() {
     const [searchParams] = useSearchParams();
@@ -17,6 +18,8 @@ export default function Rooms() {
     const pgId = currentPG?.id;
 
     const [rooms, setRooms] = useState<Room[]>([]);
+    const [floors, setFloors] = useState<Floor[]>([]);
+    const [floorError, setFloorError] = useState(false);
     const [loading, setLoading] = useState(true);
     const [openCreate, setOpenCreate] = useState(false);
     const [search, setSearch] = useState("");
@@ -33,8 +36,25 @@ export default function Rooms() {
             setLoading(false);
         }
     };
+    const fetchFloors = async () => {
+        setLoading(true);
+        try {
+            const res = await apiPrivate.get(`/pgs/${pgId}/floors`);
+            const floorList = res.data.data.floors || [];
+            setFloors(floorList);
+            if (floorList.length === 0) setFloorError(true);
+        } catch {
+            setFloorError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    useEffect(() => { fetchRooms(); }, [pgId]);
+    useEffect(() => {
+        fetchRooms();
+
+        fetchFloors();
+    }, [pgId]);
     useEffect(() => {
         if (searchParams.get("create") === "true") setOpenCreate(true);
     }, [searchParams]);
@@ -43,6 +63,15 @@ export default function Rooms() {
         r.name.toLowerCase().includes(search.toLowerCase()) ||
         r.sharing.toLowerCase().includes(search.toLowerCase())
     );
+
+    const floorAvailability = floors.map((floor) => {
+        const configuredRooms = rooms.filter(r => r.floorId === floor.id).length;
+
+        return {
+            floorId: floor.id!,
+            isAvailable: configuredRooms < floor.totalRooms
+        };
+    });
 
     return (
         <div className="p-0 md:p-8 max-w-7xl mx-auto space-y-8">
@@ -93,6 +122,9 @@ export default function Rooms() {
                 onClose={() => setOpenCreate(false)}
                 onCreated={(newRoom) => setRooms((prev) => [...prev, newRoom])}
                 pgId={pgId!}
+                floors={floors}
+                floorError={floorError}
+                floorAvailability={floorAvailability}
             />
         </div>
     );

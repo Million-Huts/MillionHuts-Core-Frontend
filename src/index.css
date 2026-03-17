@@ -198,7 +198,7 @@
 
   a,
   button {
-    @apply transition-all duration-200 ease-in-out;
+    @apply cursor-pointer transition-all duration-200 ease-in-out;
   }
 }
 

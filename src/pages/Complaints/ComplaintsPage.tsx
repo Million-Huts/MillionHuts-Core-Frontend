@@ -18,6 +18,12 @@ import AssignModal from "@/components/complaint/AssignModal";
 import CreateComplaintModal from "@/components/complaint/CreateComplaintModal";
 import type { PGUser } from "@/interfaces/pgUsers";
 
+type PaginationMeta = {
+    total: number;
+    page: number;
+    limit: number;
+}
+
 export default function ComplaintsPage() {
     const { currentPG } = usePG();
     const pgId = currentPG?.id;
@@ -28,6 +34,7 @@ export default function ComplaintsPage() {
     const [stats, setStats] = useState<ComplaintStats | null>(null);
     const [users, setUsers] = useState<PGUser[]>([]);
     const [loading, setLoading] = useState(false);
+    const [paginationMeta, setPaginationMeta] = useState<PaginationMeta | null>(null);
 
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
@@ -47,7 +54,7 @@ export default function ComplaintsPage() {
                         page,
                         search,
                         status: status === "ALL" ? "" : status,
-                        priority: priority === "ALL" ? "" : priority
+                        priority: priority === "ALL" ? "" : priority,
                     },
                 }),
                 apiPrivate.get(`/pgs/${pgId}/complaints/stats`),
@@ -55,6 +62,7 @@ export default function ComplaintsPage() {
             ]);
 
             setComplaints(compRes.data.data || []);
+            setPaginationMeta(compRes.data.pagination)
             setStats(statsRes.data);
             setUsers(userRes.data.data || []);
         } catch {
@@ -64,15 +72,13 @@ export default function ComplaintsPage() {
         }
     };
 
-    useEffect(() => { fetchData(); }, [page, status, priority, pgId]);
+    useEffect(() => { fetchData(); }, [page, status, priority, pgId, search]);
     useEffect(() => {
         if (searchParams.get("create") === "true") setIsCreateOpen(true);
     }, [searchParams]);
 
     return (
         <div className="p-2 md:p-8 max-w-7xl mx-auto space-y-8 bg-background min-h-screen">
-            <LoadingOverlay isLoading={loading} message="Fetching Tickets..." />
-
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -116,7 +122,8 @@ export default function ComplaintsPage() {
             </div>
 
             {/* Complaints Table Container */}
-            <div className="bg-card rounded-sm border shadow-sm overflow-hidden relative">
+            <div className={`bg-card rounded-sm border shadow-sm overflow-hidden relative ${loading ? 'min-h-[50vh]' : ''}`}>
+                <LoadingOverlay isLoading={loading} message="Fetching Tickets..." />
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-muted/30 border-b">
@@ -156,12 +163,12 @@ export default function ComplaintsPage() {
 
             {/* Pagination Footer */}
             <div className="flex items-center justify-between px-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Page {page}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Page {paginationMeta ? paginationMeta.page + "/" + paginationMeta.total : null}</p>
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="rounded-sm px-4 font-bold" disabled={page === 1} onClick={() => setPage(p => p - 1)}>
                         <ChevronLeft className="w-4 h-4 mr-2" /> Previous
                     </Button>
-                    <Button variant="outline" size="sm" className="rounded-sm px-4 font-bold" onClick={() => setPage(p => p + 1)}>
+                    <Button variant="outline" size="sm" className="rounded-sm px-4 font-bold" disabled={page === paginationMeta?.total} onClick={() => setPage(p => p + 1)}>
                         Next Page <ChevronRight className="w-4 h-4 ml-2" />
                     </Button>
                 </div>

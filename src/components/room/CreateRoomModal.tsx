@@ -11,11 +11,19 @@ import { Label } from "../ui/label";
 import { AlertCircle, Loader2, Sparkles, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
+interface FloorAvailability {
+    floorId: string;
+    isAvailable: boolean;
+}
+
 interface Props {
     open: boolean;
     onClose: () => void;
     onCreated: (room: Room) => void;
     pgId: string;
+    floors: Floor[];
+    floorError: boolean;
+    floorAvailability: FloorAvailability[];
 }
 
 const SHARING_OPTIONS = [
@@ -28,11 +36,9 @@ const SHARING_OPTIONS = [
 
 const COMMON_AMENITIES = ["Wardrobe", "Study Table", "Attached Washroom", "Balcony", "Window", "Mirror", "Chairs"];
 
-export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Props) {
-    const [floors, setFloors] = useState<Floor[]>([]);
+export default function CreateRoomModal({ open, onClose, onCreated, pgId, floors, floorError, floorAvailability }: Props) {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
-    const [floorError, setFloorError] = useState(false);
 
     const [features, setFeatures] = useState<string[]>([]);
     const [featureInput, setFeatureInput] = useState("");
@@ -49,22 +55,9 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
 
     useEffect(() => {
         if (!open || !pgId) return;
-        const fetchFloors = async () => {
-            setLoading(true);
-            try {
-                const res = await apiPrivate.get(`/pgs/${pgId}/floors`);
-                const floorList = res.data.data.floors || [];
-                setFloors(floorList);
-                if (floorList.length === 0) setFloorError(true);
-            } catch {
-                setFloorError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFloors();
         setFeatures([]);
         setShowCustomFeature(false);
+        setLoading(false);
     }, [open, pgId]);
 
     const toggleFeature = (feature: string) => {
@@ -95,7 +88,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
             });
             onCreated(res.data.data.room);
             toast.success("Room registered successfully");
-            onClose();
+            handleClose();
         } catch {
             toast.error("Failed to create room");
         } finally {
@@ -103,8 +96,21 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
         }
     };
 
+    const handleClose = () => {
+        setFormData({
+            name: "",
+            floorId: "",
+            roomType: "NORMAL",
+            sharing: "SINGLE",
+            capacity: 1,
+            rent: ""
+        });
+        onClose();
+    }
+
+
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[550px] rounded-sm max-h-[90vh] overflow-y-scroll p-8">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20">
@@ -120,7 +126,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                             <h3 className="text-2xl font-black">Missing Infrastructure</h3>
                             <p className="text-muted-foreground mt-2">You need to set up floors before adding rooms.</p>
                         </div>
-                        <Button asChild className="w-full rounded-sm h-12">
+                        <Button asChild className="w-full rounded-sm">
                             <Link to="/floors">Configure Floors</Link>
                         </Button>
                     </div>
@@ -143,9 +149,21 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Floor Assignment</Label>
                                     <Select onValueChange={v => setFormData({ ...formData, floorId: v })} required>
-                                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue placeholder="Select floor" /></SelectTrigger>
+                                        <SelectTrigger className="rounded-sm bg-muted/30 border-none"><SelectValue placeholder="Select floor" /></SelectTrigger>
                                         <SelectContent className="rounded-sm">
-                                            {floors.map(f => <SelectItem key={f.id} value={f.id!}>{f.label}</SelectItem>)}
+                                            {floors.map((f) => {
+                                                const availability = floorAvailability.find(a => a.floorId === f.id);
+
+                                                return (
+                                                    <SelectItem
+                                                        key={f.id}
+                                                        value={f.id!}
+                                                        disabled={!availability?.isAvailable}
+                                                    >
+                                                        {f.label}
+                                                    </SelectItem>
+                                                );
+                                            })}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -155,7 +173,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sharing</Label>
                                     <Select defaultValue="SINGLE" onValueChange={v => setFormData({ ...formData, sharing: v, capacity: SHARING_OPTIONS.find(s => s.type === v)?.capacity || 1 })}>
-                                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
                                         <SelectContent className="rounded-sm">
                                             {SHARING_OPTIONS.map(s => <SelectItem key={s.type} value={s.type} >{s.type}</SelectItem>)}
                                         </SelectContent>
@@ -164,7 +182,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Room Type</Label>
                                     <Select defaultValue="NORMAL" onValueChange={v => setFormData({ ...formData, roomType: v })}>
-                                        <SelectTrigger className="h-12 rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
+                                        <SelectTrigger className="rounded-sm bg-muted/30 border-none"><SelectValue /></SelectTrigger>
                                         <SelectContent className="rounded-sm">
                                             <SelectItem value="NORMAL">Normal</SelectItem>
                                             <SelectItem value="AC">AC</SelectItem>
@@ -173,7 +191,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rent (₹)</Label>
-                                    <Input type="number" required value={formData.rent} onChange={e => setFormData({ ...formData, rent: e.target.value })} className="h-12 rounded-sm bg-muted/30 border-none" />
+                                    <Input type="number" required value={formData.rent} onChange={e => setFormData({ ...formData, rent: e.target.value })} className="rounded-sm bg-muted/30 border-none" />
                                 </div>
                             </div>
 
@@ -198,10 +216,19 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId }: Prop
                                     </div>
                                 )}
                             </div>
+                            <div className="flex flex-row gap-3 items-center justify-end">
+                                <Button
+                                    variant={"ghost"}
+                                    onClick={handleClose}
+                                    className="rounded-sm"
+                                >
+                                    Cancel
+                                </Button>
 
-                            <Button type="submit" disabled={submitting} className="w-full h-14 rounded-sm font-black text-lg mt-4 shadow-xl">
-                                {submitting ? "Creating..." : "Register Room"}
-                            </Button>
+                                <Button type="submit" disabled={submitting} className="rounded-sm font-black">
+                                    {submitting ? "Creating..." : "Register Room"}
+                                </Button>
+                            </div>
                         </form>
                     </>
                 )}

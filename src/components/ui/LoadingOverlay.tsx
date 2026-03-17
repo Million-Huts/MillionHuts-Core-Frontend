@@ -31,7 +31,7 @@ export const LoadingOverlay = ({
                     <div className="relative flex items-center justify-center">
                         {/* Outer Pulse Ring */}
                         <motion.div
-                            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
+                            animate={{ opacity: [0.3, 0.1, 0.3] }}
                             transition={{ repeat: Infinity, duration: 2 }}
                             className="absolute h-12 w-12 rounded-full bg-primary"
                         />
@@ -50,7 +50,7 @@ export const LoadingOverlay = ({
                         <motion.p
                             initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-sm font-medium text-muted-foreground animate-pulse"
+                            className="text-sm font-medium text-muted-foreground"
                         >
                             {message}
                         </motion.p>

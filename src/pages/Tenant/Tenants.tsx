@@ -1,6 +1,6 @@
 // pages/Tenant/Tenants.tsx
 import { useEffect, useState, useCallback } from "react";
-import { Users, FileText, Plus } from "lucide-react";
+import { Users, FileText, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiPrivate } from "@/lib/api";
@@ -57,95 +57,133 @@ export default function Tenants() {
     }, [fetchData]);
 
     useEffect(() => {
-        if (searchParams.get("create") === "true")
-            setOpenSearch(true)
-        if (searchParams.get("applications") === "true")
-            setTabValue("apps")
-    }, [searchParams])
+        if (searchParams.get("create") === "true") setOpenSearch(true);
+        if (searchParams.get("applications") === "true") setTabValue("apps");
+    }, [searchParams]);
 
     if (loading) return (
-        <div className="relative min-h-screen">
-            <LoadingOverlay isLoading={loading} message="Loading Tenants..." />
+        <div className="relative min-h-screen bg-background">
+            <LoadingOverlay isLoading={loading} message="Fetching latest data..." />
         </div>
-    )
+    );
 
     return (
-        <div className="p-6 space-y-8 max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Resident Management</h1>
-                    <p className="text-muted-foreground">Manage staying tenants and incoming applications.</p>
+        // Main container uses background and foreground from your @theme
+        <div className="min-h-screen bg-background text-foreground p-6 transition-colors duration-500">
+            <div className="max-w-7xl mx-auto space-y-8">
+
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-8">
+                    <div className="space-y-1">
+                        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                            Resident Management
+                        </h1>
+                        <p className="text-muted-foreground text-lg">
+                            Monitor stays, track occupancy, and process incoming applications.
+                        </p>
+                    </div>
+
+                    <Button
+                        onClick={() => setOpenSearch(true)}
+                        size="lg"
+                        className="gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all rounded-sm px-6"
+                    >
+                        <UserPlus className="h-5 w-5" />
+                        <span className="font-semibold">Add New Resident</span>
+                    </Button>
                 </div>
-                <Button onClick={() => setOpenSearch(true)} className="gap-2 shadow-lg hover:shadow-primary/20 transition-all">
-                    <Plus className="h-4 w-4" /> Add New Resident
-                </Button>
-            </div>
 
-            <TenantStats
-                totalTenants={tenants.length}
-                pendingApps={applications.filter(a => a.status === "PENDING").length}
-                rooms={rooms}
-            />
-
-            <Tabs value={tabValue} onValueChange={(val) => setTabValue(val)} className="w-full">
-                <TabsList className="bg-muted/50 p-1 rounded-xl mb-6">
-                    <TabsTrigger value="residents" className="rounded-lg gap-2">
-                        <Users className="h-4 w-4" /> Staying Tenants
-                    </TabsTrigger>
-                    <TabsTrigger value="apps" className="rounded-lg gap-2">
-                        <FileText className="h-4 w-4" />
-                        Applications
-                        {applications.some(a => a.status === "PENDING") && (
-                            <span className="h-2 w-2 bg-primary rounded-full animate-pulse" />
-                        )}
-                    </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="residents">
-                    {tenants.length === 0 ? (
-                        <EmptyState
-                            title="No residents yet"
-                            desc="Once you add tenants or approve applications, they will appear here."
-                            onAction={() => setOpenSearch(true)}
-                        />
-                    ) : (
-                        <TenantGrid tenants={tenants} />
-                    )}
-                </TabsContent>
-
-                <TabsContent value="apps">
-                    <ApplicationList
-                        applications={applications}
-                        onApprove={(app) => {
-                            setSelectedApp(app)
-                            setSelectedTenantForStay(app.tenant!)
-                        }}
-                        onReject={() => setSelectedApp(null)}
+                {/* Stats Section - Pass semantic colors down */}
+                <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <TenantStats
+                        totalTenants={tenants.length}
+                        pendingApps={applications.filter(a => a.status === "PENDING").length}
+                        rooms={rooms}
                     />
-                </TabsContent>
-            </Tabs>
+                </section>
 
-            {/* Modals */}
-            <TenantSearchModal
-                open={openSearch}
-                onClose={() => setOpenSearch(false)}
-                onSelectTenant={(t: Tenant) => {
-                    setOpenSearch(false);
-                    setSelectedTenantForStay(t);
-                }}
-            />
+                {/* Main Tabs */}
+                <Tabs value={tabValue} onValueChange={(val) => setTabValue(val)} className="w-full">
+                    <div className="flex items-center justify-between mb-6">
+                        <TabsList className="bg-muted/30 backdrop-blur-sm border border-border rounded-sm">
+                            <TabsTrigger
+                                value="residents"
+                                className="rounded-sm px-6 py-4 gap-2 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                            >
+                                <Users className="h-4 w-4" />
+                                <span className="font-medium">Staying Tenants</span>
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="apps"
+                                className="relative rounded-sm px-6 py-4 gap-2 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+                            >
+                                <FileText className="h-4 w-4" />
+                                <span className="font-medium">Applications</span>
+                                {applications.some(a => a.status === "PENDING") && (
+                                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                    </span>
+                                )}
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
 
-            <AssignStayModal
-                open={!!selectedApp || !!selectedTenantForStay}
-                tenant={selectedTenantForStay} // Assume app includes tenantInfo
-                applicationId={selectedApp?.id}
-                rooms={rooms}
-                onClose={() => {
-                    setSelectedApp(null);
-                    setSelectedTenantForStay(null);
-                }}
-                onSuccess={fetchData}
-            />
+                    <TabsContent value="residents" className="outline-none">
+                        {tenants.length === 0 ? (
+                            <div className="bg-card border border-dashed border-border rounded-sm p-12">
+                                <EmptyState
+                                    title="No residents yet"
+                                    desc="Your resident roster is currently empty. Start by adding a tenant manually or approving a pending application."
+                                    onAction={() => setOpenSearch(true)}
+                                />
+                            </div>
+                        ) : (
+                            <div className="animate-in fade-in duration-500">
+                                <TenantGrid tenants={tenants} />
+                            </div>
+                        )}
+                    </TabsContent>
+
+                    <TabsContent value="apps" className="outline-none animate-in fade-in duration-500">
+                        <div className="bg-card rounded-sm border border-border overflow-hidden shadow-sm">
+                            <ApplicationList
+                                applications={applications}
+                                onApprove={(app) => {
+                                    setSelectedApp(app);
+                                    setSelectedTenantForStay(app.tenant!);
+                                }}
+                                onReject={() => setSelectedApp(null)}
+                            />
+                        </div>
+                    </TabsContent>
+                </Tabs>
+
+                {/* Modals - These will inherit theme colors via standard shadcn/ui portals */}
+                <TenantSearchModal
+                    open={openSearch}
+                    onClose={() => setOpenSearch(false)}
+                    onSelectTenant={(t: Tenant) => {
+                        setOpenSearch(false);
+                        setSelectedTenantForStay(t);
+                    }}
+                />
+
+                <AssignStayModal
+                    open={!!selectedApp || !!selectedTenantForStay}
+                    tenant={selectedTenantForStay}
+                    applicationId={selectedApp?.id}
+                    rooms={rooms}
+                    onClose={() => {
+                        setSelectedApp(null);
+                        setSelectedTenantForStay(null);
+                    }}
+                    onSuccess={fetchData}
+                />
+            </div>
         </div>
     );
 }
+
+
+

@@ -1,7 +1,8 @@
 import {
     Building2, Users, Settings, LogOut, ChevronLeft, LayoutDashboard,
     BedDouble, User, X, Warehouse, Command, MessageSquareWarning,
-    Wallet, Bell, UserLock
+    Wallet, Bell, UserLock,
+    FileSearchCorner
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -26,11 +27,12 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
 
     // activePattern: matches sub-routes (e.g., floors matches floors/123)
     const generalNav = [
-        { label: "Dashboard", icon: LayoutDashboard, to: `/dashboard`, activePattern: "/dashboard" },
+        { label: "Overview", icon: FileSearchCorner, to: `/overview`, activePattern: "/overview", exact: true },
         { label: "Properties", icon: Building2, to: `/pgs`, activePattern: "/pgs", exact: true },
     ];
 
     const pgDependentNav = [
+        { label: "Dashboard", icon: LayoutDashboard, to: `/dashboard`, activePattern: "/dashboard" },
         { label: "Floors", icon: Warehouse, to: `/pgs/${currentPG?.id}/floors`, activePattern: `/pgs/${currentPG?.id}/floors` },
         { label: "Rooms", icon: BedDouble, to: `/pgs/${currentPG?.id}/rooms`, activePattern: `/pgs/${currentPG?.id}/rooms` },
         { label: "Tenants", icon: Users, to: `/pgs/${currentPG?.id}/tenants`, activePattern: `/pgs/${currentPG?.id}/tenants` },
