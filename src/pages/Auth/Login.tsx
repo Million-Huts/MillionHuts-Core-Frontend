@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
     User, Lock, Loader2, ShieldCheck,
     CheckCircle2, AlertCircle,
+    MailQuestion,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -70,6 +71,7 @@ export default function LoginPage() {
                 otp,
                 process: "PASSWORD_CREATION"
             });
+            setOtp("");
             setStep("SET_PASSWORD_FORM");
             toast.success("Identity verified! Now set your password.");
         } catch (err) {
@@ -130,6 +132,38 @@ export default function LoginPage() {
             setLoading(false);
         }
     }
+
+    // 6. Request Verification Email
+    const handleSendVerification = async () => {
+        setLoading(true);
+        try {
+            await api.post("/auth/send-verification", { userId: userData?.id });
+            toast.success("Verification code sent to your email");
+        } catch (err) {
+            toast.error("Failed to send code");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 7. Request Verification Email
+    const handleVerifyForEmail = async () => {
+        setLoading(true);
+        try {
+            await api.post("/auth/verify-otp", {
+                userId: userData?.id,
+                otp,
+                process: "EMAIL_VERIFICATION"
+            });
+            setOtp('')
+            setStep("PASSWORD");
+            toast.success("Identity verified! Login Now.");
+        } catch (err) {
+            toast.error("Invalid verification code");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-3 bg-background">
@@ -216,6 +250,58 @@ export default function LoginPage() {
                                         </Button>
                                         <Link to="/forgot" className="block text-center text-xs text-muted-foreground hover:text-primary transition-colors">Forgot password?</Link>
                                     </form>
+                                )}
+
+                                {/* --- Step: Email Verification Notice & OTP --- */}
+                                {step === "VERIFY_NOTICE" && (
+                                    <div className="space-y-6">
+                                        <div className="bg-orange-500/10 text-orange-600 p-4 rounded-xl flex gap-3 text-left items-start">
+                                            <AlertCircle className="shrink-0 mt-0.5" size={18} />
+                                            <p className="text-sm font-medium">Your email is not verified. Please verify to continue login.</p>
+                                        </div>
+
+                                        {/* If user hasn't requested the code yet, show the "Send" button */}
+                                        {!otp.length && (
+                                            <Button
+                                                onClick={handleSendVerification}
+                                                className="w-full h-12 gap-2 font-bold rounded-xl"
+                                                variant="outline"
+                                                disabled={loading}
+                                            >
+                                                <MailQuestion size={18} /> {loading ? "Sending..." : "Send Verification Code"}
+                                            </Button>
+                                        )}
+
+                                        {/* Once they are ready to enter the code */}
+                                        <div className="flex flex-col items-center gap-6 animate-in fade-in slide-in-from-bottom-2">
+                                            <div className="space-y-2 text-center">
+                                                <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Enter Verification Code</h4>
+                                            </div>
+
+                                            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                                                <InputOTPGroup className="gap-2">
+                                                    {[0, 1, 2, 3, 4, 5].map((i) => (
+                                                        <InputOTPSlot key={i} index={i} className="h-12 w-10 border-2 rounded-lg" />
+                                                    ))}
+                                                </InputOTPGroup>
+                                            </InputOTP>
+
+                                            <Button
+                                                className="w-full h-12 font-bold rounded-xl shadow-lg shadow-primary/10"
+                                                onClick={handleVerifyForEmail}
+                                                disabled={otp.length < 6 || loading}
+                                            >
+                                                {loading ? <Loader2 className="animate-spin" /> : "Verify & Continue to Login"}
+                                            </Button>
+
+                                            <button
+                                                onClick={handleSendVerification}
+                                                className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline"
+                                            >
+                                                Resend Code
+                                            </button>
+                                        </div>
+                                    </div>
                                 )}
 
                                 {/* --- Step: Password Setup Verification (OTP FIRST) --- */}
