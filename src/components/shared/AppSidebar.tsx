@@ -47,24 +47,32 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
         { label: "Settings", icon: Settings, to: "/settings" },
     ];
 
-    const NavLink = ({ item }: { item: any }) => {
-        // Robust active checking: exact match or starts with pattern
+    const NavLink = ({ item, disabled }: { item: any; disabled?: boolean }) => {
         const isActive = item.exact
             ? location.pathname === item.to
             : location.pathname.startsWith(item.activePattern);
 
-        return (
-            <Link to={item.to} className={cn(
+        // If disabled, we render a div instead of a Link to prevent navigation
+        const content = (
+            <div className={cn(
                 "relative flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all",
-                isActive
+                isActive && !disabled
                     ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
                     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                collapsed && "justify-center px-2"
+                collapsed && "justify-center px-2",
+                disabled && "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-sidebar-foreground"
             )}>
-                <item.icon className={cn("h-5 w-5", isActive ? "text-sidebar-primary-foreground" : "text-muted-foreground")} />
+                <item.icon className={cn(
+                    "h-5 w-5",
+                    isActive && !disabled ? "text-sidebar-primary-foreground" : "text-muted-foreground"
+                )} />
                 {!collapsed && <span className="truncate">{item.label}</span>}
-            </Link>
+            </div>
         );
+
+        if (disabled) return content;
+
+        return <Link to={item.to}>{content}</Link>;
     };
 
     return (
@@ -80,7 +88,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-3 space-y-6 py-4">
-                        <nav className="space-y-1">{generalNav.map((i) => <NavLink key={i.to} item={i} />)}</nav>
+                        <nav className="flex flex-col gap-1">{generalNav.map((i) => <NavLink key={i.to} item={i} />)}</nav>
                         <div className="space-y-1">
                             {!collapsed && <p className="px-3 text-[10px] font-bold uppercase text-muted-foreground mb-2">Active Property</p>}
                             {!collapsed && (
@@ -94,10 +102,10 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                                 </Select>
                             )}
                         </div>
-                        <nav className="space-y-1">{pgDependentNav.map((i) => <NavLink key={i.to} item={i} />)}</nav>
+                        <nav className="flex flex-col gap-1">{pgDependentNav.map((i) => <NavLink key={i.to} item={i} disabled={!currentPG} />)}</nav>
                     </div>
 
-                    <div className="border-t border-sidebar-border p-3 space-y-1 shrink-0">
+                    <div className="border-t border-sidebar-border p-3 flex flex-col gap-1 shrink-0">
                         {bottomNav.map((i) => <NavLink key={i.to} item={i} />)}
                         <Button variant="ghost" onClick={logout} className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive">
                             <LogOut className="h-5 w-5" /> {!collapsed && "Sign Out"}
@@ -155,17 +163,29 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                         </div>
 
                         <div className="space-y-1">
-                            {pgDependentNav.map((item) => (
-                                <Link
-                                    key={item.to}
-                                    to={item.to}
-                                    onClick={() => setMobileOpen(false)}
-                                    className="flex items-center gap-3 p-3 rounded-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-                                >
-                                    <item.icon className="h-5 w-5 text-muted-foreground" />
-                                    {item.label}
-                                </Link>
-                            ))}
+                            {pgDependentNav.map((item) => {
+                                const isDisabled = !currentPG;
+                                return (
+                                    <Link
+                                        key={item.to}
+                                        to={isDisabled ? "#" : item.to} // Prevent navigation
+                                        onClick={(e) => {
+                                            if (isDisabled) {
+                                                e.preventDefault(); // Stop the click
+                                                return;
+                                            }
+                                            setMobileOpen(false);
+                                        }}
+                                        className={cn(
+                                            "flex items-center gap-3 p-3 rounded-sm text-sidebar-foreground transition-colors",
+                                            isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                        )}
+                                    >
+                                        <item.icon className="h-5 w-5 text-muted-foreground" />
+                                        {item.label}
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </div>
 
