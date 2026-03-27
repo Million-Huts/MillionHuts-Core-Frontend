@@ -56,7 +56,8 @@ export default function Rooms() {
         fetchFloors();
     }, [pgId]);
     useEffect(() => {
-        if (searchParams.get("create") === "true") setOpenCreate(true);
+        if (searchParams.get("create") === "true")
+            setOpenCreate(true);
     }, [searchParams]);
 
     const filteredRooms = rooms.filter(r =>
@@ -124,6 +125,7 @@ export default function Rooms() {
                 pgId={pgId!}
                 floors={floors}
                 floorError={floorError}
+                selectedFloor={searchParams.get('floor') ?? null}
                 floorAvailability={floorAvailability}
             />
         </div>

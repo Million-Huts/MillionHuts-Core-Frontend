@@ -107,7 +107,7 @@ export default function FloorDetails() {
 
                 <div className="bg-muted/20 rounded-sm p-6 md:p-10 border-2 border-dashed border-border">
                     {rooms.length === 0 ? (
-                        <EmptyRoomsState onAdd={() => navigate('/rooms/add')} />
+                        <EmptyRoomsState onAdd={() => navigate(`/pgs/${pgId}/rooms?create=true&floor=${floorId}`)} />
                     ) : (
                         <RoomGrid rooms={rooms} />
                     )}

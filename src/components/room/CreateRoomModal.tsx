@@ -24,6 +24,7 @@ interface Props {
     floors: Floor[];
     floorError: boolean;
     floorAvailability: FloorAvailability[];
+    selectedFloor: string | null;
 }
 
 const SHARING_OPTIONS = [
@@ -36,7 +37,7 @@ const SHARING_OPTIONS = [
 
 const COMMON_AMENITIES = ["Wardrobe", "Study Table", "Attached Washroom", "Balcony", "Window", "Mirror", "Chairs"];
 
-export default function CreateRoomModal({ open, onClose, onCreated, pgId, floors, floorError, floorAvailability }: Props) {
+export default function CreateRoomModal({ open, onClose, onCreated, pgId, floors, floorError, floorAvailability, selectedFloor }: Props) {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
@@ -148,7 +149,7 @@ export default function CreateRoomModal({ open, onClose, onCreated, pgId, floors
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Floor Assignment</Label>
-                                    <Select onValueChange={v => setFormData({ ...formData, floorId: v })} required>
+                                    <Select onValueChange={v => setFormData({ ...formData, floorId: v })} defaultValue={selectedFloor ?? ""} required>
                                         <SelectTrigger className="rounded-sm bg-muted/30 border-none"><SelectValue placeholder="Select floor" /></SelectTrigger>
                                         <SelectContent className="rounded-sm">
                                             {floors.map((f) => {
