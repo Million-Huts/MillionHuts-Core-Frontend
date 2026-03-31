@@ -3,8 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Edit3, Info as InfoIcon, Utensils, IndianRupee, PlusCircle, Building2, Phone, FileText, Layers } from "lucide-react";
 import type { Details } from "@/interfaces/pg";
+import GatesSection from "../gates/GatesSection";
 
-export default function DetailsView({ details, onEdit }: { details: Details | null; onEdit: () => void }) {
+export default function DetailsView({ details, onEdit,pgId }: { details: Details | null; onEdit: () => void; pgId:string }) {
     if (!details) {
         return (
             <div className="flex flex-col items-center justify-center p-16 border-2 border-dashed rounded-sm bg-muted/20 border-border/50">
@@ -81,6 +82,8 @@ export default function DetailsView({ details, onEdit }: { details: Details | nu
                     </CardContent>
                 </Card>
             </div>
+
+            <GatesSection pgId={pgId} />
         </div>
     );
 }

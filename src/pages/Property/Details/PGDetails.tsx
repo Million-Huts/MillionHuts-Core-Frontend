@@ -56,6 +56,7 @@ export default function PGDetails() {
                         <DetailsView
                             details={details}
                             onEdit={() => setEditing(true)}
+                            pgId={pgId!}
                         />
                     </motion.div>
                 ) : (

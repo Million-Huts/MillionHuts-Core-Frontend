@@ -2,7 +2,8 @@ import {
     Building2, Users, Settings, LogOut, ChevronLeft, LayoutDashboard,
     BedDouble, User, X, Warehouse, Command, MessageSquareWarning,
     Wallet, Bell, UserLock,
-    FileSearchCorner
+    FileSearchCorner,
+    ClipboardList
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -40,6 +41,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
         { label: "Complaints", icon: MessageSquareWarning, to: `/pgs/${currentPG?.id}/complaints`, activePattern: `/pgs/${currentPG?.id}/complaints` },
         { label: "Notifications", icon: Bell, to: `/pgs/${currentPG?.id}/notifications`, activePattern: `/pgs/${currentPG?.id}/notifications` },
         { label: "User Management", icon: UserLock, to: `/pgs/${currentPG?.id}/users`, activePattern: `/pgs/${currentPG?.id}/users` },
+        { label: "Entry Logs", icon: ClipboardList, to: `/pgs/${currentPG?.id}/entries`, activePattern: `/pgs/${currentPG?.id}/entries`, }
     ];
 
     const bottomNav = [

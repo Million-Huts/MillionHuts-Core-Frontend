@@ -28,6 +28,7 @@ import UsersPage from './pages/Users/UsersPage';
 import UserDetailsPage from './pages/Users/UserDetailsPage';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import Overview from './pages/Overview';
+import EntryLogsPage from './pages/Entry/EntryLogsPage';
 
 function App() {
   return (
@@ -89,6 +90,10 @@ function App() {
               {/* Users Module  */}
               <Route path="users" element={<UsersPage />} />
               <Route path="users/:userId" element={<UserDetailsPage />} />
+
+              {/* Security Entry Logs */}
+              <Route path="entries" element={<EntryLogsPage />} />
+
             </Route>
           </Route>
         </Route>
