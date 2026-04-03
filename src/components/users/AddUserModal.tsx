@@ -14,12 +14,14 @@ type Props = {
         phone: string;
         email: string;
         role: string;
+        staffType: string;
     };
     setForm: Dispatch<SetStateAction<{
         name: string;
         phone: string;
         email: string;
         role: string;
+        staffType: string;
     }>>;
     onSubmit: () => Promise<string | undefined>
 }
@@ -51,6 +53,18 @@ export const AddUserModal = ({ open, setOpen, form, setForm, onSubmit }: Props) 
                 </div>
 
                 <div className="grid gap-2">
+                    <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Email</Label>
+                    <Input
+                        placeholder="example@mail.com"
+                        className="rounded-sm border-border bg-muted/30 font-bold focus:ring-primary/20"
+                        value={form.email}
+                        type="email"
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                    />
+                </div>
+
+
+                <div className="grid gap-2">
                     <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Phone Number</Label>
                     <Input
                         placeholder="+91 ..."
@@ -72,6 +86,25 @@ export const AddUserModal = ({ open, setOpen, form, setForm, onSubmit }: Props) 
                         </SelectContent>
                     </Select>
                 </div>
+
+                {form.role === "STAFF" && (
+                    <div className="grid gap-2">
+                        <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">StaffType</Label>
+                        <Select value={form.staffType} onValueChange={val => setForm({ ...form, staffType: val })}>
+                            <SelectTrigger className="h-12 rounded-sm border-border bg-muted/30 font-bold">
+                                <SelectValue placeholder="Choose Staff Role" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-sm border-border">
+                                <SelectItem value="SECURITY" className="font-bold">SECURITY</SelectItem>
+                                <SelectItem value="CLEANING" className="font-bold">CLEANING</SelectItem>
+                                <SelectItem value="MESS" className="font-bold">MESS</SelectItem>
+                                <SelectItem value="MAINTENANCE" className="font-bold">MAINTENANCE</SelectItem>
+                                <SelectItem value="OTHERS" className="font-bold">OTHERS</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                )}
+
 
                 <Button
                     className="w-full h-12 rounded-sm font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 mt-4"

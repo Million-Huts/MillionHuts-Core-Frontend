@@ -18,7 +18,7 @@ export default function UsersPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [open, setOpen] = useState(false);
-    const [form, setForm] = useState({ name: "", phone: "", email: "", role: "STAFF" });
+    const [form, setForm] = useState({ name: "", phone: "", email: "", role: "STAFF", staffType: "" });
 
     const fetchUsers = async () => {
         try {
@@ -39,7 +39,7 @@ export default function UsersPage() {
             await apiPrivate.post(`/pgs/${pgId}/users`, form);
             toast.success("Staff profile deployed");
             setOpen(false);
-            setForm({ name: "", phone: "", email: "", role: "STAFF" });
+            setForm({ name: "", phone: "", email: "", role: "STAFF", staffType: "" });
             fetchUsers();
         } catch (err: any) {
             toast.error(err?.response?.data?.message || "Deployment failed");

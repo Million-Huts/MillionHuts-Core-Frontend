@@ -17,6 +17,8 @@ export interface PG {
 export interface PGSummary {
     id: string;
     name: string;
+    role: "OWNER" | "MANAGER" | "STAFF";
+    staffType: "SECURITY" | "CLEANING" | "MESS" | "MAINTENANCE" | "OTHER" | null;
 }
 
 

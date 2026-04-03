@@ -26,6 +26,9 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
     const { pgs, currentPG, switchPG } = usePG();
     const [collapsed, setCollapsed] = useState(false);
 
+    const role = currentPG?.role;
+    const staffType = currentPG?.staffType;
+
     // activePattern: matches sub-routes (e.g., floors matches floors/123)
     const generalNav = [
         { label: "Overview", icon: FileSearchCorner, to: `/overview`, activePattern: "/overview", exact: true },
@@ -48,6 +51,44 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
         { label: "Profile", icon: User, to: "/profile" },
         { label: "Settings", icon: Settings, to: "/settings" },
     ];
+
+    const filteredGeneralNav =
+        role === "OWNER" ? generalNav : [];
+
+    const filteredPgNav = pgDependentNav.filter((item) => {
+        if (!role) return false;
+
+        // OWNER → everything
+        if (role === "OWNER") return true;
+
+        // MANAGER → everything except generalNav (already handled)
+        if (role === "MANAGER") return true;
+
+        // STAFF logic
+        if (role === "STAFF") {
+            // Base modules for all staff
+            const baseAccess = [
+                "Expense",
+                "Complaints",
+                "Notifications",
+            ];
+
+            // SECURITY → entry logs
+            if (staffType === "SECURITY") {
+                return baseAccess.includes(item.label) || item.label === "Entry Logs";
+            }
+
+            // MESS → future module
+            if (staffType === "MESS") {
+                return baseAccess.includes(item.label) || item.label === "Mess";
+            }
+
+            // CLEANING / MAINTENANCE / OTHER → base only
+            return baseAccess.includes(item.label);
+        }
+
+        return false;
+    });
 
     const NavLink = ({ item, disabled }: { item: any; disabled?: boolean }) => {
         const isActive = item.exact
@@ -90,10 +131,10 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-3 space-y-6 py-4">
-                        <nav className="flex flex-col gap-1">{generalNav.map((i) => <NavLink key={i.to} item={i} />)}</nav>
+                        <nav className="flex flex-col gap-1">{filteredGeneralNav.map((i) => <NavLink key={i.to} item={i} />)}</nav>
                         <div className="space-y-1">
                             {!collapsed && <p className="px-3 text-[10px] font-bold uppercase text-muted-foreground mb-2">Active Property</p>}
-                            {!collapsed && (
+                            {role === "OWNER" ? !collapsed && (
                                 <Select value={currentPG?.id} onValueChange={switchPG}>
                                     <SelectTrigger className="w-full h-10 bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border hover:bg-sidebar-accent/80">
                                         <SelectValue placeholder="Select Property" />
@@ -102,9 +143,16 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                                         {pgs.map((pg) => <SelectItem key={pg.id} value={pg.id}>{pg.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
+                            ) : (
+                                <div className="w-full h-10 flex items-center px-3 rounded-sm bg-sidebar-accent border border-sidebar-border text-sidebar-accent-foreground">
+                                    <span className="truncate font-medium">
+                                        {currentPG?.name || "No Property"}
+                                    </span>
+                                </div>
                             )}
+
                         </div>
-                        <nav className="flex flex-col gap-1">{pgDependentNav.map((i) => <NavLink key={i.to} item={i} disabled={!currentPG} />)}</nav>
+                        <nav className="flex flex-col gap-1">{filteredPgNav.map((i) => <NavLink key={i.to} item={i} disabled={!currentPG} />)}</nav>
                     </div>
 
                     <div className="border-t border-sidebar-border p-3 flex flex-col gap-1 shrink-0">
@@ -136,7 +184,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                     <div className="p-4 space-y-6">
                         {/* General & Dependent Navs */}
                         <div className="space-y-1">
-                            {generalNav.map((item) => (
+                            {filteredGeneralNav.map((item) => (
                                 <Link
                                     key={item.to}
                                     to={item.to}
@@ -165,7 +213,7 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                         </div>
 
                         <div className="space-y-1">
-                            {pgDependentNav.map((item) => {
+                            {filteredPgNav.map((item) => {
                                 const isDisabled = !currentPG;
                                 return (
                                     <Link

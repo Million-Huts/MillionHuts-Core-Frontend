@@ -13,4 +13,14 @@ export interface UserType {
     mfaEnabled?: boolean;
     mfaSecret?: string;
     mfaTempSecret?: string;
+    access?: Access[];
+}
+
+export interface Access {
+    id: string;
+    userId: string;
+    pgId: string;
+    role: "OWNER" | "MANAGER" | "STAFF";
+    staffType: "SECURITY" | "CLEANING" | "MESS" | "MAINTENANCE" | "OTHER" | null;
+    isActive: boolean;
 }
