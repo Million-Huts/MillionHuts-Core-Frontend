@@ -27,7 +27,7 @@ export default function Properties() {
                 const list: PG[] = res.data.data.pgs || []; // Fixed key from pgsk to pgs
                 setLocalPGs(list);
                 // Keep global context in sync
-                setPGs(list.map((pg) => ({ id: pg.id, name: pg.name })));
+                setPGs(list.map((pg) => ({ id: pg.id, name: pg.name, role: pg.role, staffType: pg.staffType })));
             } catch (err) {
                 console.error("Failed to fetch properties", err);
             } finally {

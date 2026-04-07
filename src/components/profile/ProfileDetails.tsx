@@ -1,11 +1,13 @@
 import { Mail, Phone, User as UserIcon, ShieldCheck, Calendar, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { usePG } from "@/context/PGContext";
 
 interface Props { onEdit: () => void; }
 
 export default function ProfileDetails({ onEdit }: Props) {
     const { user } = useAuth();
+    const { currentPG } = usePG();
 
     const InfoBlock = ({ icon: Icon, label, value }: any) => (
         <div className="group space-y-1.5 p-4 rounded-sm bg-muted/30 border border-border/50 transition-all hover:bg-primary/5">
@@ -36,7 +38,7 @@ export default function ProfileDetails({ onEdit }: Props) {
                 <InfoBlock icon={UserIcon} label="Full Name" value={user?.name} />
                 <InfoBlock icon={Mail} label="Email Address" value={user?.email} />
                 <InfoBlock icon={Phone} label="Contact Number" value={user?.phone} />
-                <InfoBlock icon={ShieldCheck} label="System Role" value={user?.role} />
+                <InfoBlock icon={ShieldCheck} label="System Role" value={currentPG?.role} />
             </div>
 
             <div className="pt-6 border-t border-border flex items-center justify-between">

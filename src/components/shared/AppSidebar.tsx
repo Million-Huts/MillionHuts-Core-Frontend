@@ -48,8 +48,8 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
     ];
 
     const bottomNav = [
-        { label: "Profile", icon: User, to: "/profile" },
-        { label: "Settings", icon: Settings, to: "/settings" },
+        // { label: "Profile", icon: User, to: "/profile" },
+        { label: "Settings", icon: Settings, to: `/pgs/${currentPG?.id}/settings` },
     ];
 
     const filteredGeneralNav =
@@ -133,21 +133,29 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                     <div className="flex-1 overflow-y-auto px-3 space-y-6 py-4">
                         <nav className="flex flex-col gap-1">{filteredGeneralNav.map((i) => <NavLink key={i.to} item={i} />)}</nav>
                         <div className="space-y-1">
-                            {!collapsed && <p className="px-3 text-[10px] font-bold uppercase text-muted-foreground mb-2">Active Property</p>}
                             {role === "OWNER" ? !collapsed && (
-                                <Select value={currentPG?.id} onValueChange={switchPG}>
-                                    <SelectTrigger className="w-full h-10 bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border hover:bg-sidebar-accent/80">
-                                        <SelectValue placeholder="Select Property" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-popover border-border">
-                                        {pgs.map((pg) => <SelectItem key={pg.id} value={pg.id}>{pg.name}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
+                                <>
+                                    <p className="px-3 text-[10px] font-bold uppercase text-muted-foreground mb-2">Active Property</p>
+                                    <Select value={currentPG?.id} onValueChange={switchPG}>
+                                        <SelectTrigger className="w-full h-10 bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border hover:bg-sidebar-accent/80">
+                                            <SelectValue placeholder="Select Property" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-popover border-border">
+                                            {pgs.map((pg) => <SelectItem key={pg.id} value={pg.id}>{pg.name}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                </>
                             ) : (
-                                <div className="w-full h-10 flex items-center px-3 rounded-sm bg-sidebar-accent border border-sidebar-border text-sidebar-accent-foreground">
-                                    <span className="truncate font-medium">
-                                        {currentPG?.name || "No Property"}
-                                    </span>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                                        Active Property
+                                    </p>
+                                    <div className="w-full h-10 flex items-center gap-2 px-3 rounded-sm bg-sidebar-accent border border-sidebar-border text-sidebar-accent-foreground">
+                                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                                        <span className="truncate font-medium">
+                                            {currentPG?.name || "No Property"}
+                                        </span>
+                                    </div>
                                 </div>
                             )}
 

@@ -12,6 +12,8 @@ export interface PG {
     status: string;
     coverImage?: CoverImage | null;
     completionPercent?: number;
+    role: "OWNER" | "MANAGER" | "STAFF";
+    staffType: "SECURITY" | "CLEANING" | "MESS" | "MAINTENANCE" | "OTHER" | null;
 }
 
 export interface PGSummary {

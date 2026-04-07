@@ -29,6 +29,9 @@ import UserDetailsPage from './pages/Users/UserDetailsPage';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import Overview from './pages/Overview';
 import EntryLogsPage from './pages/Entry/EntryLogsPage';
+import SettingsLayout from './components/SettingsLayout';
+import Account from './pages/Settings/Account';
+import Security from './pages/Settings/Security';
 
 function App() {
   return (
@@ -94,6 +97,12 @@ function App() {
               {/* Security Entry Logs */}
               <Route path="entries" element={<EntryLogsPage />} />
 
+              {/* Settings Module */}
+
+              <Route path='settings' element={<SettingsLayout />}>
+                <Route path='account' element={<Account />} />
+                <Route path='security' element={<Security />} />
+              </Route>
             </Route>
           </Route>
         </Route>
