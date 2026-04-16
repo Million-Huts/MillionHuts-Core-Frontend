@@ -35,7 +35,7 @@ export default function CreatePGModal({ open, onClose, onCreated }: Props) {
 
             // Sync local and global state
             onCreated(newPG);
-            setPGs([...pgs, { id: newPG.id, name: newPG.name }]);
+            setPGs([...pgs, { id: newPG.id, name: newPG.name, role: newPG.role, staffType: newPG.staffType }]);
 
             toast.success(`${newPG.name} is now live!`, { id: toastId });
             onClose();
