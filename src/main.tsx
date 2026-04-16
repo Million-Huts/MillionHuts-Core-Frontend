@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext.tsx'
 import { PGProvider } from './context/PGContext.tsx'
 import { ThemeProvider } from './context/ThemeContext.tsx'
 import { initApiBase } from './lib/api.ts'
+import { SubscriptionProvider } from './context/SubscriptionContext.tsx'
 
 initApiBase().finally(() => {
   createRoot(document.getElementById('root')!).render(
@@ -14,9 +15,11 @@ initApiBase().finally(() => {
       <BrowserRouter>
         <PGProvider>
           <AuthProvider>
-            <ThemeProvider>
-              <App />
-            </ThemeProvider>
+            <SubscriptionProvider>
+              <ThemeProvider>
+                <App />
+              </ThemeProvider>
+            </SubscriptionProvider>
           </AuthProvider>
         </PGProvider>
       </BrowserRouter>

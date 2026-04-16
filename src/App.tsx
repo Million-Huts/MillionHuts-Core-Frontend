@@ -32,6 +32,8 @@ import EntryLogsPage from './pages/Entry/EntryLogsPage';
 import SettingsLayout from './components/SettingsLayout';
 import Account from './pages/Settings/Account';
 import Security from './pages/Settings/Security';
+import SubscriptionPage from './pages/Subscription/SubscriptionPage';
+import UpgradePage from './pages/Subscription/UpgradePage';
 
 function App() {
   return (
@@ -102,8 +104,12 @@ function App() {
               <Route path='settings' element={<SettingsLayout />}>
                 <Route path='account' element={<Account />} />
                 <Route path='security' element={<Security />} />
+                <Route path="billing" element={<SubscriptionPage isBillingPage={true} />} />
               </Route>
             </Route>
+
+            <Route path="/subscription" element={<SubscriptionPage isBillingPage={false} />} />
+            <Route path="/subscription/upgrade" element={<UpgradePage />} />
           </Route>
         </Route>
 

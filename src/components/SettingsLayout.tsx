@@ -18,7 +18,7 @@ export default function SettingsLayout() {
             {/* NAVIGATION SIDEBAR */}
             <aside
                 className={cn(
-                    "md:flex flex-col w-full md:w-72 border-r border-border/60 bg-card/40 backdrop-blur-sm sticky top-0 h-auto md:h-screen",
+                    "md:flex flex-col w-full md:w-72 border-r border-border/60 bg-card/40 backdrop-blur-sm md:sticky md:top-0 h-fit",
                     isMenuLevel ? 'flex' : 'hidden'
                 )}
             >
@@ -31,7 +31,7 @@ export default function SettingsLayout() {
 
             {/* CONTENT AREA */}
             <main className={cn(
-                "flex-1 md:block relative",
+                "flex-1 md:block relative min-h-",
                 !isMenuLevel ? 'block' : 'hidden'
             )}>
                 <AnimatePresence mode="wait">
