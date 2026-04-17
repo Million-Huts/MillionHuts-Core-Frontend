@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 
 interface EmptyStateProps {
     onCreate: () => void;
+    disabled: boolean;
 }
 
-export default function EmptyState({ onCreate }: EmptyStateProps) {
+export default function EmptyState({ onCreate, disabled }: EmptyStateProps) {
     return (
         <div className="relative w-full max-w-2xl overflow-hidden rounded-sm border-2 border-dashed border-border/60 bg-card/30 p-12 md:p-20 text-center transition-colors hover:border-primary/20">
             {/* Background Decorative Elements */}
@@ -48,12 +49,18 @@ export default function EmptyState({ onCreate }: EmptyStateProps) {
                     <Button
                         size="lg"
                         onClick={onCreate}
+                        disabled={disabled}
                         className="rounded-sm px-8 font-black tracking-tight shadow-xl shadow-primary/20 transition-all"
                     >
                         <Plus className="mr-2 h-5 w-5" />
                         Get Started
                     </Button>
                 </motion.div>
+                {disabled && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                        You've reached your plan limit. Upgrade to add more properties.
+                    </p>
+                )}
 
                 <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
                     MillionHuts Establishment Wizard

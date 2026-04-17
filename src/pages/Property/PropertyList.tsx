@@ -12,12 +12,16 @@ import { apiPrivate } from "@/lib/api";
 import { usePG } from "@/context/PGContext";
 import type { PG } from "@/interfaces/pg";
 import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import { LimitGuard } from "@/components/feature/LimitGuard";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 
 export default function Properties() {
     const { setPGs } = usePG();
     const [pgs, setLocalPGs] = useState<PG[]>([]);
     const [loading, setLoading] = useState(true);
     const [openCreate, setOpenCreate] = useState(false);
+    const { canUseLimit } = useFeatureAccess();
+    const canAddPG = canUseLimit("maxPGs", pgs.length);
 
     useEffect(() => {
         const fetchPGs = async () => {
@@ -58,14 +62,19 @@ export default function Properties() {
                         </p>
                     </div>
 
-                    <Button
-                        size="lg"
-                        onClick={() => setOpenCreate(true)}
-                        className="rounded-sm px-8 font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 group"
+                    <LimitGuard
+                        allowed={canAddPG}
+                        message="You've reached your property limit."
                     >
-                        <Plus className="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" />
-                        Add New Property
-                    </Button>
+                        <Button
+                            size="lg"
+                            onClick={() => setOpenCreate(true)}
+                            className="rounded-sm px-8 font-bold shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95 group"
+                        >
+                            <Plus className="w-5 h-5 mr-2 transition-transform group-hover:rotate-90" />
+                            Add New Property
+                        </Button>
+                    </LimitGuard>
                 </header>
 
                 <Separator className="bg-border/40" />
@@ -91,7 +100,13 @@ export default function Properties() {
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className="flex justify-center pt-12"
                             >
-                                <EmptyState onCreate={() => setOpenCreate(true)} />
+                                <EmptyState
+                                    onCreate={() => {
+                                        if (!canAddPG) return;
+                                        setOpenCreate(true);
+                                    }}
+                                    disabled={!canAddPG}
+                                />
                             </motion.div>
                         ) : (
                             <motion.div

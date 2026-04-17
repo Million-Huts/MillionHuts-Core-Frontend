@@ -34,6 +34,7 @@ import Account from './pages/Settings/Account';
 import Security from './pages/Settings/Security';
 import SubscriptionPage from './pages/Subscription/SubscriptionPage';
 import UpgradePage from './pages/Subscription/UpgradePage';
+import { ProtectedFeatureRoute } from './components/ProtectedFeatureRoute';
 
 function App() {
   return (
@@ -81,13 +82,29 @@ function App() {
               <Route path="tenants" element={<Tenants />} />
               <Route path="tenants/:tenantId" element={<TenantDetails />} />
 
-              {/* Expenses Module  */}
-              <Route path="expense" element={<ExpensesPage />} />
-              <Route path="expense/report" element={<ExpenseReportPage />} />
+              <Route element={
+                <ProtectedFeatureRoute
+                  type="module"
+                  featureKey="expense"
+                  featureName="Expense Management"
+                />
+              }>
+                {/* Expenses Module  */}
+                <Route path="expense" element={<ExpensesPage />} />
+                <Route path="expense/report" element={<ExpenseReportPage />} />
+              </Route>
 
               {/* Complaints Module */}
-              <Route path="complaints" element={<ComplaintsPage />} />
-              <Route path="complaints/:complaintId" element={<ComplaintDetailsPage />} />
+              <Route element={
+                <ProtectedFeatureRoute
+                  type="module"
+                  featureKey="complaints"
+                  featureName="Complaints"
+                />
+              }>
+                <Route path="complaints" element={<ComplaintsPage />} />
+                <Route path="complaints/:complaintId" element={<ComplaintDetailsPage />} />
+              </Route>
 
               {/* Notifications Module  */}
               <Route path="notifications" element={<Notifications />} />
@@ -97,7 +114,15 @@ function App() {
               <Route path="users/:userId" element={<UserDetailsPage />} />
 
               {/* Security Entry Logs */}
-              <Route path="entries" element={<EntryLogsPage />} />
+              <Route element={
+                <ProtectedFeatureRoute
+                  type="module"
+                  featureKey="entryLogs"
+                  featureName="Entry Logs"
+                />
+              }>
+                <Route path="entries" element={<EntryLogsPage />} />
+              </Route>
 
               {/* Settings Module */}
 

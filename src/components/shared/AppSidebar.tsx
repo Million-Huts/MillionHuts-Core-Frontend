@@ -15,10 +15,6 @@ import {
     Select, SelectTrigger, SelectContent, SelectItem, SelectValue,
 } from "@/components/ui/select";
 
-import { useSubscription } from "@/context/SubscriptionContext";
-import { useFeatureAccess } from "@/hooks/useFeatureAccess";
-import { useNavigate } from "react-router-dom";
-
 interface Props {
     mobileOpen: boolean;
     setMobileOpen: (val: boolean) => void;
@@ -28,33 +24,10 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
     const location = useLocation();
     const { logout } = useAuth();
     const { pgs, currentPG, switchPG } = usePG();
+    const [collapsed, setCollapsed] = useState(false);
 
     const role = currentPG?.role;
     const staffType = currentPG?.staffType;
-
-    const [collapsed, setCollapsed] = useState(false);
-
-    const navigate = useNavigate();
-
-    const { isActive, isExpired } = useSubscription();
-    const {
-        canUseLimit,
-        canUseModule,
-        canUseFinancial,
-    } = useFeatureAccess();
-
-    const featureMap: Record<
-        string,
-        { type: "limit" | "module" | "financial"; key: string } | null
-    > = {
-        "Properties": { type: "limit", key: "maxPGs" },
-        "User Management": { type: "limit", key: "maxUsers" },
-
-        "Expense": { type: "module", key: "expense" },
-        "Complaints": { type: "module", key: "complaints" },
-        "Notifications": { type: "module", key: "announcements" }, // map correctly
-        "Entry Logs": { type: "module", key: "entryLogs" },
-    };
 
     // activePattern: matches sub-routes (e.g., floors matches floors/123)
     const generalNav = [
@@ -118,73 +91,29 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
     });
 
     const NavLink = ({ item, disabled }: { item: any; disabled?: boolean }) => {
-        const isActiveRoute = item.exact
+        const isActive = item.exact
             ? location.pathname === item.to
             : location.pathname.startsWith(item.activePattern);
 
-        const featureConfig = featureMap[item.label];
-
-        let isFeatureAllowed = true;
-
-        if (featureConfig) {
-            if (featureConfig.type === "limit") {
-                isFeatureAllowed = canUseLimit(featureConfig.key as any);
-            }
-
-            if (featureConfig.type === "module") {
-                isFeatureAllowed = canUseModule(featureConfig.key as any);
-            }
-
-            if (featureConfig.type === "financial") {
-                isFeatureAllowed = canUseFinancial(featureConfig.key as any);
-            }
-        }
-
-        const isLocked = !isFeatureAllowed || !isActive;
-
-        const handleClick = (e: any) => {
-            if (disabled || isLocked) {
-                e.preventDefault();
-
-                navigate("/subscription", {
-                    state: {
-                        reason: !isActive
-                            ? isExpired
-                                ? "expired"
-                                : "no_subscription"
-                            : "limit",
-                        feature: item.label,
-                    },
-                });
-            }
-        };
-
+        // If disabled, we render a div instead of a Link to prevent navigation
         const content = (
-            <div
-                onClick={handleClick}
-                className={cn(
-                    "relative flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all",
-                    isActiveRoute && !isLocked
-                        ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                    collapsed && "justify-center px-2",
-                    (disabled || isLocked) &&
-                    "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-sidebar-foreground"
-                )}
-            >
-                <item.icon
-                    className={cn(
-                        "h-5 w-5",
-                        isActiveRoute && !isLocked
-                            ? "text-sidebar-primary-foreground"
-                            : "text-muted-foreground"
-                    )}
-                />
+            <div className={cn(
+                "relative flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-all",
+                isActive && !disabled
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                collapsed && "justify-center px-2",
+                disabled && "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-sidebar-foreground"
+            )}>
+                <item.icon className={cn(
+                    "h-5 w-5",
+                    isActive && !disabled ? "text-sidebar-primary-foreground" : "text-muted-foreground"
+                )} />
                 {!collapsed && <span className="truncate">{item.label}</span>}
             </div>
         );
 
-        if (disabled || isLocked) return content;
+        if (disabled) return content;
 
         return <Link to={item.to}>{content}</Link>;
     };
@@ -294,42 +223,13 @@ export default function AppSidebar({ mobileOpen, setMobileOpen }: Props) {
                         <div className="space-y-1">
                             {filteredPgNav.map((item) => {
                                 const isDisabled = !currentPG;
-                                const featureConfig = featureMap[item.label];
-
-                                let isFeatureAllowed = true;
-
-                                if (featureConfig) {
-                                    if (featureConfig.type === "limit") {
-                                        isFeatureAllowed = canUseLimit(featureConfig.key as any);
-                                    }
-
-                                    if (featureConfig.type === "module") {
-                                        isFeatureAllowed = canUseModule(featureConfig.key as any);
-                                    }
-
-                                    if (featureConfig.type === "financial") {
-                                        isFeatureAllowed = canUseFinancial(featureConfig.key as any);
-                                    }
-                                }
-                                const isLocked = !isFeatureAllowed || !isActive;
                                 return (
                                     <Link
                                         key={item.to}
-                                        to={isDisabled || isLocked ? "#" : item.to}
+                                        to={isDisabled ? "#" : item.to} // Prevent navigation
                                         onClick={(e) => {
-                                            if (isDisabled || isLocked) {
-                                                e.preventDefault();
-
-                                                navigate("/subscription", {
-                                                    state: {
-                                                        reason: !isActive
-                                                            ? isExpired
-                                                                ? "expired"
-                                                                : "no_subscription"
-                                                            : "limit",
-                                                        feature: item.label,
-                                                    },
-                                                });
+                                            if (isDisabled) {
+                                                e.preventDefault(); // Stop the click
                                                 return;
                                             }
                                             setMobileOpen(false);

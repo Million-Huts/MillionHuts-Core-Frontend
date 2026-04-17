@@ -8,10 +8,13 @@ import { UserCard } from "@/components/users/UserCard";
 import { AddUserModal } from "@/components/users/AddUserModal";
 import type { PGUser } from "@/interfaces/pgUsers";
 import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import { LimitGuard } from "@/components/feature/LimitGuard";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 
 export default function UsersPage() {
     const { pgId } = useParams();
     const navigate = useNavigate();
+    const { canUseLimit } = useFeatureAccess();
 
     const [users, setUsers] = useState<PGUser[]>([]);
     const [loading, setLoading] = useState(true);
@@ -48,6 +51,8 @@ export default function UsersPage() {
 
     useEffect(() => { fetchUsers(); }, [page]);
 
+    const canAddUser = canUseLimit("maxUsers", users.length);
+
     return (
         // Changed to w-full to prevent layout conflicts with the parent shell
         <div className="w-full p-6 lg:p-10">
@@ -67,9 +72,14 @@ export default function UsersPage() {
                         </p>
                     </div>
 
-                    <Button onClick={() => setOpen(true)} className="h-11 px-6 gap-2 font-black uppercase tracking-widest text-[10px] rounded-sm shadow-lg">
-                        <UserPlus className="w-4 h-4" /> Add New Staff
-                    </Button>
+                    <LimitGuard
+                        allowed={canAddUser}
+                        message="You've reached subscription limit"
+                    >
+                        <Button onClick={() => setOpen(true)} className="h-11 px-6 gap-2 font-black uppercase tracking-widest text-[10px] rounded-sm shadow-lg">
+                            <UserPlus className="w-4 h-4" /> Add New Staff
+                        </Button>
+                    </LimitGuard>
                 </div>
 
                 {/* Main Content Area */}
