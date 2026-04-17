@@ -9,7 +9,11 @@ export interface PG {
     address: string;
     city: string;
     state: string;
-    status: string;
+    status: "DRAFT" | "ACTIVE" | "INACTIVE" | "ARCHIVED";
+    locality?: string;
+    latitude?: number;
+    longitude?: number;
+    formattedAddress?: string;
     coverImage?: CoverImage | null;
     completionPercent?: number;
     role: "OWNER" | "MANAGER" | "STAFF";
