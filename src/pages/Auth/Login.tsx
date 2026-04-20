@@ -248,7 +248,7 @@ export default function LoginPage() {
                                         <Button className="w-full h-12 font-bold rounded-xl" disabled={loading}>
                                             {loading ? <Loader2 className="animate-spin" /> : "Sign In"}
                                         </Button>
-                                        <Link to="/forgot" className="block text-center text-xs text-muted-foreground hover:text-primary transition-colors">Forgot password?</Link>
+                                        <Link to="/forgot-password" className="block text-center text-xs text-muted-foreground hover:text-primary transition-colors">Forgot password?</Link>
                                     </form>
                                 )}
 
