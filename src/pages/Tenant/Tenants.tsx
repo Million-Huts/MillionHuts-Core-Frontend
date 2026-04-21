@@ -34,21 +34,55 @@ export default function Tenants() {
 
     const fetchData = useCallback(async () => {
         if (!currentPG?.id) return;
+
         setLoading(true);
-        await apiPrivate
-            .get(`/tenants/${currentPG.id}`)
-            .then((tRes) => setTenants(tRes!.data.tenants || []))
-            .catch(() => toast.error("No Tenant Found!"));
 
-        await apiPrivate
-            .get(`/pgs/${currentPG.id}/applications`)
-            .then((aRes) => setApplications(aRes!.data.data || []))
-            .catch(() => toast.error("No Applications Found!"));
+        try {
+            // 1️⃣ Get ACTIVE stays (tenants)
+            const staysRes = await apiPrivate.get(
+                `/pgs/${currentPG.id}/stays?status=ACTIVE`
+            );
 
-        await apiPrivate
-            .get(`/pgs/${currentPG.id}/rooms`)
-            .then((rRes) => setRooms(rRes!.data.data.rooms || []))
-            .catch(() => toast.error("No Room Data Found!"));
+            const stays = staysRes?.data?.data || [];
+
+            // 👉 Flatten tenant + stay info for UI
+            const tenantsData = stays.map((stay: any) => ({
+                id: stay.tenantId,
+                ...stay.tenant, // if you later include tenant in backend
+                stayInfo: {
+                    id: stay.id,
+                    roomId: stay.roomId,
+                    status: stay.status,
+                    startDate: stay.startDate,
+                },
+            }));
+
+            setTenants(tenantsData);
+
+        } catch (error) {
+            toast.error("Failed to fetch tenants");
+        }
+
+        try {
+            // 2️⃣ Applications (no change)
+            const aRes = await apiPrivate.get(
+                `/pgs/${currentPG.id}/applications`
+            );
+            setApplications(aRes?.data?.data || []);
+        } catch {
+            toast.error("No Applications Found!");
+        }
+
+        try {
+            // 3️⃣ Rooms (no change)
+            const rRes = await apiPrivate.get(
+                `/pgs/${currentPG.id}/rooms`
+            );
+            setRooms(rRes?.data?.data?.rooms || []);
+        } catch {
+            toast.error("No Room Data Found!");
+        }
+
         setLoading(false);
     }, [currentPG]);
 

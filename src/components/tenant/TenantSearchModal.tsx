@@ -21,7 +21,7 @@ export default function TenantSearchModal({ open, onClose, onSelectTenant }: any
         setIsSearching(true);
         try {
             const res = await apiPrivate.get(`/tenants/search?q=${val}`);
-            setResults(res.data.tenants || []);
+            setResults(res.data.data || []);
         } finally {
             setIsSearching(false);
         }
